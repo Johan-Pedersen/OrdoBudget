@@ -4,7 +4,8 @@
   - https://pkg.go.dev/google.golang.org/api/sheets/v4
 - API doc
   - https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/
-
+- Sample requests
+  - https://developers.google.com/sheets/api/samples
 ## Nordeas's csv fil
 
 - kolonnerne er forskudt med 1 hvis der er brugt 'Nordea Pay'
