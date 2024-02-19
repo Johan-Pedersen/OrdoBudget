@@ -93,19 +93,105 @@ func main() {
 	// Own
 	// https://docs.google.com/spreadsheets/d/1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc/edit#gid=0
 	spreadsheetId := "1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc"
-	readRange := "A1:B"
-	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
-	if err != nil {
-		log.Fatalf("Unable to retrieve data from sheet: %v", err)
+	// readRange := "Udtrœk!C2:C"
+	// resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
+	// if err != nil {
+	// 	log.Fatalf("Unable to retrieve data from sheet: %v", err)
+	// }
+	//
+	// if len(resp.Values) == 0 {
+	// 	fmt.Println("No data found.")
+	// } else {
+	// 	fmt.Println("Name, Major:")
+	// for _, row := range resp.Values {
+	// Print columns A and E, which correspond to indices 0 and 4.
+	// fmt.Printf("%s\n", row[0])
+	//
+	// // Tekst : kolonne
+	// udtrœksKlasser := map[string]string{
+	// 	"Resturant besøg/takeway/mad på skole": "E",
+	// 	"Helbred (fx tandlœge, medicin m.m.)":  "F",
+	// 	"ANTON (foder, pleje, godbidder mv.)":  "G",
+	// 	"Boligudstyr":                          "H",
+	// 	"Elektronik":                           "I",
+	// 	"Gaver":                                "J",
+	// 	"Social arrangementer":                 "K",
+	// 	"Rejser":                               "L",
+	// 	"Spotify":                              "M",
+	// 	"Transport, cykel, parkering m.m.":     "N",
+	// 	"Golf":                                 "O",
+	// 	"Dashlane":                             "P",
+	// 	"Diverse":                              "Q",
+	// 	"Skolebøger m.m.":                      "R",
+	// 	"Tøj og sko":                           "S",
+	// 	"Personlig pleje (kosmetik, frisør mv.)": "T",
+	// 	"Briller abonnement ":                    "U",
+	// 	"Icloud, onedrive, Prime":                "V",
+	// }
+	//
+	// maping := map[string]string{
+	// 	"skatteguiden.dk GF2023":        "Diverse",
+	// 	"Silkeborg Ry Golfklub -":       "Golf",
+	// 	"MobilePay Rejsekort":           "Transport, cykel, parkering m.m.",
+	// 	"SILKEBORG RY GOLFKLUDen 03.02": "Golf",
+	// }
+	//
+	// println(udtrœksKlasser[maping[row[0].(string)]])
+
+	// cutpaste := sheets.CutPasteRequest{
+	// 	Destination: &sheets.GridCoordinate{
+	// 		ColumnIndex: 4,
+	// 		RowIndex:    2,
+	// 		SheetId:     1,
+	// 	},
+	// 	PasteType: "PASTE_NORMAL",
+	// 	Source: &sheets.GridRange{
+	// 		EndColumnIndex:   1,
+	// 		EndRowIndex:      33,
+	// 		SheetId:          1,
+	// 		StartColumnIndex: 1,
+	// 		StartRowIndex:    2,
+	// 	},
+	// }
+	// requests := []sheets.Request{
+	// 	CutPaste: cutpaste,
+	// }
+	//
+	// request := sheets.BatchUpdateSpreadsheetRequest{
+	// 	IncludeSpreadsheetInResponse: false,
+	// 	Requests: requests,
+	// }
+	// }
+	// Create the CutPasteRequest
+	// }
+	cutPasteReq := &sheets.Request{
+		CutPaste: &sheets.CutPasteRequest{
+			Source: &sheets.GridRange{
+				EndColumnIndex:   0,
+				EndRowIndex:      31,
+				SheetId:          1472288449,
+				StartColumnIndex: 0,
+				StartRowIndex:    1,
+			},
+			Destination: &sheets.GridCoordinate{
+				ColumnIndex: 5,
+				RowIndex:    1,
+				SheetId:     1472288449,
+			},
+			PasteType: "PASTE_NORMAL", // Adjust paste type as needed
+		},
 	}
 
-	if len(resp.Values) == 0 {
-		fmt.Println("No data found.")
-	} else {
-		fmt.Println("Name, Major:")
-		for _, row := range resp.Values {
-			// Print columns A and E, which correspond to indices 0 and 4.
-			fmt.Printf("%s\n", row[0])
-		}
+	// Create the BatchUpdateRequest
+	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
+		Requests: []*sheets.Request{cutPasteReq},
 	}
+
+	// Execute the BatchUpdate request
+	_, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
+	if err != nil {
+		log.Fatalf("Unable to perform CutPaste operation: %v", err)
+	}
+
+	log.Println("Data moved successfully!")
 }
