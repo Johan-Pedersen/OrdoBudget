@@ -6,21 +6,6 @@
   - https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/
 - Sample requests
   - https://developers.google.com/sheets/api/samples
-## Nordeas's csv fil
-
-- kolonnerne er forskudt med 1 hvis der er brugt 'Nordea Pay'
-- Hvilke kolonner skal jeg bruge
-  - A (bogførings dato)
-  - B (Beløb)
-  - G(Tekst)
-    - Hvis Teksten er "Nordea Pay køb", så skal man også kigge på H. 
-  - H( i normal case, saldo i heltal)
-    - ved "Nordea Pay" er det også en del af teksten.
-  - I (i normal case, øre for saldo)
-    - ved "Nordea Pay", er dette saldo i heltal
-  - J
-    - ved "Nordea Pay", er dette øre for saldo
-  
 
 ## Todo
 
@@ -40,6 +25,32 @@
 - lœs udtrœks grupperinger fra config og opsœt formattering
   - 
 - Brug regex til mapning
+  - Brug regexp.MatchString(pattern String, s String)
+  - Lav et ignorecase match
+- Hvordan skal man håndtere forsikringer og fœlles udgifter
+  - De bliver jo bare taget totalt set fra min konto og bliver kun "delt ud" når de bliver trukket fra fœlles kontoen
+  - Det samme gœlder "Faste Udgifter"
+  - Så skal man selv dele dem op. Men det virker heller ikke helt smart.
+
+  - Det er måske fint bare at holde det sådan her og når man så trœkker data fra sin egen lønkonto. Så er det kun "Hverdag" man opdatere.
+- automatisk find den rigtige indsœttelsesrœkke 
+
+## Nordeas's csv fil
+
+- kolonnerne er forskudt med 1 hvis der er brugt 'Nordea Pay'
+- Hvilke kolonner skal jeg bruge
+  - A (bogførings dato)
+  - B (Beløb)
+  - G(Tekst)
+    - Hvis Teksten er "Nordea Pay køb", så skal man også kigge på H. 
+  - H( i normal case, saldo i heltal)
+    - ved "Nordea Pay" er det også en del af teksten.
+  - I (i normal case, øre for saldo)
+    - ved "Nordea Pay", er dette saldo i heltal
+  - J
+    - ved "Nordea Pay", er dette øre for saldo
+  
+
 
 ## Upload CSV fil
 
@@ -57,4 +68,13 @@
 - Flyt data
   - Kan dette gøres lokalt
 - Flyt data over i hoved sheet
+
+## Resume
+
+- Ud for hver udtrœk, skriver vi den udtrœksklasse den er kommet i
+- Så har vi et map med den totale sum for hver enkelt udtrœksklasse som så er det vi sender over i regne arket.
+
+- Tilsidst kan vi display hver enkelt udtrœk og dens udtrœksklasse
+  - Enten kan vi vœlge at bare lave en sysout, ellers skal vi lave inserts i udtrœkstabellen. Så man også kan se historisk.
+
 

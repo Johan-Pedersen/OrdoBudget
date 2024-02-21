@@ -91,34 +91,34 @@ func main() {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	readRange := "Udtrœk!C2:C"
+	readRange := "Udtrœk!B2:C"
 	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
 
-	requests := make([]*sheets.Request, 0)
+	// requests := make([]*sheets.Request, 0)
 	for i, elm := range valRange.Values {
-		fmt.Println(i, " ", elm[0])
-		i := int64(i)
-		req := cutPasteSingleReq(i+1, 2, i+1,
-			int64(textToCol(elm[0].(string))))
-
-		requests = append(requests, req)
+		fmt.Println(i, " Udtrœk ", elm[1], " beløb ", elm[0])
+		// i := int64(i)
+		// req := cutPasteSingleReq(i+1, 1, i+1,
+		// 	int64(textToCol(elm[0].(string))))
+		//
+		// requests = append(requests, req)
 	}
 
 	// cutPasteReq := cutPasteSingleReq(1, 1, 5, 1)
 	// Create the BatchUpdateRequest
-	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: requests,
-	}
+	// batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
+	// 	Requests: requests,
+	// }
 
 	// Execute the BatchUpdate request
-	_, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
+	// _, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
 
-	if err != nil {
-		log.Fatalf("Unable to perform CutPaste operation: %v", err)
-	}
+	// if err != nil {
+	// 	log.Fatalf("Unable to perform CutPaste operation: %v", err)
+	// }
 	log.Println("Data moved successfully!")
 }
 
