@@ -27,3 +27,6 @@ credentials.json
 # json
 
 *.json
+
+# vim session files
+*.vim
