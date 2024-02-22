@@ -39,7 +39,6 @@ func UpdateReq(grpSums []float64, toRow, toCol, sheetId int64) *sheets.Request {
 			Values: []*sheets.CellData{
 				{
 					UserEnteredValue: &sheets.ExtendedValue{
-						// Den fucker op fordi den tager referencen til v vaiablen, så hvad end den ender med at vœre til sidst er det de alle sammen er
 						NumberValue: &grpSums[i],
 					},
 				},
