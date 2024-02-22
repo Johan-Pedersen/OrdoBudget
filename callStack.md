@@ -1,5 +1,5 @@
 # callStack
 
-- Flyt data til de rigtige kolonner
+- Insert sum data i nyt sheet 
 - Hoved funktionalitet
 - Upload csv fil

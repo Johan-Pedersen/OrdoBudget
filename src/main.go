@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 
+	req "budgetAutomation/src/requests"
+
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -91,7 +93,7 @@ func main() {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	readRange := "Udtrœk!B2:C"
+	readRange := "Udtrœk!A2:C12"
 	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
@@ -99,46 +101,34 @@ func main() {
 
 	// requests := make([]*sheets.Request, 0)
 	for i, elm := range valRange.Values {
-		fmt.Println(i, " Udtrœk ", elm[1], " beløb ", elm[0])
-		// i := int64(i)
-		// req := cutPasteSingleReq(i+1, 1, i+1,
-		// 	int64(textToCol(elm[0].(string))))
-		//
-		// requests = append(requests, req)
+		fmt.Println(i, "Dato", elm[0], "Udtrœk ", elm[1], " beløb ", elm[2])
 	}
+	// 	val, err := strconv.ParseFloat(elm[0].(string), 64)
+	// 	fmt.Println("val", val)
+	// 	if err != nil {
+	// 		log.Fatalf("Could not read cell data")
+	// 	}
+	// 	updateExcerptSum(elm[1].(string), val)
 
+	// i := int64(i)
+	// req := cutPasteSingleReq(i+1, 1, i+1,
+	// 	int64(textToCol(elm[0].(string))))
+	//
+	// requests = append(requests, req)
+	// }
+
+	updatereq := req.UpdateReq([]float64{5.0, 6.0, 7.0, 9.0}, 0, 3, 0)
 	// cutPasteReq := cutPasteSingleReq(1, 1, 5, 1)
 	// Create the BatchUpdateRequest
-	// batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
-	// 	Requests: requests,
-	// }
+	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
+		Requests: []*sheets.Request{updatereq},
+	}
 
 	// Execute the BatchUpdate request
-	// _, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
+	_, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
 
-	// if err != nil {
-	// 	log.Fatalf("Unable to perform CutPaste operation: %v", err)
-	// }
-	log.Println("Data moved successfully!")
-}
-
-func cutPasteSingleReq(fromRow, fromCol, toRow, toCol int64) *sheets.Request {
-	cutPasteReq := &sheets.Request{
-		CutPaste: &sheets.CutPasteRequest{
-			Source: &sheets.GridRange{
-				EndColumnIndex:   fromCol + 1,
-				EndRowIndex:      fromRow + 1,
-				SheetId:          1472288449,
-				StartColumnIndex: fromCol,
-				StartRowIndex:    fromRow,
-			},
-			Destination: &sheets.GridCoordinate{
-				ColumnIndex: toCol,
-				RowIndex:    toRow,
-				SheetId:     1472288449,
-			},
-			PasteType: "PASTE_NORMAL", // Adjust paste type as needed
-		},
+	if err != nil {
+		log.Fatalf("Unable to perform CutPaste operation: %v", err)
 	}
-	return cutPasteReq
+	log.Println("Data moved successfully!")
 }

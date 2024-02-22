@@ -69,6 +69,14 @@
   - Kan dette gøres lokalt
 - Flyt data over i hoved sheet
 
+### Insert sum data i nyt sheet
+
+- Hvordan angiver man et nyt sheet til insert
+- Kan man lave en stor updateReq med alle data i 
+  - Det burde man virkelig kunne gøre. 
+  - Specielt når data jo bare hœnger sammen.
+- Hvorfor skal man i read range både angive sheet navn og i get skal man angive sheet ID, når kun 1 burde vœre nødvendig
+
 ## Resume
 
 - Ud for hver udtrœk, skriver vi den udtrœksklasse den er kommet i
