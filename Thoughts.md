@@ -77,6 +77,10 @@
   - Specielt når data jo bare hœnger sammen.
 - Hvorfor skal man i read range både angive sheet navn og i get skal man angive sheet ID, når kun 1 burde vœre nødvendig
 
+### insert data i den rigtige kolonne
+
+- 
+
 ## Resume
 
 - Ud for hver udtrœk, skriver vi den udtrœksklasse den er kommet i
