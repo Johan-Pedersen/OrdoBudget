@@ -24,19 +24,16 @@ func MonthToColInd(month int64) int64 {
 /*
 Check if date of exerpt is in the prev month
 */
-func CheckCurMonth(haveCurMonth bool, curMonth, exrptMonth int64) (bool, bool, int64) {
+func CheckCurMonth(curMonth, exrptMonth int64) (bool, int64) {
 	isNewMonth := false
 
-	if !haveCurMonth {
+	if curMonth != -1 {
 		curMonth = exrptMonth
-		haveCurMonth = true
-	}
-	if exrptMonth != curMonth {
+	} else if exrptMonth != curMonth {
 
 		isNewMonth = true
 		log.Println("Begin new month")
-	} else {
-		curMonth = exrptMonth
 	}
-	return isNewMonth, haveCurMonth, curMonth
+
+	return isNewMonth, curMonth
 }

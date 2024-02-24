@@ -102,8 +102,7 @@ func main() {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
 
-	var curMonth int64 = 2
-	haveCurMonth := false
+	var curMonth int64 = -1
 	// requests := make([]*sheets.Request, 0)
 
 	// find Excerpt sum for current month.
@@ -119,7 +118,7 @@ func main() {
 				log.Println("Could not read excerpt date", err)
 			} else {
 
-				isNewMonth, haveCurMonth, curMonth = util.CheckCurMonth(haveCurMonth, curMonth, exrptMonth)
+				isNewMonth, curMonth = util.CheckCurMonth(curMonth, exrptMonth)
 
 				if isNewMonth {
 					break
