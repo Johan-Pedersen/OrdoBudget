@@ -7,8 +7,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 
-	req "budgetAutomation/src/requests"
+	"budgetAutomation/src/util"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -93,22 +95,46 @@ func main() {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	// Get Date, Amount and description
 	readRange := "Udtrœk!A2:C12"
 	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
 
+	var curMonth int64 = 2
+	haveCurMonth := false
 	// requests := make([]*sheets.Request, 0)
-	for i, elm := range valRange.Values {
-		fmt.Println(i, "Dato", elm[0], "Udtrœk ", elm[1], " beløb ", elm[2])
+
+	// find Excerpt sum for current month.
+	for _, elm := range valRange.Values {
+
+		isNewMonth := false
+		// Get excerpt month
+		if elm[0].(string) != "Reserveret" {
+
+			exrptMonth, err := strconv.ParseInt(strings.Split(elm[0].(string), "/")[1], 0, 64)
+
+			if err != nil {
+				log.Println("Could not read excerpt date", err)
+			} else {
+
+				isNewMonth, haveCurMonth, curMonth = util.CheckCurMonth(haveCurMonth, curMonth, exrptMonth)
+
+				if isNewMonth {
+					break
+				}
+			}
+		}
+
+		amount, err := strconv.ParseFloat(elm[1].(string), 64)
+		if err != nil {
+			log.Fatalf("Could not read amount")
+		}
+		updateExcerptSum(elm[2].(string), amount)
 	}
-	// 	val, err := strconv.ParseFloat(elm[0].(string), 64)
-	// 	fmt.Println("val", val)
-	// 	if err != nil {
-	// 		log.Fatalf("Could not read cell data")
-	// 	}
-	// 	updateExcerptSum(elm[1].(string), val)
+
+	printExcerptGrpSum()
 
 	// i := int64(i)
 	// req := cutPasteSingleReq(i+1, 1, i+1,
@@ -117,18 +143,18 @@ func main() {
 	// requests = append(requests, req)
 	// }
 
-	updatereq := req.UpdateReq([]float64{5.0, 6.0, 7.0, 9.0}, 0, 3, 0)
-	// cutPasteReq := cutPasteSingleReq(1, 1, 5, 1)
-	// Create the BatchUpdateRequest
-	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: []*sheets.Request{updatereq},
-	}
+	// updatereq := req.UpdateReq([]float64{5.0, 6.0, 7.0, 9.0}, 0, 3, 0)
+	// // cutPasteReq := cutPasteSingleReq(1, 1, 5, 1)
+	// // Create the BatchUpdateRequest
+	// batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
+	// 	Requests: []*sheets.Request{updatereq},
+	// }
 
 	// Execute the BatchUpdate request
-	_, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
-
-	if err != nil {
-		log.Fatalf("Unable to perform CutPaste operation: %v", err)
-	}
+	// _, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
+	//
+	//	if err != nil {
+	//		log.Fatalf("Unable to perform CutPaste operation: %v", err)
+	//	}
 	log.Println("Data moved successfully!")
 }
