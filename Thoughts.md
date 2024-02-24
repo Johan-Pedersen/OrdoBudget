@@ -79,7 +79,12 @@
 
 ### insert data i den rigtige kolonne
 
-- 
+- Hvordan finder vi den rigtige kolonne
+  - vi kan hardcode det 
+  - Vi har listen af excerpt grps, så man kan bare lave en match og se om elm[0].(string) matcher.
+- Lav match på måned 
+- nœste step
+  - Så har vi rœkken og kolonnen og så er det bare at indsœtte data
 
 ## Resume
 
