@@ -1,5 +1,13 @@
 # Tanker
 
+Google cloud project: *budgetautomation-414105* er det gamle projekt
+nyt projekt: budgetautomation-414505
+
+## nyttige links
+
+- https://developers.google.com/sheets/api/guides/concepts
+- https://console.cloud.google.com/iam-admin/iam?orgonly=true&project=budgetautomation-414505&supportedpurview=organizationId,folder,project
+- https://developers.google.com/sheets/api/reference/rest?apix=true
 - go bibliotektet
   - https://pkg.go.dev/google.golang.org/api/sheets/v4
 - API doc
@@ -94,4 +102,48 @@
 - Tilsidst kan vi display hver enkelt udtrœk og dens udtrœksklasse
   - Enten kan vi vœlge at bare lave en sysout, ellers skal vi lave inserts i udtrœkstabellen. Så man også kan se historisk.
 
+## access tokens
+
+- Har jeg et refresh token
+- Hvad er er refresh token
+
+- Behøver jeg et refresh token når jeg bruger golangs client library
+  - Burde den så ikke stå for det eller er det ikke det de mener?
+
+- Man kan bruge Application Default Credentials(ADC)
+  - Gør jeg allerede, men det virker stadig ikke.
+  - Nu har jeg default credentials som altid bliver brugt
+
+- Et refresh token bruges til at genopfriske et acccess token, som normalt udløber efter 1 time.
+  - Et refresh token udløber efter 7 dage.
+  - Der er et limit på 100 refresh tokens pr google account pr clinet ID
+    - Men hvis man når sit limit, bliver gamle refresh tokens bare "overskrevet"
+    - hvad betyder det
+
+- Jeg har credentials til at få en kode, den kode kan jeg bruge til at få et access token, det access token bruger man til at snakke med api'et.
+
+
+- Basic steps
+  - Obtain OAuth 2.0 credentials from the Google API Console.
+    - Done
+  - Obtain an access token from the Google Authorization Server
+    - Det er dette token der er udløbet
+    - Den er nok udløbet fordi mit refresh token er udløbet.
+    - Med en desktop app skal man bruge en code varifier der skal bruges til at få authrocation koden man skal bruge til at få access token.
+    - Men hvordan kan det have virket før hvis ikke jeg havde det.
+  - Examine scopes of access granted by the user
+  - Send the access token to an API
+    - Det står der ikke rigtig noget om hvordan man gør
+  - Refresh the access token, if necessary
+    - Når ens access tokens udløber skal man bruge et refresh-token 
+
+- Hvornår skal man bruge et refresh token
+  - Der er 7 dags udløbstid på et refresh token
+  - Hvornår skal man bruge er nyt access-token
+    - Det er hver gang man skal have adgang til api'et
+    - Hver access-token varer i 1 time.
+  - Men betyder det man kun kan have 100 refresh tokens af gangen
+    - Det betyder så at man kun kan have access til 100 API's af gangen.
+
+- 
 
