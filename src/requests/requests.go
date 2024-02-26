@@ -30,7 +30,10 @@ func CutPasteSingleReq(fromRow, fromCol, toRow, toCol int64) *sheets.Request {
 	return cutPasteReq
 }
 
-func UpdateReq(grpSums []float64, toRow, toCol, sheetId int64) *sheets.Request {
+/*
+Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
+*/
+func MultiUpdateReq(grpSums []float64, rowInd, colInd, sheetId int64) *sheets.Request {
 	var rowData []*sheets.RowData
 
 	for i := range grpSums {
@@ -46,19 +49,43 @@ func UpdateReq(grpSums []float64, toRow, toCol, sheetId int64) *sheets.Request {
 		})
 	}
 
-	for _, v := range rowData {
-		fmt.Println(*v.Values[0].UserEnteredValue.NumberValue)
-	}
-
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "*",
 			Start: &sheets.GridCoordinate{
-				ColumnIndex: toCol,
-				RowIndex:    toRow,
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
 				SheetId:     sheetId,
 			},
 			Rows: rowData,
+		},
+	}
+	return updateReq
+}
+
+/*
+Update single cell at (rowInd, colInd) with amount
+*/
+
+func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Request {
+	rowData := &sheets.RowData{
+		Values: []*sheets.CellData{
+			{
+				UserEnteredValue: &sheets.ExtendedValue{
+					NumberValue: &amount,
+				},
+			},
+		},
+	}
+	updateReq := &sheets.Request{
+		UpdateCells: &sheets.UpdateCellsRequest{
+			Fields: "*",
+			Start: &sheets.GridCoordinate{
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
+				SheetId:     sheetId,
+			},
+			Rows: []*sheets.RowData{rowData},
 		},
 	}
 	return updateReq

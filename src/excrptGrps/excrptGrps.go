@@ -1,26 +1,26 @@
-package main
+package excrptgrps
 
 import "fmt"
 
 var excerptGrpSums = map[string]float64{
-	"Resturant besøg/takeway/mad på skole": 0.0,
-	"Helbred (fx tandlœge, medicin m.m.)":  0.0,
-	"ANTON (foder, pleje, godbidder mv.)":  0.0,
-	"Boligudstyr":                          0.0,
-	"Elektronik":                           0.0,
-	"Gaver":                                0.0,
-	"Social arrangementer":                 0.0,
-	"Rejser":                               0.0,
-	"Spotify":                              0.0,
-	"Transport, cykel, parkering m.m.":     0.0,
-	"Golf":                                 0.0,
-	"Dashlane":                             0.0,
-	"Diverse":                              0.0,
-	"Skolebøger m.m.":                      0.0,
-	"Tøj og sko":                           0.0,
-	"Personlig pleje (kosmetik, frisør mv.)": 0.0,
-	"Briller abonnement ":                    0.0,
-	"Icloud, onedrive, Prime":                0.0,
+	"Resturant besøg/takeway/mad på skole": -1.0,
+	"Helbred (fx tandlœge, medicin m.m.)":  -1.0,
+	"ANTON (foder, pleje, godbidder mv.)":  -1.0,
+	"Boligudstyr":                          -1.0,
+	"Elektronik":                           -1.0,
+	"Gaver":                                -1.0,
+	"Social arrangementer":                 -1.0,
+	"Rejser":                               -1.0,
+	"Spotify":                              -1.0,
+	"Transport, cykel, parkering m.m.":     -1.0,
+	"Golf":                                 -1.0,
+	"Dashlane":                             -1.0,
+	"Diverse":                              -1.0,
+	"Skolebøger m.m.":                      -1.0,
+	"Tøj og sko":                           -1.0,
+	"Personlig pleje (kosmetik, frisør mv.)": -1.0,
+	"Briller abonnement ":                    -1.0,
+	"Icloud, onedrive, Prime":                -1.0,
 }
 
 var excerptGrpRows = map[string]int{
@@ -45,7 +45,7 @@ var excerptGrpRows = map[string]int{
 	"Icloud, onedrive, Prime":                65,
 }
 
-var excerptGrps = map[string]string{
+var DescToExcerptGrps = map[string]string{
 	"skatteguiden.dk GF2023":        "Diverse",
 	"Silkeborg Ry Golfklub -":       "Golf",
 	"MobilePay Rejsekort":           "Transport, cykel, parkering m.m.",
@@ -62,12 +62,22 @@ var excerptGrps = map[string]string{
 	"REMA 1000":                     "Mad",
 }
 
-func updateExcerptSum(excerptGrp string, amount float64) {
-	excerptGrpSums[excerptGrps[excerptGrp]] += float64(amount)
+func UpdateExcerptSum(excerptGrp string, amount float64) {
+	excerptGrpSums[DescToExcerptGrps[excerptGrp]] += float64(amount)
 }
 
-func printExcerptGrpSum() {
+func PrintExcerptGrpSum() {
+	fmt.Println("###################################################")
 	for k, v := range excerptGrpSums {
-		fmt.Println(k, ": ", v)
+		fmt.Println(k, ": ", v+1)
 	}
+	fmt.Println("###################################################")
+}
+
+func GetTotal(excrptGrp string) float64 {
+	total := excerptGrpSums[excrptGrp]
+	if total != 0.0 {
+		return excerptGrpSums[excrptGrp] + 1
+	}
+	return 0.0
 }

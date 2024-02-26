@@ -27,7 +27,7 @@ Check if date of exerpt is in the prev month
 func CheckCurMonth(curMonth, exrptMonth int64) (bool, int64) {
 	isNewMonth := false
 
-	if curMonth != -1 {
+	if curMonth == -1 {
 		curMonth = exrptMonth
 	} else if exrptMonth != curMonth {
 

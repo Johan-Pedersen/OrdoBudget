@@ -10,7 +10,10 @@ import (
 	"strconv"
 	"strings"
 
+	excrptgrps "budgetAutomation/src/excrptGrps"
 	"budgetAutomation/src/util"
+
+	req "budgetAutomation/src/requests"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -96,8 +99,8 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Get Date, Amount and description
-	readRange := "Udtrœk!A2:C12"
-	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
+	readRangeExrpt := "Udtrœk!A2:C24"
+	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRangeExrpt).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
@@ -108,11 +111,18 @@ func main() {
 	// find Excerpt sum for current month.
 	for _, elm := range valRange.Values {
 
+		date, description := elm[0].(string), elm[2].(string)
+
+		amount, err := strconv.ParseFloat(elm[1].(string), 64)
+		if err != nil {
+			log.Fatalf("Could not read amount")
+		}
+
 		isNewMonth := false
 		// Get excerpt month
-		if elm[0].(string) != "Reserveret" {
+		if date != "Reserveret" {
 
-			exrptMonth, err := strconv.ParseInt(strings.Split(elm[0].(string), "/")[1], 0, 64)
+			exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
 
 			if err != nil {
 				log.Println("Could not read excerpt date", err)
@@ -121,19 +131,43 @@ func main() {
 				isNewMonth, curMonth = util.CheckCurMonth(curMonth, exrptMonth)
 
 				if isNewMonth {
+					fmt.Println("break is newMonth")
 					break
 				}
 			}
 		}
 
-		amount, err := strconv.ParseFloat(elm[1].(string), 64)
-		if err != nil {
-			log.Fatalf("Could not read amount")
-		}
-		updateExcerptSum(elm[2].(string), amount)
+		fmt.Println(description)
+		excrptgrps.UpdateExcerptSum(description, amount)
 	}
 
-	printExcerptGrpSum()
+	excrptgrps.PrintExcerptGrpSum()
+
+	// Find excerpt grps to insert at
+	readRangeInserRow := "A1:A"
+	rows, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRangeInserRow).Do()
+	if err != nil {
+		log.Fatalf("Unable to perform get: %v", err)
+	}
+
+	var updateReqs []*sheets.Request
+
+	println("****")
+	for i, elm := range rows.Values {
+		if len(elm) == 0 {
+			fmt.Println("")
+		} else {
+			println(elm[0].(string))
+			excrptGrp := elm[0].(string)
+
+			total := excrptgrps.GetTotal(excrptGrp)
+
+			if total != 0.0 {
+				updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), curMonth+1, 0))
+			}
+
+		}
+	}
 
 	// i := int64(i)
 	// req := cutPasteSingleReq(i+1, 1, i+1,
@@ -142,18 +176,18 @@ func main() {
 	// requests = append(requests, req)
 	// }
 
-	// updatereq := req.UpdateReq([]float64{5.0, 6.0, 7.0, 9.0}, 0, 3, 0)
-	// // cutPasteReq := cutPasteSingleReq(1, 1, 5, 1)
-	// // Create the BatchUpdateRequest
-	// batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
-	// 	Requests: []*sheets.Request{updatereq},
-	// }
+	// updatereq := req.MultiUpdateReq([]float64{5.0, 6.0, 7.0, 9.0}, 0, 5, 1472288449)
+	// cutPasteReq := cutPasteSingleReq(1, 1, 5, 1)
+	// Create the BatchUpdateRequest
+	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
+		Requests: updateReqs,
+	}
 
 	// Execute the BatchUpdate request
-	// _, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
-	//
-	//	if err != nil {
-	//		log.Fatalf("Unable to perform CutPaste operation: %v", err)
-	//	}
+	_, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
+
+	if err != nil {
+		log.Fatalf("Unable to perform CutPaste operation: %v", err)
+	}
 	log.Println("Data moved successfully!")
 }
