@@ -154,3 +154,9 @@ nyt projekt: budgetautomation-414505
 - ideelt set angiver man excrpt grps i en lang liste og så skal man angive man hvilke udtrœk der mapper til hvilke grps
 - Det skal jo så bare marshalls til Json form
 
+## Brug regex til excrptGrp matching
+
+- Hvordan vil man bruge regex matching til maps
+  - Skal man så selv en map data struktur
+  - Du får jo et langt input og så skal du match det bare en lille del at det.
+  - Det bliver man jo nødt til at lave en speciel algoritme.

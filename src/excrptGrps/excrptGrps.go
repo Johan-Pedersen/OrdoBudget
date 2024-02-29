@@ -31,7 +31,8 @@ func PrintExcrptGrpTotals() {
 func GetTotal(excrptGrp string) float64 {
 	total := excrptGrpTotals[excrptGrp]
 	if total != 0.0 {
-		return excrptGrpTotals[excrptGrp] + 1
+
+		return -1 * (excrptGrpTotals[excrptGrp] + 1)
 	}
 	return 0.0
 }

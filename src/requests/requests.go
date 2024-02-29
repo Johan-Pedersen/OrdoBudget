@@ -79,7 +79,7 @@ func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Requ
 	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
-			Fields: "*",
+			Fields: "UserEnteredValue",
 			Start: &sheets.GridCoordinate{
 				ColumnIndex: colInd,
 				RowIndex:    rowInd,
