@@ -140,10 +140,10 @@ func main() {
 		}
 
 		fmt.Println(description)
-		excrptgrps.UpdateExcerptTotal(description, amount)
+		excrptgrps.UpdateExcrptTotal(description, amount)
 	}
 
-	excrptgrps.PrintExcerptGrpTotals()
+	excrptgrps.PrintExcrptGrpTotals()
 
 	// Find excerpt grps to insert at
 	readRangeInserRow := "A1:A"
