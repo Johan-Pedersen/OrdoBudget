@@ -110,7 +110,7 @@ func main() {
 	var curMonth int64 = -1
 	// requests := make([]*sheets.Request, 0)
 
-	// find Excerpt sum for current month.
+	// find Excerpt Total for current month.
 	for _, elm := range valRange.Values {
 
 		date, description := elm[0].(string), elm[2].(string)
@@ -140,10 +140,10 @@ func main() {
 		}
 
 		fmt.Println(description)
-		excrptgrps.UpdateExcerptSum(description, amount)
+		excrptgrps.UpdateExcerptTotal(description, amount)
 	}
 
-	excrptgrps.PrintExcerptGrpSum()
+	excrptgrps.PrintExcerptGrpTotals()
 
 	// Find excerpt grps to insert at
 	readRangeInserRow := "A1:A"

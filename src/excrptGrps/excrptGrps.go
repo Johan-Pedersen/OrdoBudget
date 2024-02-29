@@ -12,26 +12,26 @@ type Data struct {
 	ExcrptMappings map[string]string
 }
 
-var excerptGrpSums = map[string]float64{}
+var excerptGrpTotals = map[string]float64{}
 
 var descToExcerptGrps = map[string]string{}
 
-func UpdateExcerptSum(excerptGrp string, amount float64) {
-	excerptGrpSums[descToExcerptGrps[excerptGrp]] += float64(amount)
+func UpdateExcerptTotal(excerptGrp string, amount float64) {
+	excerptGrpTotals[descToExcerptGrps[excerptGrp]] += float64(amount)
 }
 
-func PrintExcerptGrpSum() {
+func PrintExcerptGrpTotals() {
 	fmt.Println("###################################################")
-	for k, v := range excerptGrpSums {
+	for k, v := range excerptGrpTotals {
 		fmt.Println(k, ": ", v+1)
 	}
 	fmt.Println("###################################################")
 }
 
 func GetTotal(excrptGrp string) float64 {
-	total := excerptGrpSums[excrptGrp]
+	total := excerptGrpTotals[excrptGrp]
 	if total != 0.0 {
-		return excerptGrpSums[excrptGrp] + 1
+		return excerptGrpTotals[excrptGrp] + 1
 	}
 	return 0.0
 }
@@ -62,10 +62,11 @@ func InitExcrptGrps() {
 		return
 	}
 
-	// Init excrptGrp Sums
+	// Init excrptGrp Totals
 	for _, v := range data.ExcrptGrps {
-		excerptGrpSums[v] = -1.0
+		excerptGrpTotals[v] = -1.0
 	}
 
+	// Init ExcrptGrp mappings
 	descToExcerptGrps = data.ExcrptMappings
 }
