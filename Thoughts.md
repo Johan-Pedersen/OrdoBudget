@@ -147,3 +147,10 @@ nyt projekt: budgetautomation-414505
 
 - 
 
+## Excrpt grps på JSON format
+
+- Vi skal angive excrpt grps og udtrœks mappings
+
+- ideelt set angiver man excrpt grps i en lang liste og så skal man angive man hvilke udtrœk der mapper til hvilke grps
+- Det skal jo så bare marshalls til Json form
+
