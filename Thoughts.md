@@ -43,6 +43,9 @@ nyt projekt: budgetautomation-414505
   - Det er måske fint bare at holde det sådan her og når man så trœkker data fra sin egen lønkonto. Så er det kun "Hverdag" man opdatere.
 - automatisk find den rigtige indsœttelsesrœkke 
 
+- Man kan ikke altid sige "Føtex" skal gå til mad. Fordi føtex har mange andre ting
+  - Så skal man kunne definere 1 el. flere grupper til føtex og så skal man selv angive hvilken gruppe dette skal i
+
 ## Nordeas's csv fil
 
 - kolonnerne er forskudt med 1 hvis der er brugt 'Nordea Pay'
