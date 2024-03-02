@@ -159,7 +159,6 @@ func main() {
 		if len(elm) == 0 {
 			fmt.Println("")
 		} else {
-			println(elm[0].(string))
 			excrptGrp := elm[0].(string)
 
 			total := excrptgrps.GetTotal(excrptGrp)
