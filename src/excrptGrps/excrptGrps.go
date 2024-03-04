@@ -8,42 +8,75 @@ import (
 	"strings"
 )
 
+var excrptGrpTotals = map[string]float64{}
+
+var excrptGrpMappings = []ExcrptGrp{}
+
+// Marshal and unmarshal json
 type Data struct {
 	ExcrptGrps     []string
 	ExcrptMappings map[string][]string
 }
 
-var excrptGrpTotals = map[string]float64{}
+type ExcrptGrp struct {
+	// Used to make lookup in excerptMappings array
+	ind int
 
-var excrptGrpMappings = map[string][]string{}
+	// Name of the ExcrptGrp
+	name string
 
-func UpdateExcrptTotal(excrpt string, amount float64) {
-	excrptGrp := ""
+	// Matches for this excrptGrp
+	mappings []string
+}
+
+func UpdateExcrptTotal(date, excrpt string, amount float64) {
+	excrptGrpName := ""
 	// ignore case
-	excrpt = strings.ToLower(excrpt)
-	// Find correct excrpt grp
-	for curExcrptGrp, excrpts := range excrptGrpMappings {
+	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
 
-		for _, excr := range excrpts {
+	ind := -1
+	// Find correct excrpt grp
+	for _, excrptGrp := range excrptGrpMappings {
+
+		for _, excr := range excrptGrp.mappings {
 			if strings.Contains(excrpt, excr) {
-				excrptGrp = curExcrptGrp
+				excrptGrpName = excrptGrp.name
 				break
 			}
 		}
 
-		if excrptGrp != "" {
+		if excrptGrpName != "" {
 			break
 		}
 	}
 
+	if excrptGrpName == "" {
+		fmt.Println("Can't match to group:", date, excrpt, ":", amount)
+		fmt.Println("Select group")
+		fmt.Scan(&ind)
+
+		excrptGrpName = excrptGrpMappings[ind].name
+
+	}
+
 	// Update correct excrpt grp
-	excrptGrpTotals[excrptGrp] += float64(amount)
+	excrptGrpTotals[excrptGrpName] += float64(amount)
 }
 
 func PrintExcrptGrpTotals() {
 	fmt.Println("###################################################")
 	for k, v := range excrptGrpTotals {
 		fmt.Println(k, ": ", v+1)
+	}
+	fmt.Println("###################################################")
+}
+
+func PrintExcrptGrps() {
+	i := 0
+	fmt.Println("Excerpt groups")
+	fmt.Println("###################################################")
+	for k := range excrptGrpMappings {
+		fmt.Println(i, ":", k)
 	}
 	fmt.Println("###################################################")
 }

@@ -100,6 +100,8 @@ func main() {
 
 	excrptgrps.InitExcrptGrps()
 
+	excrptgrps.PrintExcrptGrps()
+
 	// Get Date, Amount and description
 	readRangeExrpt := "Udtrœk!A2:C24"
 	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRangeExrpt).Do()
@@ -140,7 +142,7 @@ func main() {
 		}
 
 		fmt.Println(description)
-		excrptgrps.UpdateExcrptTotal(description, amount)
+		excrptgrps.UpdateExcrptTotal(date, description, amount)
 	}
 
 	excrptgrps.PrintExcrptGrpTotals()
