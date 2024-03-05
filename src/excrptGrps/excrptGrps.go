@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 )
@@ -94,7 +95,7 @@ func InitExcrptGrps() {
 	// Open the JSON file
 	file, err := os.Open("excrptGrpData.json")
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		log.Fatalln("Error opening file:", err)
 		return
 	}
 	defer file.Close()
@@ -102,7 +103,7 @@ func InitExcrptGrps() {
 	// Read the JSON data from the file
 	jsonData, err := io.ReadAll(file)
 	if err != nil {
-		fmt.Println("Error reading JSON data:", err)
+		log.Fatalln("Error reading JSON data:", err)
 		return
 	}
 
@@ -112,7 +113,7 @@ func InitExcrptGrps() {
 	// Unmarshal the JSON data into the struct
 	err = json.Unmarshal(jsonData, &data)
 	if err != nil {
-		fmt.Println("Error unmarshaling JSON data:", err)
+		log.Fatalln("Error unmarshaling JSON data:", err)
 		return
 	}
 
