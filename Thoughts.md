@@ -163,3 +163,7 @@ nyt projekt: budgetautomation-414505
   - Skal man så selv en map data struktur
   - Du får jo et langt input og så skal du match det bare en lille del at det.
   - Det bliver man jo nødt til at lave en speciel algoritme.
+
+## Opdeling af excerptgroups
+
+- Kan man lave et generisk array af json objekter

@@ -14,7 +14,7 @@ var excrptGrpMappings = []ExcrptGrp{}
 
 // Marshal and unmarshal json
 type Data struct {
-	ExcrptMappings map[string][]string
+	ExcrptMappings map[string]map[string][]string
 }
 
 type ExcrptGrp struct {
@@ -26,6 +26,9 @@ type ExcrptGrp struct {
 
 	// Matches for this excrptGrp
 	mappings []string
+
+	// Defines the type of this excerpt
+	parent string
 }
 
 func UpdateExcrptTotal(date, excrpt string, amount float64) {
@@ -74,7 +77,7 @@ func PrintExcrptGrps() {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
 	for _, excrptGrp := range excrptGrpMappings {
-		fmt.Println(excrptGrp.ind, ":", excrptGrp.name)
+		fmt.Println(excrptGrp.ind, ":", excrptGrp.name, "(", excrptGrp.parent, ")")
 	}
 	fmt.Println("###################################################")
 }
@@ -115,18 +118,21 @@ func InitExcrptGrps() {
 
 	i := 0
 	// Init excrptGrp Totals
-	for excrptGrp, mappings := range data.ExcrptMappings {
-		excrptGrpTotals[excrptGrp] = -1.0
-		excrptGrpMappings = append(excrptGrpMappings,
-			createExcrptGrp(i, excrptGrp, mappings))
-		i += 1
+	for parent, excrpts := range data.ExcrptMappings {
+		for excrptGrp, mappings := range excrpts {
+			excrptGrpTotals[excrptGrp] = -1.0
+			excrptGrpMappings = append(excrptGrpMappings,
+				createExcrptGrp(i, excrptGrp, parent, mappings))
+			i += 1
+		}
 	}
 }
 
-func createExcrptGrp(ind int, name string, mappings []string) ExcrptGrp {
+func createExcrptGrp(ind int, name, parent string, mappings []string) ExcrptGrp {
 	return ExcrptGrp{
 		ind:      ind,
 		name:     name,
 		mappings: mappings,
+		parent:   parent,
 	}
 }
