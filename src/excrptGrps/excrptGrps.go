@@ -2,6 +2,7 @@ package excrptgrps
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -11,7 +12,7 @@ import (
 
 var excrptGrpTotals = map[string]float64{}
 
-var excrptGrpMappings = []ExcrptGrp{}
+var excrptGrps = []ExcrptGrpParent{}
 
 // Marshal and unmarshal json
 type Data struct {
@@ -32,6 +33,11 @@ type ExcrptGrp struct {
 	parent string
 }
 
+type ExcrptGrpParent struct {
+	name       string
+	excrptGrps []ExcrptGrp
+}
+
 func UpdateExcrptTotal(date, excrpt string, amount float64) {
 	excrptGrpName := ""
 	// ignore case
@@ -39,12 +45,13 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 
 	ind := -1
 	// Find correct excrpt grp
-	for _, excrptGrp := range excrptGrpMappings {
-
-		for _, match := range excrptGrp.mappings {
-			if strings.Contains(excrpt, match) {
-				excrptGrpName = excrptGrp.name
-				break
+	for _, parent := range excrptGrps {
+		for i := range parent.excrptGrps {
+			for _, match := range parent.excrptGrps[i].mappings {
+				if strings.Contains(excrpt, match) {
+					excrptGrpName = parent.excrptGrps[i].name
+					break
+				}
 			}
 		}
 
@@ -53,13 +60,25 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 		}
 	}
 
+	// No matches for group
 	if excrptGrpName == "" {
 		fmt.Println("Can't match to group:", date, excrpt, ":", amount)
 		fmt.Println("Select group")
 		fmt.Scan(&ind)
 
-		excrptGrpName = excrptGrpMappings[ind].name
+		for _, parent := range excrptGrps {
+			for _, excrptGrp := range parent.excrptGrps {
+				if excrptGrp.ind == ind {
+					excrptGrpName = excrptGrps[ind].name
+					break
+				}
+			}
 
+			if excrptGrpName != "" {
+				break
+			}
+
+		}
 	}
 
 	// Update correct excrpt grp
@@ -77,8 +96,11 @@ func PrintExcrptGrpTotals() {
 func PrintExcrptGrps() {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
-	for _, excrptGrp := range excrptGrpMappings {
-		fmt.Println(excrptGrp.ind, ":", excrptGrp.name, "(", excrptGrp.parent, ")")
+	for _, parent := range excrptGrps {
+		fmt.Println("\n************", parent.name, "************")
+		for _, excrptGrp := range parent.excrptGrps {
+			fmt.Println(excrptGrp.ind, ":", excrptGrp.name)
+		}
 	}
 	fmt.Println("###################################################")
 }
@@ -119,13 +141,17 @@ func InitExcrptGrps() {
 
 	i := 0
 	// Init excrptGrp Totals
-	for parent, excrpts := range data.ExcrptMappings {
+	for parentName, excrpts := range data.ExcrptMappings {
+
+		grps := []ExcrptGrp{}
 		for excrptGrp, mappings := range excrpts {
 			excrptGrpTotals[excrptGrp] = -1.0
-			excrptGrpMappings = append(excrptGrpMappings,
-				createExcrptGrp(i, excrptGrp, parent, mappings))
+			grps = append(grps,
+				createExcrptGrp(i, excrptGrp, parentName, mappings))
 			i += 1
 		}
+		parent := ExcrptGrpParent{parentName, grps}
+		excrptGrps = append(excrptGrps, parent)
 	}
 }
 
@@ -136,4 +162,21 @@ func createExcrptGrp(ind int, name, parent string, mappings []string) ExcrptGrp 
 		mappings: mappings,
 		parent:   parent,
 	}
+}
+
+/*
+Get excerpt group based on name OR index(ind).
+Both can be specified, but it's not necessary.
+If you don't want to use ind, make ind < 0.
+if you don't want to use name, make name = "".
+*/
+func getExcrptGrp(name string, ind int) (ExcrptGrp, error) {
+	for _, parent := range excrptGrps {
+		for _, excrptGrp := range parent.excrptGrps {
+			if excrptGrp.name == name || excrptGrp.ind == ind {
+				return excrptGrp, nil
+			}
+		}
+	}
+	return ExcrptGrp{}, errors.New("Excrpt grp not found")
 }

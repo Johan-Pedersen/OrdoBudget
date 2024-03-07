@@ -1,6 +1,10 @@
 # callStack
 
-- brug log.Fatal ved json errors.
+- Lav rewrite
+  - Det virker ikke til at vœre lavet så smart
+  - Specilet med den her parent situation
+  - Det bliver mange dobblet forloop osv.
+  - kan man fold de her json handling sektioner
 - Opdeling af excerptgroups
   - Skal man have en liste af parents?
 - håndter unknown groups til sidst

@@ -166,4 +166,4 @@ nyt projekt: budgetautomation-414505
 
 ## Opdeling af excerptgroups
 
-- Kan man lave et generisk array af json objekter
+- 
