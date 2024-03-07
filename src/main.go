@@ -158,9 +158,7 @@ func main() {
 
 	println("****")
 	for i, elm := range rows.Values {
-		if len(elm) == 0 {
-			fmt.Println("")
-		} else {
+		if len(elm) != 0 {
 			excrptGrp := elm[0].(string)
 
 			total := excrptgrps.GetTotal(excrptGrp)
@@ -193,4 +191,6 @@ func main() {
 		log.Fatalf("Unable to perform CutPaste operation: %v", err)
 	}
 	log.Println("Data moved successfully!")
+
+	excrptgrps.PrintResume()
 }

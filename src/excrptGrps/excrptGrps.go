@@ -7,12 +7,15 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 var excrptGrpTotals = map[string]float64{}
 
 var excrptGrps = []ExcrptGrpParent{}
+
+var resume = []string{}
 
 // Marshal and unmarshal json
 type Data struct {
@@ -69,7 +72,7 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 		for _, parent := range excrptGrps {
 			for _, excrptGrp := range parent.excrptGrps {
 				if excrptGrp.ind == ind {
-					excrptGrpName = excrptGrps[ind].name
+					excrptGrpName = excrptGrp.name
 					break
 				}
 			}
@@ -83,6 +86,8 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 
 	// Update correct excrpt grp
 	excrptGrpTotals[excrptGrpName] += float64(amount)
+
+	resume = append(resume, date+" "+excrpt+" "+strconv.FormatFloat(amount, 'f', -1, 64)+": "+excrptGrpName)
 }
 
 func PrintExcrptGrpTotals() {
@@ -101,6 +106,15 @@ func PrintExcrptGrps() {
 		for _, excrptGrp := range parent.excrptGrps {
 			fmt.Println(excrptGrp.ind, ":", excrptGrp.name)
 		}
+	}
+	fmt.Println("###################################################")
+}
+
+func PrintResume() {
+	fmt.Println("Resume")
+	fmt.Println("###################################################")
+	for _, str := range resume {
+		fmt.Println(str)
 	}
 	fmt.Println("###################################################")
 }
