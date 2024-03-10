@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	excrptgrps "budgetAutomation/src/excrptGrps"
-	"budgetAutomation/src/util"
 
 	req "budgetAutomation/src/requests"
 
@@ -109,8 +108,13 @@ func main() {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
 
-	var curMonth int64 = -1
+	// Which month from 1-12 should be handled
+	var month int64 = -1
+	fmt.Println("Specify month:")
+	fmt.Scan(&month)
 	// requests := make([]*sheets.Request, 0)
+
+	isRightMonth := false
 
 	// find Excerpt Total for current month.
 	for _, elm := range valRange.Values {
@@ -119,32 +123,30 @@ func main() {
 
 		amount, err := strconv.ParseFloat(elm[1].(string), 64)
 		if err != nil {
-			log.Fatalf("Could not read amount")
-		}
+			log.Println("Could not read amount for", description)
+		} else {
+			// Get excerpt month
+			if date != "Reserveret" {
 
-		isNewMonth := false
-		// Get excerpt month
-		if date != "Reserveret" {
+				exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
+				if err != nil {
+					log.Fatal("Could not read excerpt date", err)
+				}
 
-			exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
-
-			if err != nil {
-				log.Println("Could not read excerpt date", err)
-			} else {
-
-				isNewMonth, curMonth = util.CheckCurMonth(curMonth, exrptMonth)
-
-				if isNewMonth {
-					fmt.Println("break is newMonth")
+				if month == exrptMonth {
+					isRightMonth = true
+				} else if exrptMonth > month {
 					break
 				}
+				if isRightMonth {
+					excrptgrps.UpdateExcrptTotal(date, description, amount)
+				}
+
+			} else {
+				excrptgrps.UpdateResume(date, description, "Not handled", amount)
 			}
 		}
-
-		fmt.Println(description)
-		excrptgrps.UpdateExcrptTotal(date, description, amount)
 	}
-
 	excrptgrps.PrintExcrptGrpTotals()
 
 	// Find excerpt grps to insert at
@@ -159,12 +161,16 @@ func main() {
 	println("****")
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
-			excrptGrp := elm[0].(string)
+
+			excrptGrp, err := excrptgrps.GetExcrptGrp(elm[0].(string), -1)
+			if err != nil {
+				log.Fatalln("can't get excerpt group", err)
+			}
 
 			total := excrptgrps.GetTotal(excrptGrp)
 
 			if total != 0.0 {
-				updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), curMonth+1, 0))
+				updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), month+1, 0))
 			}
 
 		}

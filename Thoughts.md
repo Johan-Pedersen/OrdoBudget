@@ -164,6 +164,16 @@ nyt projekt: budgetautomation-414505
   - Du får jo et langt input og så skal du match det bare en lille del at det.
   - Det bliver man jo nødt til at lave en speciel algoritme.
 
-## Opdeling af excerptgroups
+## Angiv måned
 
-- 
+- Hvis der er nogen der ikke har en måned, så må det vœre fordi at de er "kommende" og ikke nødvendigvis i denne måned
+  - Så dem skal man faktisk ikke tage med.
+
+## Test
+
+- Kan lave insert for Jan Dec
+- i udtrœkket kan specified month ligge først, i midten og til sidst
+- Udtrœk med blank lines
+- Udtrœk med store og små bogstaver
+- udtrœk med mellemrum
+- Udtrœk med positiv value

@@ -43,6 +43,7 @@ type ExcrptGrpParent struct {
 
 func UpdateExcrptTotal(date, excrpt string, amount float64) {
 	excrptGrpName := ""
+
 	// ignore case
 	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
 
@@ -87,6 +88,12 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 	// Update correct excrpt grp
 	excrptGrpTotals[excrptGrpName] += float64(amount)
 
+	// Update resume
+
+	UpdateResume(date, excrpt, excrptGrpName, amount)
+}
+
+func UpdateResume(date, excrpt, excrptGrpName string, amount float64) {
 	resume = append(resume, date+" "+excrpt+" "+strconv.FormatFloat(amount, 'f', -1, 64)+": "+excrptGrpName)
 }
 
@@ -119,10 +126,14 @@ func PrintResume() {
 	fmt.Println("###################################################")
 }
 
-func GetTotal(excrptGrp string) float64 {
-	total := excrptGrpTotals[excrptGrp]
+func GetTotal(excrptGrp ExcrptGrp) float64 {
+	total := excrptGrpTotals[excrptGrp.name]
 	if total != 0.0 {
-		return -1 * (excrptGrpTotals[excrptGrp] + 1)
+		if excrptGrp.parent != "Indkomst efter skat" {
+			return -1 * (excrptGrpTotals[excrptGrp.name] + 1)
+		} else {
+			return excrptGrpTotals[excrptGrp.name] + 1
+		}
 	}
 	return 0.0
 }
@@ -184,7 +195,7 @@ Both can be specified, but it's not necessary.
 If you don't want to use ind, make ind < 0.
 if you don't want to use name, make name = "".
 */
-func getExcrptGrp(name string, ind int) (ExcrptGrp, error) {
+func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 	for _, parent := range excrptGrps {
 		for _, excrptGrp := range parent.excrptGrps {
 			if excrptGrp.name == name || excrptGrp.ind == ind {
