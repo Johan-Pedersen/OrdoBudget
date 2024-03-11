@@ -3,6 +3,13 @@
 Google cloud project: *budgetautomation-414105* er det gamle projekt
 nyt projekt: budgetautomation-414505
 
+## Forklaring
+
+- Parent: ignored
+  - Det er til udtrœk som fx "johan til fœlles", som ikke har nogen decideret gruppe og bliver håndteret gennem sheets, uden om dette system.
+
+  
+
 ## nyttige links
 
 - https://developers.google.com/sheets/api/guides/concepts
@@ -177,3 +184,8 @@ nyt projekt: budgetautomation-414505
 - Udtrœk med store og små bogstaver
 - udtrœk med mellemrum
 - Udtrœk med positiv value
+
+### Håndtering af fœlles udgifter
+
+
+

@@ -85,8 +85,10 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 		}
 	}
 
-	// Update correct excrpt grp
-	excrptGrpTotals[excrptGrpName] += float64(amount)
+	if excrptGrpName != "Ignored" {
+		// Update correct excrpt grp
+		excrptGrpTotals[excrptGrpName] += float64(amount)
+	}
 
 	// Update resume
 
