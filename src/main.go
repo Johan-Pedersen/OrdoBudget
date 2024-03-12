@@ -121,7 +121,10 @@ func main() {
 
 		date, description := elm[0].(string), elm[2].(string)
 
-		amount, err := strconv.ParseFloat(elm[1].(string), 64)
+		s := strings.ReplaceAll(elm[1].(string), ",", ".")
+
+		amount, err := strconv.ParseFloat(s, 64)
+
 		if err != nil {
 			log.Println("Could not read amount for", description)
 		} else {
@@ -140,9 +143,9 @@ func main() {
 				}
 				if isRightMonth {
 					excrptgrps.UpdateExcrptTotal(date, description, amount)
-				}
-
-				excrptgrps.UpdateResume(date, description, "Not handled", amount)
+				} // else {
+				// excrptgrps.UpdateResume(date, description, "Not handled", amount)
+				//	}
 			}
 		}
 	}

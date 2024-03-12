@@ -1,5 +1,7 @@
 # callStack
 
+
+- Fejl når man selecter gruppe nr uden for mœngden
 - håndter blanke linjer i udtrœk
 - Test
 - parse udtrœk fra bank til rigtig format
