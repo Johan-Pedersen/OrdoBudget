@@ -52,10 +52,13 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 	for _, parent := range excrptGrps {
 		for i := range parent.excrptGrps {
 			for _, match := range parent.excrptGrps[i].mappings {
-				if strings.Contains(excrpt, match) {
+				if strings.Contains(excrpt, strings.ToLower(match)) {
 					excrptGrpName = parent.excrptGrps[i].name
 					break
 				}
+			}
+			if excrptGrpName != "" {
+				break
 			}
 		}
 
@@ -205,5 +208,5 @@ func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 			}
 		}
 	}
-	return ExcrptGrp{}, errors.New("Excrpt grp not found")
+	return ExcrptGrp{}, errors.New("Excrpt grp: " + name + ", not found")
 }

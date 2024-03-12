@@ -163,14 +163,15 @@ func main() {
 		if len(elm) != 0 {
 
 			excrptGrp, err := excrptgrps.GetExcrptGrp(elm[0].(string), -1)
-			if err != nil {
-				log.Fatalln("can't get excerpt group", err)
-			}
 
-			total := excrptgrps.GetTotal(excrptGrp)
+			// Only update when we have a valid group. as re run through all lines in sheet
+			if err == nil {
+				//
+				total := excrptgrps.GetTotal(excrptGrp)
 
-			if total != 0.0 {
-				updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), month+1, 0))
+				if total != 0.0 {
+					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), month+1, 0))
+				}
 			}
 
 		}
