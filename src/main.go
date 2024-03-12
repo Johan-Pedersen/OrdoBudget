@@ -102,7 +102,7 @@ func main() {
 	excrptgrps.PrintExcrptGrps()
 
 	// Get Date, Amount and description
-	readRangeExrpt := "Udtrœk!A2:C24"
+	readRangeExrpt := "Udtrœk!A2:C68"
 	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRangeExrpt).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
@@ -135,14 +135,13 @@ func main() {
 
 				if month == exrptMonth {
 					isRightMonth = true
-				} else if exrptMonth > month {
+				} else if exrptMonth < month {
 					break
 				}
 				if isRightMonth {
 					excrptgrps.UpdateExcrptTotal(date, description, amount)
 				}
 
-			} else {
 				excrptgrps.UpdateResume(date, description, "Not handled", amount)
 			}
 		}
