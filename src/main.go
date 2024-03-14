@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	excrptgrps "budgetAutomation/src/excrptGrps"
+	"budgetAutomation/src/util"
 
 	req "budgetAutomation/src/requests"
 
@@ -166,13 +167,13 @@ func main() {
 
 			excrptGrp, err := excrptgrps.GetExcrptGrp(elm[0].(string), -1)
 
-			// Only update when we have a valid group. as re run through all lines in sheet
+			// Only update when we have a valid group. as we run through all lines in sheet
 			if err == nil {
 				//
 				total := excrptgrps.GetTotal(excrptGrp)
 
 				if total != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), month+1, 0))
+					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 0))
 				}
 			}
 
