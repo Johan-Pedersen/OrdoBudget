@@ -7,7 +7,6 @@
 - håndter vi korrekt positive tal i udgifts sektionen
   - Det er jo rigtig nok at det skal skifte fortegn. selvom det ikke er så pœnt
 - Fejl når man selecter gruppe nr uden for mœngden
-- håndter blanke linjer i udtrœk
 - Test
 - parse udtrœk fra bank til rigtig format
 - opsœtning af excrptGrpData
