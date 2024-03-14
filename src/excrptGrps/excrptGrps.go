@@ -134,10 +134,10 @@ func PrintResume() {
 func GetTotal(excrptGrp ExcrptGrp) float64 {
 	total := excrptGrpTotals[excrptGrp.name]
 	if total != 0.0 {
-		if excrptGrp.parent != "Indkomst efter skat" {
-			return -1 * (excrptGrpTotals[excrptGrp.name] + 1)
-		} else {
+		if excrptGrp.parent == "Indkomst efter skat" {
 			return excrptGrpTotals[excrptGrp.name] + 1
+		} else {
+			return -1 * (excrptGrpTotals[excrptGrp.name] + 1)
 		}
 	}
 	return 0.0
