@@ -3,7 +3,6 @@
 
 - Visning af excerptgrps skal ske i sortet rœkkefølge
   - Så det er den samme hver gang
-- Fejl når man selecter gruppe nr uden for mœngden
 - Test
   - test at alle udregninger passer med saldo
 - parse udtrœk fra bank til rigtig format
