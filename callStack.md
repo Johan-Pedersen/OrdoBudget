@@ -6,6 +6,7 @@
   - Så det er den samme hver gang
 - Fejl når man selecter gruppe nr uden for mœngden
 - Test
+  - test at alle udregninger passer med saldo
 - parse udtrœk fra bank til rigtig format
 - opsœtning af excrptGrpData
   - Skal også vœre muligt at tilføje/fjerne opdelinger
