@@ -71,7 +71,15 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 	if excrptGrpName == "" {
 		fmt.Println("Can't match to group:", date, excrpt, ":", amount)
 		fmt.Println("Select group")
-		fmt.Scan(&ind)
+		validInd := false
+		for !validInd {
+			fmt.Scan(&ind)
+			if ind > -1 && ind < len(excrptGrpTotals) {
+				validInd = true
+			} else {
+				fmt.Println("Invalid grp number.\nPlease choose again")
+			}
+		}
 
 		for _, parent := range excrptGrps {
 			for _, excrptGrp := range parent.excrptGrps {
