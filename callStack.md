@@ -3,6 +3,7 @@
 
 - Visning af excerptgrps skal ske i sortet rœkkefølge
   - Så det er den samme hver gang
+  - Rimlig involved. Ved ikke helt hvordan vi skal gøre det på en god måde når vi gerne vil beholde parents.
 - Test
   - test at alle udregninger passer med saldo
 - parse udtrœk fra bank til rigtig format
