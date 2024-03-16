@@ -67,6 +67,35 @@ func MultiUpdateReq(grpSums []float64, rowInd, colInd, sheetId int64) *sheets.Re
 Update single cell at (rowInd, colInd) with amount
 */
 
+func SingleUpdateReqBlank(rowInd, colInd, sheetId int64) *sheets.Request {
+	blank := ""
+	rowData := &sheets.RowData{
+		Values: []*sheets.CellData{
+			{
+				UserEnteredValue: &sheets.ExtendedValue{
+					StringValue: &blank,
+				},
+			},
+		},
+	}
+	updateReq := &sheets.Request{
+		UpdateCells: &sheets.UpdateCellsRequest{
+			Fields: "UserEnteredValue",
+			Start: &sheets.GridCoordinate{
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
+				SheetId:     sheetId,
+			},
+			Rows: []*sheets.RowData{rowData},
+		},
+	}
+	return updateReq
+}
+
+/*
+Update single cell at (rowInd, colInd) with amount
+*/
+
 func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Request {
 	rowData := &sheets.RowData{
 		Values: []*sheets.CellData{

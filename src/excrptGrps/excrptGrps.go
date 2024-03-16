@@ -131,16 +131,20 @@ func PrintResume() {
 	fmt.Println("###################################################")
 }
 
-func GetTotal(excrptGrp ExcrptGrp) float64 {
-	total := excrptGrpTotals[excrptGrp.name]
-	if total != 0.0 {
-		if excrptGrp.parent == "Indkomst efter skat" {
-			return excrptGrpTotals[excrptGrp.name] + 1
-		} else {
-			return -1 * (excrptGrpTotals[excrptGrp.name] + 1)
-		}
+func GetTotal(excrptGrpName string) (float64, error) {
+	excrptGrp, err := GetExcrptGrp(excrptGrpName, -1)
+	//
+	if err != nil {
+		return 0, err
 	}
-	return 0.0
+
+	// Total should always be a positive number
+	total := excrptGrpTotals[excrptGrp.name] + 1
+	if excrptGrp.parent == "Indkomst efter skat" {
+		return total, nil
+	} else {
+		return -1 * total, nil
+	}
 }
 
 func InitExcrptGrps() {

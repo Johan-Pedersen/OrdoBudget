@@ -164,19 +164,19 @@ func main() {
 	println("****")
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
-
-			excrptGrp, err := excrptgrps.GetExcrptGrp(elm[0].(string), -1)
-
 			// Only update when we have a valid group. as we run through all lines in sheet
 			if err == nil {
 				//
-				total := excrptgrps.GetTotal(excrptGrp)
+				total, notFoundErr := excrptgrps.GetTotal(elm[0].(string))
 
-				if total != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 0))
+				if notFoundErr == nil {
+					if total != 0.0 {
+						updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 0))
+					} else {
+						updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month), 0))
+					}
 				}
 			}
-
 		}
 	}
 

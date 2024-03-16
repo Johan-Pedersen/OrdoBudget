@@ -1,7 +1,6 @@
 # callStack
 
 
-- Overskriv alle felter der ikke har fået en vœrdi i totals
 - Visning af excerptgrps skal ske i sortet rœkkefølge
   - Så det er den samme hver gang
 - Fejl når man selecter gruppe nr uden for mœngden
