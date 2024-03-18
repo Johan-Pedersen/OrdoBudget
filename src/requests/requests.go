@@ -64,7 +64,7 @@ func MultiUpdateReq(grpSums []float64, rowInd, colInd, sheetId int64) *sheets.Re
 }
 
 /*
-Update single cell at (rowInd, colInd) with amount
+Update single cell at (rowInd, colInd) with blank
 */
 
 func SingleUpdateReqBlank(rowInd, colInd, sheetId int64) *sheets.Request {

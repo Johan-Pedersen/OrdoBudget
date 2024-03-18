@@ -103,7 +103,7 @@ func main() {
 	excrptgrps.PrintExcrptGrps()
 
 	// Get Date, Amount and description
-	readRangeExrpt := "Udtrœk!A2:C68"
+	readRangeExrpt := "Udtrœk!A2:D"
 	valRange, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRangeExrpt).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
@@ -116,6 +116,9 @@ func main() {
 	// requests := make([]*sheets.Request, 0)
 
 	isRightMonth := false
+
+	// account balance
+	accBalance := -1.0
 
 	// find Excerpt Total for current month.
 	for _, elm := range valRange.Values {
@@ -139,6 +142,15 @@ func main() {
 
 				if month == exrptMonth {
 					isRightMonth = true
+					if accBalance == -1.0 {
+						s := strings.ReplaceAll(elm[3].(string), ",", ".")
+
+						accBalance, err = strconv.ParseFloat(s, 64)
+						if err != nil {
+							log.Fatalln("Could not read account balance")
+						}
+					}
+
 				} else if exrptMonth < month {
 					break
 				}
@@ -164,18 +176,17 @@ func main() {
 	println("****")
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
-			// Only update when we have a valid group. as we run through all lines in sheet
-			if err == nil {
-				//
-				total, notFoundErr := excrptgrps.GetTotal(elm[0].(string))
 
-				if notFoundErr == nil {
-					if total != 0.0 {
-						updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 0))
-					} else {
-						updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month), 0))
-					}
+			total, notFoundErr := excrptgrps.GetTotal(elm[0].(string))
+
+			if notFoundErr == nil {
+				if total != 0.0 {
+					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 0))
+				} else {
+					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month), 0))
 				}
+			} else if elm[0].(string) == "Faktisk balance" {
+				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month), 0))
 			}
 		}
 	}
