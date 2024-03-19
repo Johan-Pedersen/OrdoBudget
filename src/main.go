@@ -130,7 +130,7 @@ func main() {
 		amount, err := strconv.ParseFloat(s, 64)
 
 		if err != nil {
-			log.Println("Could not read amount for", description)
+			log.Println("Could not read amount for", date, ":", description)
 		} else {
 			// Get excerpt month
 			if date != "Reserveret" {
@@ -179,7 +179,10 @@ func main() {
 
 			total, notFoundErr := excrptgrps.GetTotal(elm[0].(string))
 
+			fmt.Println("notFoundErr", notFoundErr)
+
 			if notFoundErr == nil {
+				fmt.Println("total: ", total)
 				if total != 0.0 {
 					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 0))
 				} else {
@@ -209,7 +212,7 @@ func main() {
 	_, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateReq).Context(ctx).Do()
 
 	if err != nil {
-		log.Fatalf("Unable to perform CutPaste operation: %v", err)
+		log.Fatalf("Unable to perform update operation: %v", err)
 	}
 	log.Println("Data moved successfully!")
 
