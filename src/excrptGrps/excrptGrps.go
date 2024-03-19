@@ -215,7 +215,7 @@ if you don't want to use name, make name = "".
 func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 	for _, parent := range excrptGrps {
 		for _, excrptGrp := range parent.excrptGrps {
-			if excrptGrp.name == name || excrptGrp.ind == ind {
+			if strings.EqualFold(strings.Trim(excrptGrp.name, " "), strings.Trim(name, " ")) || excrptGrp.ind == ind {
 				return excrptGrp, nil
 			}
 		}
