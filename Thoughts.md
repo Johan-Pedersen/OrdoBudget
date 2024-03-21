@@ -185,7 +185,13 @@ nyt projekt: budgetautomation-414505
 - udtrœk med mellemrum
 - Udtrœk med positiv value
 
-### Håndtering af fœlles udgifter
+## Hvad har jeg lœrt
+
+- Skal huske at overføre det rigtige beløb til Fœlles konto'en
+- Håndte kvartal vis / tilfœldig justeringer af fœlles udgifter
+    - Hvis der pludselig kommer en "vand" opkrœvning og man så bruger sin egen lønkonto, i stedet for fœlles.
+
+- Håndtering af at kunne bruge forskellige konti (fx at trœkke fra opsparingen)
 
 
 
