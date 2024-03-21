@@ -184,12 +184,12 @@ func main() {
 			if notFoundErr == nil {
 				fmt.Println("total: ", total)
 				if total != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 0))
+					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 1685114351))
 				} else {
-					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month), 0))
+					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month), 1685114351))
 				}
-			} else if elm[0].(string) == "Faktisk balance" {
-				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month), 0))
+			} else if strings.EqualFold(strings.Trim(elm[0].(string), " "), "Faktisk balance") {
+				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month), 1685114351))
 			}
 		}
 	}
