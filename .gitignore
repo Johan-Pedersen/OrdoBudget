@@ -24,7 +24,7 @@ go.work
 
 credentials.json
 
-# json
+# json (for credentials)
 
 *.json
 
