@@ -30,3 +30,6 @@ credentials.json
 
 # vim sessions
 *.vim
+
+# excerpt data
+*.csv
