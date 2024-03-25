@@ -61,6 +61,38 @@ func MultiUpdateReq(data []string, rowInd, colInd, sheetId int64) *sheets.Reques
 }
 
 /*
+Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
+*/
+func MultiUpdateReqNum(data []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+	var rowData []*sheets.RowData
+
+	for i := range data {
+		rowData = append(rowData, &sheets.RowData{
+			Values: []*sheets.CellData{
+				{
+					UserEnteredValue: &sheets.ExtendedValue{
+						NumberValue: &data[i],
+					},
+				},
+			},
+		})
+	}
+
+	updateReq := &sheets.Request{
+		UpdateCells: &sheets.UpdateCellsRequest{
+			Fields: "*",
+			Start: &sheets.GridCoordinate{
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
+				SheetId:     sheetId,
+			},
+			Rows: rowData,
+		},
+	}
+	return updateReq
+}
+
+/*
 Update single cell at (rowInd, colInd) with blank
 */
 

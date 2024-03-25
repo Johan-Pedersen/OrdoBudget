@@ -2,12 +2,13 @@ package util
 
 import (
 	"encoding/csv"
-	"encoding/json"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
-func ReadExcrptCsv(path string) ([]string, []string, []string, []string) {
+func ReadExcrptCsv(path string) ([]string, []float64, []string, []float64) {
 	// Open the CSV file
 	file, err := os.Open("Lønkonto.csv")
 	if err != nil {
@@ -21,6 +22,7 @@ func ReadExcrptCsv(path string) ([]string, []string, []string, []string) {
 	// Dont test on number of fields
 	reader.FieldsPerRecord = -1
 
+	// Set delimite
 	reader.Comma = ';'
 	// Read all records from the CSV file
 	// records, err := reader.ReadAll()
@@ -28,12 +30,12 @@ func ReadExcrptCsv(path string) ([]string, []string, []string, []string) {
 	return getExcrpt(reader)
 }
 
-func getExcrpt(reader *csv.Reader) ([]string, []string, []string, []string) {
+func getExcrpt(reader *csv.Reader) ([]string, []float64, []string, []float64) {
 	// Print each record
 	var dates []string
-	var amounts []string
+	var amounts []float64
 	var descriptions []string
-	var balances []string
+	var balances []float64
 
 	i := 0
 	for {
@@ -48,27 +50,23 @@ func getExcrpt(reader *csv.Reader) ([]string, []string, []string, []string) {
 					log.Fatal("Error:", err)
 				}
 			}
-
 			dates = append(dates, row[0])
-
-			amounts = append(amounts, row[1])
+			amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+			amounts = append(amounts, amount)
 
 			descriptions = append(descriptions, row[5])
-			balances = append(balances, row[6])
+			balance, err := strconv.ParseFloat(strings.ReplaceAll(row[6], ",", "."), 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+			balances = append(balances, balance)
 			//
 		}
 
 		i++
 	}
 	return dates, amounts, descriptions, balances
-}
-
-// Function to encode the value using UTF-8
-func encodeValue(inputValue string) string {
-	// Encode the value using UTF-8
-	encodedValue, err := json.Marshal(inputValue)
-	if err != nil {
-		log.Fatalf("Unable to encode value: %v", err)
-	}
-	return string(encodedValue)
 }
