@@ -1,8 +1,6 @@
 package requests
 
 import (
-	"fmt"
-
 	"google.golang.org/api/sheets/v4"
 )
 
@@ -33,16 +31,15 @@ func CutPasteSingleReq(fromRow, fromCol, toRow, toCol int64) *sheets.Request {
 /*
 Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
 */
-func MultiUpdateReq(grpSums []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+func MultiUpdateReq(data []string, rowInd, colInd, sheetId int64) *sheets.Request {
 	var rowData []*sheets.RowData
 
-	for i := range grpSums {
-		fmt.Println(grpSums[i])
+	for i := range data {
 		rowData = append(rowData, &sheets.RowData{
 			Values: []*sheets.CellData{
 				{
 					UserEnteredValue: &sheets.ExtendedValue{
-						NumberValue: &grpSums[i],
+						StringValue: &data[i],
 					},
 				},
 			},

@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	excrptgrps "budgetAutomation/src/excrptGrps"
-	"budgetAutomation/src/util"
+	util "budgetAutomation/src/util"
 
 	req "budgetAutomation/src/requests"
 
@@ -98,6 +98,16 @@ func main() {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
+		Requests: excrptgrps.UpdateExcrptSheet("/home/johan/Downloads/Lønkonto+ 9037298546 - 2024-03-18 19.37.52.csv"),
+	}
+
+	// Execute the BatchUpdate request
+	_, err = srv.Spreadsheets.BatchUpdate(spreadsheetId, batchUpdateExcerptSheetReq).Context(ctx).Do()
+
+	if err != nil {
+		log.Fatalf("Unable to perform update excerpt sheet operation: %v", err)
+	}
 	excrptgrps.InitExcrptGrps()
 
 	excrptgrps.PrintExcrptGrps()

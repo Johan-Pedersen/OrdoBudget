@@ -9,6 +9,11 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"budgetAutomation/src/requests"
+	"budgetAutomation/src/util"
+
+	"google.golang.org/api/sheets/v4"
 )
 
 var excrptGrpTotals = map[string]float64{}
@@ -221,4 +226,15 @@ func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 		}
 	}
 	return ExcrptGrp{}, errors.New("Excrpt grp: " + name + ", not found")
+}
+
+func UpdateExcrptSheet(path string) []*sheets.Request {
+	dates, amounts, descriptions, balances := util.ReadExcrptCsv(path)
+
+	return []*sheets.Request{
+		requests.MultiUpdateReq(dates, 1, 0, 1472288449),
+		requests.MultiUpdateReq(amounts, 1, 1, 1472288449),
+		requests.MultiUpdateReq(descriptions, 1, 2, 1472288449),
+		requests.MultiUpdateReq(balances, 1, 3, 1472288449),
+	}
 }
