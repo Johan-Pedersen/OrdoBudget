@@ -193,5 +193,25 @@ nyt projekt: budgetautomation-414505
 
 - Håndtering af at kunne bruge forskellige konti (fx at trœkke fra opsparingen)
 
+## Håndtering af kvartalvis kontigenter osv.
 
+- Man Søger bare for at dele beløbet op i 3 og så er det bare det man overfører hver måned
 
+- man kan også lave en kvartalvis overførsel til fœlles konto'en, som bare passer til det beløb 
+- Hvis man bare delte overførslerne op så havde vi ikke dette problem.
+
+- Men det er noget der skal kunne håndteres
+  - 
+- casen: man overførere et fast beløb hver mdr til at dœkke alle forsikringer
+  - Så kommer der en surprise opkrœvning (der hører under en eksiterende gruppe), som man betaler fra sin egen konto.
+  - Det betyder begge disse udtrœk skal ligge i den samme gruppe.
+  - Men fordi den faste allerede er bestemt, så bliver den overskrevet af den eksisterende
+  - Det hele kommer fra at man ikke har en individuelt overførsel for her ting
+  - Men man kunne jo definere en ny default vœrdi for de faste udgifter, så hver gang der kommer en surpise, så bliver det bare lagt til. 
+  - Skal man have en verifier der tjekker om den overføre vœrdi stemmer med hvad der trœkkes.
+  
+
+## parse udtrœk fra bank til rigtig format
+
+- Vi skal opdatere udtrœks sheets før vi kan gå videre med det andet
+- Så vi skal have en eller anden form for mekanisme, så man ikke kan gå videre før vi har retureneret fra udtrœks update.
