@@ -6,9 +6,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
-func ReadExcrptCsv(path string) ([]string, []float64, []string, []float64) {
+/*
+Denne er lidt overflødig
+*/
+func ReadExcrptCsv(path string) ([]float64, []float64, []string, []float64) {
 	// Open the CSV file
 	file, err := os.Open("Lønkonto.csv")
 	if err != nil {
@@ -30,9 +34,9 @@ func ReadExcrptCsv(path string) ([]string, []float64, []string, []float64) {
 	return getExcrpt(reader)
 }
 
-func getExcrpt(reader *csv.Reader) ([]string, []float64, []string, []float64) {
+func getExcrpt(reader *csv.Reader) ([]float64, []float64, []string, []float64) {
 	// Print each record
-	var dates []string
+	var dates []float64
 	var amounts []float64
 	var descriptions []string
 	var balances []float64
@@ -41,7 +45,7 @@ func getExcrpt(reader *csv.Reader) ([]string, []float64, []string, []float64) {
 	for {
 		row, err := reader.Read()
 		// Dont read header-line
-		if i > 0 {
+		if i > 1 {
 			if err != nil {
 				// Check for end of file
 				if err.Error() == "EOF" {
@@ -50,7 +54,14 @@ func getExcrpt(reader *csv.Reader) ([]string, []float64, []string, []float64) {
 					log.Fatal("Error:", err)
 				}
 			}
-			dates = append(dates, row[0])
+			date, err := time.Parse("2006/01/02", row[0])
+			baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
+			days := int(date.Sub(baseDate).Hours() / 24)
+			if err != nil {
+				log.Fatal(err)
+			}
+			// dates = append(dates, row[0])
+			dates = append(dates, float64(days))
 			amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
 			if err != nil {
 				log.Fatal(err)

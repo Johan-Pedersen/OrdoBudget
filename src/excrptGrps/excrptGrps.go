@@ -232,7 +232,7 @@ func UpdateExcrptSheet(path string) []*sheets.Request {
 	dates, amounts, descriptions, balances := util.ReadExcrptCsv(path)
 
 	return []*sheets.Request{
-		requests.MultiUpdateReq(dates, 1, 0, 1472288449),
+		requests.MultiUpdateReqDate(dates, 1, 0, 1472288449),
 		requests.MultiUpdateReqNum(amounts, 1, 1, 1472288449),
 		requests.MultiUpdateReq(descriptions, 1, 2, 1472288449),
 		requests.MultiUpdateReqNum(balances, 1, 3, 1472288449),

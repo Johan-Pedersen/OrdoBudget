@@ -77,7 +77,46 @@ func MultiUpdateReqNum(data []float64, rowInd, colInd, sheetId int64) *sheets.Re
 			},
 		})
 	}
+	updateReq := &sheets.Request{
+		UpdateCells: &sheets.UpdateCellsRequest{
+			Fields: "*",
+			Start: &sheets.GridCoordinate{
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
+				SheetId:     sheetId,
+			},
+			Rows: rowData,
+		},
+	}
+	return updateReq
+}
 
+/*
+Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
+*/
+func MultiUpdateReqDate(data []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+	var rowData []*sheets.RowData
+
+	for i := range data {
+		print(i)
+		// dø := 42198.0
+		rowData = append(rowData, &sheets.RowData{
+			Values: []*sheets.CellData{
+				{
+					UserEnteredValue: &sheets.ExtendedValue{
+						NumberValue: &data[i],
+					},
+
+					UserEnteredFormat: &sheets.CellFormat{
+						NumberFormat: &sheets.NumberFormat{
+							Type:    "DATE",
+							Pattern: "yyyy/mm/dd",
+						},
+					},
+				},
+			},
+		})
+	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "*",
