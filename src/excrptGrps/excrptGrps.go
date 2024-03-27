@@ -46,7 +46,7 @@ type ExcrptGrpParent struct {
 	excrptGrps []ExcrptGrp
 }
 
-func UpdateExcrptTotal(date, excrpt string, amount float64) {
+func updateExcrptTotal(date, excrpt string, amount float64) {
 	excrptGrpName := ""
 
 	// ignore case
@@ -237,4 +237,54 @@ func UpdateExcrptSheet(path string) []*sheets.Request {
 		requests.MultiUpdateReq(descriptions, 1, 2, 1472288449),
 		requests.MultiUpdateReqNum(balances, 1, 3, 1472288449),
 	}
+}
+
+/*
+Reads excrpts to update excrptGrpTotals and returns most recent account balance
+*/
+func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
+	isRightMonth := false
+	accBalance := -1.0
+	for _, elm := range excrpts.Values {
+
+		date, description := elm[0].(string), elm[2].(string)
+
+		// s := strings.ReplaceAll(elm[1].(string), ",", ".")
+
+		amount, err := strconv.ParseFloat(elm[1].(string), 64)
+
+		if err != nil {
+			log.Println("Could not read amount for", date, ":", description)
+		} else {
+			// Get excerpt month
+			if date != "Reserveret" {
+
+				exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
+				if err != nil {
+					log.Fatal("Could not read excerpt date", err)
+				}
+
+				if month == exrptMonth {
+					isRightMonth = true
+					if accBalance == -1.0 {
+						s := strings.ReplaceAll(elm[3].(string), ",", ".")
+
+						accBalance, err = strconv.ParseFloat(s, 64)
+						if err != nil {
+							log.Fatalln("Could not read account balance")
+						}
+					}
+
+				} else if exrptMonth < month {
+					break
+				}
+				if isRightMonth {
+					updateExcrptTotal(date, description, amount)
+				} // else {
+				// excrptgrps.UpdateResume(date, description, "Not handled", amount)
+				//	}
+			}
+		}
+	}
+	return accBalance
 }
