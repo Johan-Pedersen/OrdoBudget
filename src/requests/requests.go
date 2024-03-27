@@ -99,7 +99,6 @@ func MultiUpdateReqDate(data []float64, rowInd, colInd, sheetId int64) *sheets.R
 
 	for i := range data {
 		print(i)
-		// dø := 42198.0
 		rowData = append(rowData, &sheets.RowData{
 			Values: []*sheets.CellData{
 				{

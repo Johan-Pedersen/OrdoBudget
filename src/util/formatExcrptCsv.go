@@ -29,12 +29,7 @@ func ReadExcrptCsv(path string) ([]float64, []float64, []string, []float64) {
 	// Set delimite
 	reader.Comma = ';'
 	// Read all records from the CSV file
-	// records, err := reader.ReadAll()
 
-	return getExcrpt(reader)
-}
-
-func getExcrpt(reader *csv.Reader) ([]float64, []float64, []string, []float64) {
 	// Print each record
 	var dates []float64
 	var amounts []float64
@@ -45,7 +40,7 @@ func getExcrpt(reader *csv.Reader) ([]float64, []float64, []string, []float64) {
 	for {
 		row, err := reader.Read()
 		// Dont read header-line
-		if i > 1 {
+		if i > 0 {
 			if err != nil {
 				// Check for end of file
 				if err.Error() == "EOF" {
@@ -55,26 +50,27 @@ func getExcrpt(reader *csv.Reader) ([]float64, []float64, []string, []float64) {
 				}
 			}
 			date, err := time.Parse("2006/01/02", row[0])
-			baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
-			days := int(date.Sub(baseDate).Hours() / 24)
 			if err != nil {
-				log.Fatal(err)
-			}
-			// dates = append(dates, row[0])
-			dates = append(dates, float64(days))
-			amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
-			if err != nil {
-				log.Fatal(err)
-			}
-			amounts = append(amounts, amount)
+				log.Println("Skipping this excerpt")
+			} else {
+				// Google sheets calculate dates as - days since Dec 30, 1899
+				baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
+				days := int(date.Sub(baseDate).Hours() / 24)
+				dates = append(dates, float64(days))
+				amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
+				if err != nil {
+					log.Fatal(err)
+				}
+				amounts = append(amounts, amount)
 
-			descriptions = append(descriptions, row[5])
-			balance, err := strconv.ParseFloat(strings.ReplaceAll(row[6], ",", "."), 64)
-			if err != nil {
-				log.Fatal(err)
+				descriptions = append(descriptions, row[5])
+				balance, err := strconv.ParseFloat(strings.ReplaceAll(row[6], ",", "."), 64)
+				if err != nil {
+					log.Fatal(err)
+				}
+				balances = append(balances, balance)
+				//
 			}
-			balances = append(balances, balance)
-			//
 		}
 
 		i++
