@@ -1,7 +1,6 @@
 # callStack
 
 
-- parse udtrœk fra bank til rigtig format
 - For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
   - Og ved at den lœser dem fra excel arket. Så bliver disse automatisk tilpasset hvad man har til at stå i arket.
 - Definer protokol for overførsler
