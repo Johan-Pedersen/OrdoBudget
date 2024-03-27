@@ -99,7 +99,7 @@ func main() {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: excrptgrps.UpdateExcrptSheet("/home/johan/Downloads/Lønkonto+ 9037298546 - 2024-03-18 19.37.52.csv"),
+		Requests: excrptgrps.UpdateExcrptSheet("Lønkonto.csv"),
 	}
 
 	// Execute the BatchUpdate request

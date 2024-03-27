@@ -14,7 +14,7 @@ Denne er lidt overflødig
 */
 func ReadExcrptCsv(path string) ([]float64, []float64, []string, []float64) {
 	// Open the CSV file
-	file, err := os.Open("Lønkonto.csv")
+	file, err := os.Open(path)
 	if err != nil {
 		log.Fatalln("Coud not open excerpt file.", err)
 	}
