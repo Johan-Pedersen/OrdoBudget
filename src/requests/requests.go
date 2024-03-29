@@ -73,6 +73,11 @@ func MultiUpdateReqNum(data []float64, rowInd, colInd, sheetId int64) *sheets.Re
 					UserEnteredValue: &sheets.ExtendedValue{
 						NumberValue: &data[i],
 					},
+					UserEnteredFormat: &sheets.CellFormat{
+						NumberFormat: &sheets.NumberFormat{
+							Type: "NUMBER",
+						},
+					},
 				},
 			},
 		})
