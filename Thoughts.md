@@ -53,6 +53,23 @@ nyt projekt: budgetautomation-414505
 - Man kan ikke altid sige "Føtex" skal gå til mad. Fordi føtex har mange andre ting
   - Så skal man kunne definere 1 el. flere grupper til føtex og så skal man selv angive hvilken gruppe dette skal i
 
+- God håndtering af overførsel mellem konti
+  - Hvordan skal man vise at man overfører penge til en opsparings konto og så henter man så pengene ind igen når de skal bruges.
+
+- Oprettelse af nye felter
+
+- Fjern "faktisk balance", da det er forvirrende
+  - Kan bare have et lokalt tjek, der sammenligner konto balance og faktisk balance og kommer med en error / besked hvis der er merkant forskel.
+  - Kan faktisk godt lide at have den. Så måske vi skulle beholde den
+
+- Hvad hvis man får penge tilbage og vil fordele dem mellem konti?
+
+- Dette sheet viser kun budget konto'en. Det skal også vœre muligt at se alle konti.
+
+- Lœs PDF udtrœk og ikke kun .csv fil
+
+- håndtering af lån og renter
+
 ## Nordeas's csv fil
 
 - kolonnerne er forskudt med 1 hvis der er brugt 'Nordea Pay'

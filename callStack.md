@@ -1,6 +1,9 @@
 # callStack
 
 
+- De udtrœk med x.0, kommer bare ind i udtrœk som x. 
+- Den skal kun lave udtrœkket for den måned man har gang i.
+  - Med mindre man laver det for flere måneder.
 - For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
   - Og ved at den lœser dem fra excel arket. Så bliver disse automatisk tilpasset hvad man har til at stå i arket.
 - Definer protokol for overførsler
