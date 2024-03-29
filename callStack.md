@@ -1,15 +1,5 @@
 # callStack
 
-
-- Lav rewrite
-  - Det virker ikke til at vœre lavet så smart
-  - Specilet med den her parent situation
-  - Det bliver mange dobblet forloop osv.
-  - kan man fold de her json handling sektioner
-  - getExcerptGrp er meget ineffektiv
-  - Det er meget grimt at alle api requests skal kaldes fra main()
-    - Meget grim og cluttered main()
-  - Hvis en funktion returnere en error, skal den bare fejle og ikke smide den ud til kalderen
 - For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
   - Og ved at den lœser dem fra excel arket. Så bliver disse automatisk tilpasset hvad man har til at stå i arket.
 - Den skal kun lave udtrœkket for den måned man har gang i.
@@ -24,6 +14,7 @@
 - Dette budget viser kun for budget konto'en, måske skal man også kunne se sine andre konti
 - Lœs udtrœk fra PDF og ikke kun csv filer
 - håndtering af lån og renter
+
 - Definer protokol for overførsler
   - Hvordan kan man håndtere den her situation med a-kassen. Hvor man tilføjer flere penge end hvad man havde planlagt
     - Denne situation skal ikke overskrive a-kasse beløbet men ligge til det 

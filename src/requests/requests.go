@@ -191,17 +191,3 @@ func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Requ
 	}
 	return updateReq
 }
-
-/*
-For each excerpt, get date, amount, describtion
-*/
-func GetExcerpts() {
-	// readRange := "Udtrœk!B2:C12"
-	// // Get from "udtrœks sheet"
-	// valRange, err := srv.Spreadsheets.Values.Get(1472288449, readRange).Do()
-	// if err != nil {
-	// 	log.Fatalf("Unable to perform get: %v", err)
-	// }
-	//
-	// return valRange
-}
