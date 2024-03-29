@@ -25,38 +25,12 @@ nyt projekt: budgetautomation-414505
 ## Todo
 
 - Der er ingen grund til at upload filen til google sheets for at hente den igen til update totals
-
 - Er det feasible at hente hele sheet'et 1 gang og selv lave alle operationerne
   - Det skulle vœre for at minimere # requests
   - Tror det er nødvendigt at lave så meget som muligt lokalt.
 - Som udgangspunkt er det nok nemmere bare at hente 1 kolonne af gangen
 
-- Bestem en sortering
-- Hent bank udtrœk
-  - Kan create et nyt sheets med denne data
-- flyt data til de rigtige kolonner 
-  - Det er nok mest rart at vi ikke bare har alle udregninger / data lokalt da man så kan se på dem hvis der er noget der ikke helt stemmer
-  - Det skal også vœre muligt at selv justere de resterende udregninger man ikke kan vide på forhånd
-- Til sidst skal alle kolonnerne summeres og lœgges ind i måneden der passer med dette udtrœk.
-  - Man kan matche det med den dato der står i udtrœkket.
-- lœs udtrœks grupperinger fra config og opsœt formattering
-  - 
-- Brug regex til mapning
-  - Brug regexp.MatchString(pattern String, s String)
-  - Lav et ignorecase match
-- Hvordan skal man håndtere forsikringer og fœlles udgifter
-  - De bliver jo bare taget totalt set fra min konto og bliver kun "delt ud" når de bliver trukket fra fœlles kontoen
-  - Det samme gœlder "Faste Udgifter"
-  - Så skal man selv dele dem op. Men det virker heller ikke helt smart.
-
-  - Det er måske fint bare at holde det sådan her og når man så trœkker data fra sin egen lønkonto. Så er det kun "Hverdag" man opdatere.
-- automatisk find den rigtige indsœttelsesrœkke 
-
-- Man kan ikke altid sige "Føtex" skal gå til mad. Fordi føtex har mange andre ting
-  - Så skal man kunne definere 1 el. flere grupper til føtex og så skal man selv angive hvilken gruppe dette skal i
-
-- God håndtering af overførsel mellem konti
-  - Hvordan skal man vise at man overfører penge til en opsparings konto og så henter man så pengene ind igen når de skal bruges.
+- Bestem en sortering for udtrœks grupperne
 
 - Oprettelse af nye felter
 
