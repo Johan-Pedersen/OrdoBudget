@@ -24,6 +24,8 @@ nyt projekt: budgetautomation-414505
 
 ## Todo
 
+- Der er ingen grund til at upload filen til google sheets for at hente den igen til update totals
+
 - Er det feasible at hente hele sheet'et 1 gang og selv lave alle operationerne
   - Det skulle vœre for at minimere # requests
   - Tror det er nødvendigt at lave så meget som muligt lokalt.

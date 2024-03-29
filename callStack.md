@@ -2,6 +2,7 @@
 
 
 - De udtrœk med x.0, kommer bare ind i udtrœk som x. 
+  - sœt decimal point somehow
 - Den skal kun lave udtrœkket for den måned man har gang i.
   - Med mindre man laver det for flere måneder.
 - For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
