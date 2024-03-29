@@ -249,12 +249,12 @@ func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
 
 		date, description := elm[0].(string), elm[2].(string)
 
-		// s := strings.ReplaceAll(elm[1].(string), ",", ".")
+		s := strings.ReplaceAll(elm[1].(string), ",", ".")
 
-		amount, err := strconv.ParseFloat(elm[1].(string), 64)
+		amount, err := strconv.ParseFloat(s, 64)
 
 		if err != nil {
-			log.Println("Could not read amount for", date, ":", description)
+			log.Println("Could not read amount for", date, ":", description, ":", elm[1].(string))
 		} else {
 			// Get excerpt month
 			if date != "Reserveret" {
