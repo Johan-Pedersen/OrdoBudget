@@ -208,3 +208,33 @@ nyt projekt: budgetautomation-414505
 
 - Vi skal opdatere udtrœks sheets før vi kan gå videre med det andet
 - Så vi skal have en eller anden form for mekanisme, så man ikke kan gå videre før vi har retureneret fra udtrœks update.
+
+## base-line vœrdier til faste udgifter
+
+- Vœlg hvilke Parent's der skal have andre baseline vœrdier
+- lœs dem 
+
+## hvilke parents skal have andre baseline vœrdier
+
+- Fœlles udgifter
+- mad
+- Forsikring
+
+- Alle vi laver en 'total' overførsel for
+
+- Hvad hvis ikke der står noget
+
+- man skal have en måde at fortœlle den at den skal hente disse vœrdier fra sheet
+
+- Hver gruppe skal have et override flag. Som er true per defalt
+  - Men hvis ikke, så skal man ind og finde den
+
+- Man definerer hver gruppe
+- Efter man har initieret alle excerptGrps, så løver man dem igennem igen og ser hvilke nogen der har override flagget. Som man så skal ind og hente data fra sheets til.
+- Det skal ske til sidste i init excrptgrps metoden
+
+- Det er trœls at man skal have SpreadSheetId og SpreadSheetsService med i alle funktioner som skal bruge det.
+  - Det det skal gives med helt ude fra main funktionen og ind til den inderste funktion der skal lave en form for api kald
+  - Kan ikke vœre rigitgt at at det er nødvendig
+  - Det burde vœre en form for global variabel der var accessible genenm hele programmet.
+    - Men hvordan laver man det og er det overhovedet en god ide?

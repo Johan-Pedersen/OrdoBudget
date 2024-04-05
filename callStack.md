@@ -1,7 +1,11 @@
 # callStack
 
+- får blank i fœlles udgifter når jeg kører for Feb
 - For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
   - Og ved at den lœser dem fra excel arket. Så bliver disse automatisk tilpasset hvad man har til at stå i arket.
+  - Lav noget mere smart i forhold til at initiere excerpt grp totals
+    - det skal Også vœre sådan at man skal kunne œndre i sheetet uden at risikere at fucke noget op
+    - Så man kan ikke lœse fra et specifikt sted fra sheets.
 - Den skal kun lave udtrœkket for den måned man har gang i.
   - Med mindre man laver det for flere måneder.
 - Et excrpt skal have flere mappings
