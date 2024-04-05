@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"budgetAutomation/src/requests"
+	req "budgetAutomation/src/requests"
 	"budgetAutomation/src/util"
 
 	"google.golang.org/api/sheets/v4"
@@ -22,9 +23,14 @@ var excrptGrps = []ExcrptGrpParent{}
 
 var resume = []string{}
 
+type DataExcrpt struct {
+	Matches     []string
+	IsCommonGrp bool
+}
+
 // Marshal and unmarshal json
 type Data struct {
-	ExcrptMappings map[string]map[string][]string
+	ExcrptMappings map[string]map[string]DataExcrpt
 }
 
 type ExcrptGrp struct {
@@ -39,6 +45,10 @@ type ExcrptGrp struct {
 
 	// Defines the type of this excerpt
 	parent string
+
+	// Determines if the initial group total value should be read from the sheet or start at 0
+	// Default is false
+	isCommonGrp bool
 }
 
 type ExcrptGrpParent struct {
@@ -55,9 +65,11 @@ func updateExcrptTotal(date, excrpt string, amount float64) {
 	ind := -1
 	// Find correct excrpt grp
 	for _, parent := range excrptGrps {
+
 		for i := range parent.excrptGrps {
 			for _, match := range parent.excrptGrps[i].mappings {
-				if strings.Contains(excrpt, strings.ToLower(match)) {
+				match = strings.ToLower(strings.Trim(match, " "))
+				if strings.Contains(excrpt, match) {
 					excrptGrpName = parent.excrptGrps[i].name
 					break
 				}
@@ -160,7 +172,7 @@ func GetTotal(excrptGrpName string) (float64, error) {
 	}
 }
 
-func InitExcrptGrps() {
+func InitExcrptGrps(excrptGrps *sheets.ValueRange, month int64) {
 	// Open the JSON file
 	file, err := os.Open("excrptGrpData.json")
 	if err != nil {
@@ -186,12 +198,55 @@ func InitExcrptGrps() {
 		return
 	}
 
+	// initialize excerpt grps with -1 as total
+	createGrps(data)
+
+	PrintExcrptGrpTotals()
+	PrintExcrptGrps()
+
+	updateCommonGrps(excrptGrps, month)
+}
+
+func updateCommonGrps(excrptGrps *sheets.ValueRange, month int64) {
+	// Get Date, Amount and description
+
+	for i, elm := range excrptGrps.Values {
+		if len(elm) != 0 {
+			excrptGrp, notFound := GetExcrptGrp(elm[0].(string), -1)
+			if notFound == nil {
+				if excrptGrp.isCommonGrp {
+					readRangeExrpt := "budget!" + util.MonthToA1Notation(month) + fmt.Sprint(i+1)
+					excrpts, readExcrptsErr := req.GetSheet().Values.Get(req.GetSpreadsheetId(), readRangeExrpt).Do()
+					if readExcrptsErr != nil {
+						log.Fatalf("Unable to perform get: %v", readExcrptsErr)
+					}
+
+					val := strings.Trim(excrpts.Values[0][0].(string), " ")
+					if len(val) > 0 {
+						amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(val[:len(val)-4], ".", ""), ",", "."), 64)
+						if err != nil {
+							log.Fatal(err)
+						}
+						// updateExcrptTotal("9999-99-99", excrptGrp.name, amount)
+						excrptGrpTotals[excrptGrp.name] += -1 * float64(amount)
+					} else {
+						excrptGrpTotals[excrptGrp.name] += 0.0
+					}
+				}
+			}
+		}
+	}
+}
+
+func createGrps(data Data) {
 	i := 0
 	// Init excrptGrp Totals
 	for parentName, excrpts := range data.ExcrptMappings {
 
+		// parentName = strings.Trim(parentName, " ")
 		grps := []ExcrptGrp{}
 		for excrptGrp, mappings := range excrpts {
+			// excrptGrp = strings.Trim(excrptGrp, " ")
 			excrptGrpTotals[excrptGrp] = -1.0
 			grps = append(grps,
 				createExcrptGrp(i, excrptGrp, parentName, mappings))
@@ -202,12 +257,13 @@ func InitExcrptGrps() {
 	}
 }
 
-func createExcrptGrp(ind int, name, parent string, mappings []string) ExcrptGrp {
+func createExcrptGrp(ind int, name, parent string, data DataExcrpt) ExcrptGrp {
 	return ExcrptGrp{
-		ind:      ind,
-		name:     name,
-		mappings: mappings,
-		parent:   parent,
+		ind:         ind,
+		name:        name,
+		mappings:    data.Matches,
+		parent:      parent,
+		isCommonGrp: data.IsCommonGrp,
 	}
 }
 
@@ -215,7 +271,8 @@ func createExcrptGrp(ind int, name, parent string, mappings []string) ExcrptGrp 
 Get excerpt group based on name OR index(ind).
 Both can be specified, but it's not necessary.
 If you don't want to use ind, make ind < 0.
-if you don't want to use name, make name = "".
+if you don't want to use name, make name = "". \n
+returnes err if not found
 */
 func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 	for _, parent := range excrptGrps {
