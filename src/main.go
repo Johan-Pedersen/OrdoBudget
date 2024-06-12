@@ -26,7 +26,7 @@ func main() {
 	}
 	// Update excerpt sheet, before we begin
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: excrptgrps.UpdateExcrptSheet("Lønkonto.csv"),
+		Requests: excrptgrps.UpdateExcrptSheet("excrptSheet.csv"),
 	}
 
 	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
