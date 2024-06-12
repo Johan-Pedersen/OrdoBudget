@@ -1,4 +1,4 @@
-# Tanker
+# Thoughts
 
 Google cloud project: *budgetautomation-414105* er det gamle projekt
 nyt projekt: budgetautomation-414505

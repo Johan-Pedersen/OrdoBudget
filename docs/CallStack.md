@@ -1,5 +1,6 @@
-# callStack
+# CallStack
 
+- Lav en struktureret / template excrptGrpData.json fil
 - får blank i fœlles udgifter når jeg kører for Feb
 - For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
   - Og ved at den lœser dem fra excel arket. Så bliver disse automatisk tilpasset hvad man har til at stå i arket.
@@ -37,4 +38,6 @@
   - Skal indsert i lowercase
 - Kunne man automatisere det hele hvis man fik en bank-fuldmagt af brugeren
 - Skal man gøre noget specifikt for at håndtere  kvartalvis/iregulœre overførsler til anden konto
+- Kunne laese fra pdf filer
+    - Kan blive et problem med formateringen.
 
