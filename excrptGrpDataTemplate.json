@@ -1,0 +1,24 @@
+{
+  "ExcrptMappings": {
+    "Indkomst efter skat": {
+      "Løn": {
+        "Matches": ["match1", "match2"],
+        "IsCommonGrp": false
+      },
+      "SU": {
+        "Matches": ["match3"],
+        "IsCommonGrp": false
+      }
+    },
+    "Fælles udgifter": {
+      "Husleje": {
+        "Matches": ["match4", "match5"],
+        "IsCommonGrp": true
+      },
+      "El inkl. varme": {
+        "Matches": ["match6", "match7"],
+        "IsCommonGrp": true
+      }
+    }
+  }
+}
