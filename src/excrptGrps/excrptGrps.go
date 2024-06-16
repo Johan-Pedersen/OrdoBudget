@@ -1,6 +1,8 @@
 package excrptgrps
 
 import (
+	"budgetAutomation/src/requests"
+	"budgetAutomation/src/util"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,9 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"budgetAutomation/src/requests"
 	req "budgetAutomation/src/requests"
-	"budgetAutomation/src/util"
 
 	"google.golang.org/api/sheets/v4"
 )
@@ -210,27 +210,35 @@ func InitExcrptGrps(excrptGrps *sheets.ValueRange, month int64) {
 func updateCommonGrps(excrptGrps *sheets.ValueRange, month int64) {
 	// Get Date, Amount and description
 
+	A1Not := util.MonthToA1Notation(month)
 	for i, elm := range excrptGrps.Values {
 		if len(elm) != 0 {
 			excrptGrp, notFound := GetExcrptGrp(elm[0].(string), -1)
 			if notFound == nil {
 				if excrptGrp.isCommonGrp {
-					readRangeExrpt := "budget!" + util.MonthToA1Notation(month) + fmt.Sprint(i+1)
+
+					readRangeExrpt := "budget!" + A1Not + fmt.Sprint(i+1)
 					excrpts, readExcrptsErr := req.GetSheet().Values.Get(req.GetSpreadsheetId(), readRangeExrpt).Do()
+
 					if readExcrptsErr != nil {
 						log.Fatalf("Unable to perform get: %v", readExcrptsErr)
 					}
 
-					val := strings.Trim(excrpts.Values[0][0].(string), " ")
-					if len(val) > 0 {
-						amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(val[:len(val)-4], ".", ""), ",", "."), 64)
-						if err != nil {
-							log.Fatal(err)
-						}
-						// updateExcrptTotal("9999-99-99", excrptGrp.name, amount)
-						excrptGrpTotals[excrptGrp.name] += -1 * float64(amount)
-					} else {
+					if len(excrpts.Values) == 0 {
 						excrptGrpTotals[excrptGrp.name] += 0.0
+					} else {
+
+						val := strings.Trim(excrpts.Values[0][0].(string), " ")
+						if len(val) > 0 {
+							amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(val[:len(val)-4], ".", ""), ",", "."), 64)
+							if err != nil {
+								log.Fatal(err)
+							}
+							// updateExcrptTotal("9999-99-99", excrptGrp.name, amount)
+							excrptGrpTotals[excrptGrp.name] += -1 * float64(amount)
+						} else {
+							excrptGrpTotals[excrptGrp.name] += 0.0
+						}
 					}
 				}
 			}
@@ -303,11 +311,8 @@ func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
 	isRightMonth := false
 	accBalance := -1.0
 	for _, elm := range excrpts.Values {
-
 		date, description := elm[0].(string), elm[2].(string)
-
 		s := strings.ReplaceAll(elm[1].(string), ",", ".")
-
 		amount, err := strconv.ParseFloat(s, 64)
 
 		if err != nil {
