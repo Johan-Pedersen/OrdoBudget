@@ -19,6 +19,12 @@
         "Matches": ["match6", "match7"],
         "IsCommonGrp": true
       }
+    },
+    "Ignored":{
+      "madKonto":{
+        "Matches":["Til madkonto"],
+        "IsCommonGrp": false
+      }
     }
   }
 }
