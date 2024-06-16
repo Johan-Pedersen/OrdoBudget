@@ -238,3 +238,30 @@ nyt projekt: budgetautomation-414505
   - Kan ikke vœre rigitgt at at det er nødvendig
   - Det burde vœre en form for global variabel der var accessible genenm hele programmet.
     - Men hvordan laver man det og er det overhovedet en god ide?
+
+
+## Sundhedsforsikring bug
+
+- Vi skal vide hvad values er
+- Vi faar et array. Men af hvad?
+- Nogen gange er det et array af arrays og andre gange ikk?
+
+- Vi faar en valueRange m. range, MajorDimension, values
+    - values
+        - Array of Arrays
+        - outer array er alt data man har bestilt i sin Range
+        - inner arrays er hver en major dimention(?)
+    - Major dimention
+        - Major dimentions bestemmer om et inner array skal repraesentere en Row eller coloumn
+
+- Men vi faar bare et tomt array
+    - Saa det siger jo der ikke er nogen data.
+    - Men det er jo ogsaa rigtigt
+    - Der er bare forskel paa om vi faar et tomt array eller om vi ikke faar noget array
+
+    - Intet array siger jo at der ikke er nogen major dimention, hvor tomt bare siger der ikke er nogen data
+
+- Det skyldes en eller anden formatering paa sundhedsforsikrings raekken saa der ikke kommer nogen value fra den. Men vand raekken har ikke det problem
+- Saa man kan bare kopiere vand cellen og saette ind
+- Kan det vare det bare et et whitespace?
+

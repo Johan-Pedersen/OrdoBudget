@@ -1,5 +1,21 @@
 # CallStack
 
+- Sundhedsforsikring bug
+- Med api kald er det maaske bedre at check paa http statuskoder i stedet for error?
+    - Det opnaar vel lidt det samme
+- Faa debuggeren til at fungere
+- Man kan bare laese excrptGrps fra budget
+    - Det er in the end smartere
+- Skal kunne huske hvilke mappings du har lavet foer
+    - Saa behoever man ikke at lave en config fil. Hvis den selv finder ud af det
+- Hvornaar skal man bruge isCommonGrp
+    - Lav forklaring i noterne
+    - Rename,
+    - Forklar hvornaar denne skal bruges
+    - Hvilken situation er det den loeser
+        - Det er til faelles udgifterne, som alle sammen bliver daekket af "Johan til faelles" og "Johan Forsikringer"
+    - IsCommonGrp brude maaske haenge paa parent
+- Man kan lave et check om de faste overfoerelser passer med hvad der staar i sheets
 - Lav en struktureret / template excrptGrpData.json fil
 - får blank i fœlles udgifter når jeg kører for Feb
 - For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
