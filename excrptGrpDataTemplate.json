@@ -1,29 +1,45 @@
 {
   "ExcrptMappings": {
-    "Indkomst efter skat": {
-      "Løn": {
-        "Matches": ["match1", "match2"],
-        "IsCommonGrp": false
+    "Income after tax": {
+      "Income": {
+        "Matches": ["matchs..."],
+        "FixedExpense": false
       },
       "SU": {
-        "Matches": ["match3"],
-        "IsCommonGrp": false
+        "Matches": ["matchs..."],
+        "FixedExpense": false
       }
     },
-    "Fælles udgifter": {
-      "Husleje": {
-        "Matches": ["match4", "match5"],
-        "IsCommonGrp": true
+    "Car": {
+      "Gas": {
+        "Matches": ["matchs..."],
+        "FixedExpense": false
+      }
+    },
+    "Fixed expenses": {
+      "Rent": {
+        "Matches": ["matchs..."],
+        "FixedExpense": true
       },
-      "El inkl. varme": {
-        "Matches": ["match6", "match7"],
-        "IsCommonGrp": true
+      "Electricity": {
+        "Matches": ["matchs..."],
+        "FixedExpense": true
+      }
+    },
+    "Variable expenses":{
+      "Presents": {
+        "Matches": ["matchs..."],
+        "FixedExpense": false
+      },
+      "Golf": {
+        "Matches": ["matchs..."],
+        "FixedExpense": false
       }
     },
     "Ignored":{
-      "madKonto":{
-        "Matches":["Til madkonto"],
-        "IsCommonGrp": false
+      "Food":{
+        "Matches":["matchs..."],
+        "FixedExpense": false
       }
     }
   }
