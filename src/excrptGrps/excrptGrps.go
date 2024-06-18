@@ -24,8 +24,8 @@ var excrptGrps = []ExcrptGrpParent{}
 var resume = []string{}
 
 type DataExcrpt struct {
-	Matches     []string
-	IsCommonGrp bool
+	Matches      []string
+	FixedExpense bool
 }
 
 // Marshal and unmarshal json
@@ -48,7 +48,7 @@ type ExcrptGrp struct {
 
 	// Determines if the initial group total value should be read from the sheet or start at 0
 	// Default is false
-	isCommonGrp bool
+	fixedExpense bool
 }
 
 type ExcrptGrpParent struct {
@@ -215,7 +215,7 @@ func updateCommonGrps(excrptGrps *sheets.ValueRange, month int64) {
 		if len(elm) != 0 {
 			excrptGrp, notFound := GetExcrptGrp(elm[0].(string), -1)
 			if notFound == nil {
-				if excrptGrp.isCommonGrp {
+				if excrptGrp.fixedExpense {
 
 					readRangeExrpt := "budget!" + A1Not + fmt.Sprint(i+1)
 					excrpts, readExcrptsErr := req.GetSheet().Values.Get(req.GetSpreadsheetId(), readRangeExrpt).Do()
@@ -267,11 +267,11 @@ func createGrps(data Data) {
 
 func createExcrptGrp(ind int, name, parent string, data DataExcrpt) ExcrptGrp {
 	return ExcrptGrp{
-		ind:         ind,
-		name:        name,
-		mappings:    data.Matches,
-		parent:      parent,
-		isCommonGrp: data.IsCommonGrp,
+		ind:          ind,
+		name:         name,
+		mappings:     data.Matches,
+		parent:       parent,
+		fixedExpense: data.FixedExpense,
 	}
 }
 

@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"log"
+	"math"
 )
 
 /*
@@ -10,7 +11,7 @@ Converts colum ID such as 'AD' to it's colum Index
 */
 func ColToColInd(col string) int64 {
 	fmt.Println("colToColInd ", col)
-	return int64(col[len(col)-1]-'A') + int64(25*max(0, len(col)-1))
+	return int64(col[len(col)-1]-'A') + int64(25*math.Max(0, float64(len(col)-1)))
 }
 
 /*
