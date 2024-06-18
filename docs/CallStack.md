@@ -1,18 +1,7 @@
 # CallStack
 
-- Dokumentation
-    - Brug af isCommonGrp
-        - mere passende navn
-    - Template fil
-    - Flow diagram?
-- Hvornaar skal man bruge isCommonGrp
-    - Lav forklaring i noterne
-    - Rename,
-    - Forklar hvornaar denne skal bruges
-    - Hvilken situation er det den loeser
-        - Det er til faelles udgifterne, som alle sammen bliver daekket af "Johan til faelles" og "Johan Forsikringer"
-    - IsCommonGrp brude maaske haenge paa parent
-
+- Template google sheets der passer til excrptGrpDataTemplate
+- Lav pacts gallerie
 - Faa debuggeren til at fungere
 - Man kan bare laese excrptGrps fra budget
     - Det er in the end smartere
