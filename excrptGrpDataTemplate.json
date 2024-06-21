@@ -42,8 +42,8 @@
       }
     },
     "Ignored":{
-      "Food":{
-        "Matches":["matchs..."],
+      "Ignored":{
+        "Matches":["matchs to not count..."],
         "FixedExpense": false
       }
     }
