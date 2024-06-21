@@ -8,7 +8,12 @@
       "SU": {
         "Matches": ["matchs..."],
         "FixedExpense": false
+      },
+      "Other income":{
+        "Matches":["matches..."],
+        "FixedExpense": false
       }
+
     },
     "Car": {
       "Gas": {
