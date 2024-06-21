@@ -91,7 +91,7 @@ func updateExcrptTotal(date, excrpt string, amount float64) {
 		validInd := false
 		for !validInd {
 			fmt.Scan(&ind)
-			if ind > -1 && ind < len(excrptGrpTotals) {
+			if ind > -1 && ind <= len(excrptGrpTotals) {
 				validInd = true
 			} else {
 				fmt.Println("Invalid grp number.\nPlease choose again")
