@@ -56,39 +56,89 @@ type ExcrptGrpParent struct {
 	excrptGrps []ExcrptGrp
 }
 
+func isIgnored(parentName string) bool {
+	return parentName == "Ignored"
+}
+
 func updateExcrptTotal(date, excrpt string, amount float64) {
-	excrptGrpName := ""
+	var excrptGrpMatches []ExcrptGrp
+	ignored := false
 
 	// ignore case
 	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
 
-	ind := -1
 	// Find correct excrpt grp
 	for _, parent := range excrptGrps {
-
 		for i := range parent.excrptGrps {
 			for _, match := range parent.excrptGrps[i].mappings {
 				match = strings.ToLower(strings.Trim(match, " "))
 				if strings.Contains(excrpt, match) {
-					excrptGrpName = parent.excrptGrps[i].name
-					break
+					excrptGrpMatches = append(excrptGrpMatches, parent.excrptGrps[i])
+					if isIgnored(parent.name) {
+						ignored = true
+						break
+					}
 				}
 			}
-			if excrptGrpName != "" {
-				break
-			}
-		}
-
-		if excrptGrpName != "" {
-			break
 		}
 	}
 
-	// No matches for group
-	if excrptGrpName == "" {
+	if !ignored {
+
+		excrptGrpName := selMatchGrp(date, excrpt, amount, excrptGrpMatches)
+
+		excrptGrpTotals[excrptGrpName] += float64(amount)
+		UpdateResume(date, excrpt, excrptGrpName, amount)
+	} else {
+		UpdateResume(date, excrpt, excrptGrpMatches[0].name, amount)
+	}
+}
+
+/*
+Select excrptGrp for given match
+*/
+func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []ExcrptGrp) string {
+	grp := ""
+
+	if len(excrptGrpMatches) == 0 {
+
+		// Choose group to match
+		ind := -1
 		fmt.Println("Can't match to group:", date, excrpt, ":", amount)
 		fmt.Println("Select group")
 		validInd := false
+		for !validInd {
+			fmt.Scan(&ind)
+			if ind > -1 && ind <= len(excrptGrpTotals) {
+				validInd = true
+			} else {
+				fmt.Println("Invalid grp number.\nPlease choose again")
+			}
+		}
+		for _, parent := range excrptGrps {
+			for _, excrptGrp := range parent.excrptGrps {
+				if excrptGrp.ind == ind {
+					grp = excrptGrp.name
+					break
+				}
+			}
+
+			if grp != "" {
+				break
+			}
+
+		}
+	} else if len(excrptGrpMatches) > 1 {
+
+		// Choose group to match
+		ind := -1
+		fmt.Println("Matches multiple groups:", date, excrpt, ":", amount)
+		fmt.Println("Select group")
+		validInd := false
+
+		for _, v := range excrptGrpMatches {
+			fmt.Println(v.ind, ":", v.name)
+		}
 		for !validInd {
 			fmt.Scan(&ind)
 			if ind > -1 && ind <= len(excrptGrpTotals) {
@@ -101,26 +151,20 @@ func updateExcrptTotal(date, excrpt string, amount float64) {
 		for _, parent := range excrptGrps {
 			for _, excrptGrp := range parent.excrptGrps {
 				if excrptGrp.ind == ind {
-					excrptGrpName = excrptGrp.name
+					grp = excrptGrp.name
 					break
 				}
 			}
 
-			if excrptGrpName != "" {
+			if grp != "" {
 				break
 			}
 
 		}
+	} else {
+		grp = excrptGrpMatches[0].name
 	}
-
-	if excrptGrpName != "Ignored" {
-		// Update correct excrpt grp
-		excrptGrpTotals[excrptGrpName] += float64(amount)
-	}
-
-	// Update resume
-
-	UpdateResume(date, excrpt, excrptGrpName, amount)
+	return grp
 }
 
 func UpdateResume(date, excrpt, excrptGrpName string, amount float64) {
