@@ -216,7 +216,7 @@ func GetTotal(excrptGrpName string) (float64, error) {
 	}
 }
 
-func InitExcrptGrps(excrptGrps *sheets.ValueRange, month int64) {
+func InitExcrptGrps(excrptGrps *sheets.ValueRange, month, person int64) {
 	// Open the JSON file
 	file, err := os.Open("excrptGrpData.json")
 	if err != nil {
@@ -248,13 +248,13 @@ func InitExcrptGrps(excrptGrps *sheets.ValueRange, month int64) {
 	PrintExcrptGrpTotals()
 	PrintExcrptGrps()
 
-	updateCommonGrps(excrptGrps, month)
+	updateCommonGrps(excrptGrps, month, person)
 }
 
-func updateCommonGrps(excrptGrps *sheets.ValueRange, month int64) {
+func updateCommonGrps(excrptGrps *sheets.ValueRange, month, person int64) {
 	// Get Date, Amount and description
 
-	A1Not := util.MonthToA1Notation(month)
+	A1Not := util.MonthToA1Notation(month, person)
 	for i, elm := range excrptGrps.Values {
 		if len(elm) != 0 {
 			excrptGrp, notFound := GetExcrptGrp(elm[0].(string), -1)

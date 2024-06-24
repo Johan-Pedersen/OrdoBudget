@@ -45,13 +45,18 @@ func main() {
 	// Initial API reqeusts to get Data
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	// Who is doing the budget
+	var person int64
+	fmt.Println("Which person is doing the budget: 1 or 2")
+	fmt.Scan(&person)
+
 	// Which month from 1-12 should be handled
 	var month int64 = -1
 	fmt.Println("Specify month:")
 	fmt.Scan(&month)
 
 	// Initialize and print excerpt groups
-	excrptgrps.InitExcrptGrps(budgetColA, month)
+	excrptgrps.InitExcrptGrps(budgetColA, month, person)
 	excrptgrps.PrintExcrptGrps()
 
 	accBalance := excrptgrps.LoadExcrptTotal(excrpts, month)
@@ -61,7 +66,7 @@ func main() {
 
 	// Find excerpt grps to insert at
 
-	updateReqs := updateBudgetReqs(budgetColA, accBalance, month)
+	updateReqs := updateBudgetReqs(budgetColA, accBalance, month, person)
 	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
 		Requests: updateReqs,
 	}
@@ -77,7 +82,7 @@ func main() {
 	excrptgrps.PrintResume()
 }
 
-func updateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month int64) []*sheets.Request {
+func updateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person int64) []*sheets.Request {
 	var updateReqs []*sheets.Request
 
 	for i, elm := range rows.Values {
@@ -87,12 +92,12 @@ func updateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month int64) 
 
 			if notFoundErr == nil {
 				if total != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month), 1685114351))
+					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month, person), 1685114351))
 				} else {
-					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month), 1685114351))
+					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month, person), 1685114351))
 				}
 			} else if strings.EqualFold(strings.Trim(elm[0].(string), " "), "Faktisk balance") {
-				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month), 1685114351))
+				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month, person), 1685114351))
 			}
 		}
 	}

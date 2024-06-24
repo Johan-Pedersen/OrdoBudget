@@ -18,16 +18,21 @@ func ColToColInd(col string) int64 {
 Month not 0-indexed -> Jan = 1 ... Dec = 12
 Currently it matches only my col
 */
-func MonthToColInd(month int64) int64 {
-	return 1 + ((month - 1) * 2)
+func MonthToColInd(month, person int64) int64 {
+	var adjustment int64 = 0
+
+	if person == 2 {
+		adjustment += 1
+	}
+	return 1 + ((month - 1) * 2) + adjustment
 }
 
 /*
 Month not 0-indexed -> Jan = 1 ... Dec = 12
 Currently it matches only my col
 */
-func MonthToA1Notation(month int64) string {
-	return string(rune(97 + MonthToColInd(month)))
+func MonthToA1Notation(month, person int64) string {
+	return string(rune(97 + MonthToColInd(month, person)))
 }
 
 /*
