@@ -1,29 +1,22 @@
 # CallStack
 
-- Template google sheets der passer til excrptGrpDataTemplate
-- Lav pacts gallerie
-- Faa debuggeren til at fungere
-- Man kan bare laese excrptGrps fra budget
-    - Det er in the end smartere
-- Skal kunne huske hvilke mappings du har lavet foer
-    - Saa behoever man ikke at lave en config fil. Hvis den selv finder ud af det
-- Med api kald er det maaske bedre at check paa http statuskoder i stedet for error?
-    - Det opnaar vel lidt det samme
-- Man kan lave et check om de faste overfoerelser passer med hvad der staar i sheets
-- Lav en struktureret / template excrptGrpData.json fil
-- får blank i fœlles udgifter når jeg kører for Feb
-- For hver mdr skal man lœse de faste udgifter og sœtte baseline grpTotals baseret på det.
-  - Og ved at den lœser dem fra excel arket. Så bliver disse automatisk tilpasset hvad man har til at stå i arket.
-  - Lav noget mere smart i forhold til at initiere excerpt grp totals
-    - det skal Også vœre sådan at man skal kunne œndre i sheetet uden at risikere at fucke noget op
-    - Så man kan ikke lœse fra et specifikt sted fra sheets.
-- Den skal kun lave udtrœkket for den måned man har gang i.
-  - Med mindre man laver det for flere måneder.
-- Et excrpt skal have flere mappings
-  - Og så får man bare sådan en håndtering som ved andre ukendet
-  - Men hvor der kun er de definerede valgmuligheder
+
+- Lav "hash" funktion. Saa matches altid har den samme index
+    - det er maaskte ikke noedvendig, hvis vi laver det i en gui?
+    - Ikke strengt noedvendigt, men ville goere visningen noget nemmere
+
+- Refactor
+    - LoadExcrptTotal er lidt et maerkeligt navn, for det der goer hovedparten af logikken
+    - Anden datastruktur til lave opslag i ExcrptGrp listen
+    - Rename ExcrptGrp -> ExrptGrp
 - Update totals baseret på excel arket i stedet for sheets
   - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
+- Validation
+    - Skal kunne bruges til "debug" budgettet
+    - Maaske mest interessent for de faste overfoerlser til faelles kontoen
+- Lav en quick way at opdatere matches paa, saa naar man ser en der burde have et match, saa kan man hurtigt opdatere den og man behoever ikke at huske at goere det bagefter
+- Skal kunne huske hvilke mappings du har lavet foer
+    - Saa behoever man ikke at lave en config fil. Hvis den selv finder ud af det
 - God håndtering af overførsel mellem konti
   - Hvordan skal man vise at man overfører penge til en opsparings konto og så henter man så pengene ind igen når de skal bruges.
 - Dette budget viser kun for budget konto'en, måske skal man også kunne se sine andre konti

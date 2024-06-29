@@ -265,3 +265,64 @@ nyt projekt: budgetautomation-414505
 - Saa man kan bare kopiere vand cellen og saette ind
 - Kan det vare det bare et et whitespace?
 
+## Madkonto udgiften bliver sat ind i overskrifts linjen paa madKonto
+
+- Hvordan fungere ignored
+    - Har name i ignored gruppen noget at sige
+
+- Madkonto'en staar baade i config filen til bare at have ingen matches, men ogsaa som ignored
+    - Det samme goer faelles udgifter og forsikringer(?)
+
+## Man kan lave et check om de faste overfoerelser passer med hvad der staar i sheets
+
+- Med denne kan man se forskellen paa indtastet og aktuel overfoert
+
+- Skal det vaere et faelles pgm, eller skal det bare vaere til os?
+    - Det skal jo bare vare til os. Man kan altid lave eksempler.
+
+- Hvor relevant er det hvad vi overfoere og hvad der bliver trukket paa den anden konto
+    - Det handler jo bare om der er + el. - paa faelles konto'en. Det er jo somsaadan ligegyldigt for vores egen bankkonto.
+    - Saa kan den saa vaere sket en fejl 
+
+## Et excrpt skal have flere mappings
+
+- Og så får man bare sådan en håndtering som ved andre ukendet
+- Men hvor der kun er de definerede valgmuligheder
+
+- Hver gang skal man saa loebe igennem alle matches, det giver saa en liste som man saa kan fremstille i en select correct excrpt Grp.
+    - Ligger op til at komme dette i en funktion for sig
+    - Funktion til vaelge match
+
+## Lav "hash" funktion. Saa matches altid har den samme index
+
+- Hvor bruger vi unordered lists 
+    - excrptGrpTotals
+
+- Hvis vi havde hashfunktioner kunne man sikkert undgaa mange af disse dobbelt loops
+    - Det bliver specilt svaert jo flere punkter man har
+- Saa skal man nok ikke goere den 2 dyb, saa er det nemmere hvis man ikke har noget parent.
+    - Man kan vel hash parent + excrptGrp og saa faar man noget unikt ud. 
+    - Hvis man bruger hashing, saa er der jo altid risikoen for collision.
+
+- Hvad vil vi gerne opnaa
+    - Man kan paa konstant tid faa en excrptGrp baseret paa et givent udtraek
+        - 
+    - ExcrptGrps listen skal altid staa i den samme sorterede raekke foelge
+        - Hvis dette gaar i mod foerste punkt, kan vi bare lave en sorterings algoritme til vissing af.
+        - de skal godt nok have det samme nummer hver gang.
+            - De behoever ikke et nummer hvis vi laver det som en gui.
+            - Men for nu er det maaske stadig en god ide
+
+### Konstant tids opslag
+
+- Find en excrpt grp for et givent udtraek
+    - Kan man nok ikke goere paa konstant tid. Da udtraekkene er lange og vi kun skal match paa et enkelt ord i den liste.
+
+- Det er et dobbelt for-loop hver gang man skal finde en excrpt Grp
+    - Fx. naar man skal lede efter en med et givent "index". 
+
+- Hvilke situationer skal vi bruge det i 
+    - Find excrptGrp der matcher et givent udtraek
+    - Find excrptGrp der matcher et givent "index"
+    - GetExcrptGrp baseret paa name, eller index
+
