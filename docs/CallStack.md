@@ -1,0 +1,45 @@
+# CallStack
+
+- Refactor
+    - Omdan projektet til en MVC struktur
+    - Liste af excrptGrps skal vaere et 1D array 
+    - Brug multithreading til at match udtraek med excrptGrp
+    - LoadExcrptTotal er lidt et maerkeligt navn, for det der goer hovedparten af logikken
+    - Update totals baseret på excel arket i stedet for sheets
+        - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
+- byg gui app
+    - https://docs.fyne.io/started/
+- Validation
+    - Skal kunne bruges til "debug" budgettet
+    - Maaske mest interessent for de faste overfoerlser til faelles kontoen
+- Sloring af sheet-id?
+- Lav en quick way at opdatere matches paa, saa naar man ser en der burde have et match, saa kan man hurtigt opdatere den og man behoever ikke at huske at goere det bagefter
+- Skal kunne huske hvilke mappings du har lavet foer
+    - Saa behoever man ikke at lave en config fil. Hvis den selv finder ud af det
+- God håndtering af overførsel mellem konti
+  - Hvordan skal man vise at man overfører penge til en opsparings konto og så henter man så pengene ind igen når de skal bruges.
+- Dette budget viser kun for budget konto'en, måske skal man også kunne se sine andre konti
+- Lœs udtrœk fra PDF og ikke kun csv filer
+- håndtering af lån og renter
+
+- Definer protokol for overførsler
+  - Hvordan kan man håndtere den her situation med a-kassen. Hvor man tilføjer flere penge end hvad man havde planlagt
+    - Denne situation skal ikke overskrive a-kasse beløbet men ligge til det 
+    - Overfører samlet set x kr for forsikringer. y af de kr går til a-kasse.
+    - Jeg overfører y kr til a-kasse. de bliver kun trukket hver 3 mdr. så skal det gœlde at 3y = hvad jeg betaler til a-kassen.
+- Kan man lave log.Fatal mere specifik 
+- Håndtering forskellig formattering af udtrœkkene
+  - 1.000.000 vs 1000000
+  - 1000,00 vs 1000.00
+  - og dets permutationer
+- Visning af excerptgrps skal ske i sortet rœkkefølge
+  - Så det er den samme hver gang
+  - Rimlig involved. Ved ikke helt hvordan vi skal gøre det på en god måde når vi gerne vil beholde parents.
+- opsœtning af excrptGrpData
+  - Skal også vœre muligt at tilføje/fjerne opdelinger
+  - Skal indsert i lowercase
+- Kunne man automatisere det hele hvis man fik en bank-fuldmagt af brugeren
+- Skal man gøre noget specifikt for at håndtere  kvartalvis/iregulœre overførsler til anden konto
+- Kunne laese fra pdf filer
+    - Kan blive et problem med formateringen.
+

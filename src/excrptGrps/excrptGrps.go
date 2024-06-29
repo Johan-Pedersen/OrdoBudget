@@ -1,6 +1,8 @@
 package excrptgrps
 
 import (
+	"budgetAutomation/src/requests"
+	"budgetAutomation/src/util"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,6 +11,10 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	req "budgetAutomation/src/requests"
+
+	"google.golang.org/api/sheets/v4"
 )
 
 var excrptGrpTotals = map[string]float64{}
@@ -17,9 +23,14 @@ var excrptGrps = []ExcrptGrpParent{}
 
 var resume = []string{}
 
+type DataExcrpt struct {
+	Matches      []string
+	FixedExpense bool
+}
+
 // Marshal and unmarshal json
 type Data struct {
-	ExcrptMappings map[string]map[string][]string
+	ExcrptMappings map[string]map[string]DataExcrpt
 }
 
 type ExcrptGrp struct {
@@ -34,6 +45,10 @@ type ExcrptGrp struct {
 
 	// Defines the type of this excerpt
 	parent string
+
+	// Determines if the initial group total value should be read from the sheet or start at 0
+	// Default is false
+	fixedExpense bool
 }
 
 type ExcrptGrpParent struct {
@@ -41,40 +56,92 @@ type ExcrptGrpParent struct {
 	excrptGrps []ExcrptGrp
 }
 
-func UpdateExcrptTotal(date, excrpt string, amount float64) {
-	excrptGrpName := ""
+func isIgnored(parentName string) bool {
+	return parentName == "Ignored"
+}
+
+func updateExcrptTotal(date, excrpt string, amount float64) {
+	var excrptGrpMatches []ExcrptGrp
+	ignored := false
 
 	// ignore case
 	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
 
-	ind := -1
 	// Find correct excrpt grp
 	for _, parent := range excrptGrps {
 		for i := range parent.excrptGrps {
 			for _, match := range parent.excrptGrps[i].mappings {
-				if strings.Contains(excrpt, strings.ToLower(match)) {
-					excrptGrpName = parent.excrptGrps[i].name
-					break
+				match = strings.ToLower(strings.Trim(match, " "))
+				if strings.Contains(excrpt, match) {
+					excrptGrpMatches = append(excrptGrpMatches, parent.excrptGrps[i])
+					if isIgnored(parent.name) {
+						ignored = true
+						break
+					}
 				}
 			}
-			if excrptGrpName != "" {
-				break
-			}
-		}
-
-		if excrptGrpName != "" {
-			break
 		}
 	}
 
-	// No matches for group
-	if excrptGrpName == "" {
+	if !ignored {
+
+		excrptGrpName := selMatchGrp(date, excrpt, amount, excrptGrpMatches)
+
+		excrptGrpTotals[excrptGrpName] += float64(amount)
+		UpdateResume(date, excrpt, excrptGrpName, amount)
+	} else {
+		UpdateResume(date, excrpt, excrptGrpMatches[0].name, amount)
+	}
+}
+
+/*
+Select excrptGrp for given match
+*/
+func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []ExcrptGrp) string {
+	grp := ""
+
+	if len(excrptGrpMatches) == 0 {
+
+		// Choose group to match
+		ind := -1
 		fmt.Println("Can't match to group:", date, excrpt, ":", amount)
 		fmt.Println("Select group")
 		validInd := false
 		for !validInd {
 			fmt.Scan(&ind)
-			if ind > -1 && ind < len(excrptGrpTotals) {
+			if ind > -1 && ind <= len(excrptGrpTotals) {
+				validInd = true
+			} else {
+				fmt.Println("Invalid grp number.\nPlease choose again")
+			}
+		}
+		for _, parent := range excrptGrps {
+			for _, excrptGrp := range parent.excrptGrps {
+				if excrptGrp.ind == ind {
+					grp = excrptGrp.name
+					break
+				}
+			}
+
+			if grp != "" {
+				break
+			}
+
+		}
+	} else if len(excrptGrpMatches) > 1 {
+
+		// Choose group to match
+		ind := -1
+		fmt.Println("Matches multiple groups:", date, excrpt, ":", amount)
+		fmt.Println("Select group")
+		validInd := false
+
+		for _, v := range excrptGrpMatches {
+			fmt.Println(v.ind, ":", v.name)
+		}
+		for !validInd {
+			fmt.Scan(&ind)
+			if ind > -1 && ind <= len(excrptGrpTotals) {
 				validInd = true
 			} else {
 				fmt.Println("Invalid grp number.\nPlease choose again")
@@ -84,26 +151,20 @@ func UpdateExcrptTotal(date, excrpt string, amount float64) {
 		for _, parent := range excrptGrps {
 			for _, excrptGrp := range parent.excrptGrps {
 				if excrptGrp.ind == ind {
-					excrptGrpName = excrptGrp.name
+					grp = excrptGrp.name
 					break
 				}
 			}
 
-			if excrptGrpName != "" {
+			if grp != "" {
 				break
 			}
 
 		}
+	} else {
+		grp = excrptGrpMatches[0].name
 	}
-
-	if excrptGrpName != "Ignored" {
-		// Update correct excrpt grp
-		excrptGrpTotals[excrptGrpName] += float64(amount)
-	}
-
-	// Update resume
-
-	UpdateResume(date, excrpt, excrptGrpName, amount)
+	return grp
 }
 
 func UpdateResume(date, excrpt, excrptGrpName string, amount float64) {
@@ -155,7 +216,7 @@ func GetTotal(excrptGrpName string) (float64, error) {
 	}
 }
 
-func InitExcrptGrps() {
+func InitExcrptGrps(excrptGrps *sheets.ValueRange, month, person int64) {
 	// Open the JSON file
 	file, err := os.Open("excrptGrpData.json")
 	if err != nil {
@@ -181,12 +242,63 @@ func InitExcrptGrps() {
 		return
 	}
 
+	// initialize excerpt grps with -1 as total
+	createGrps(data)
+
+	PrintExcrptGrpTotals()
+	PrintExcrptGrps()
+
+	updateCommonGrps(excrptGrps, month, person)
+}
+
+func updateCommonGrps(excrptGrps *sheets.ValueRange, month, person int64) {
+	// Get Date, Amount and description
+
+	A1Not := util.MonthToA1Notation(month, person)
+	for i, elm := range excrptGrps.Values {
+		if len(elm) != 0 {
+			excrptGrp, notFound := GetExcrptGrp(elm[0].(string), -1)
+			if notFound == nil {
+				if excrptGrp.fixedExpense {
+
+					readRangeExrpt := "budget!" + A1Not + fmt.Sprint(i+1)
+					excrpts, readExcrptsErr := req.GetSheet().Values.Get(req.GetSpreadsheetId(), readRangeExrpt).Do()
+
+					if readExcrptsErr != nil {
+						log.Fatalf("Unable to perform get: %v", readExcrptsErr)
+					}
+
+					if len(excrpts.Values) == 0 {
+						excrptGrpTotals[excrptGrp.name] += 0.0
+					} else {
+
+						val := strings.Trim(excrpts.Values[0][0].(string), " ")
+						if len(val) > 0 {
+							amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(val[:len(val)-4], ".", ""), ",", "."), 64)
+							if err != nil {
+								log.Fatal(err)
+							}
+							// updateExcrptTotal("9999-99-99", excrptGrp.name, amount)
+							excrptGrpTotals[excrptGrp.name] += -1 * float64(amount)
+						} else {
+							excrptGrpTotals[excrptGrp.name] += 0.0
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func createGrps(data Data) {
 	i := 0
 	// Init excrptGrp Totals
 	for parentName, excrpts := range data.ExcrptMappings {
 
+		// parentName = strings.Trim(parentName, " ")
 		grps := []ExcrptGrp{}
 		for excrptGrp, mappings := range excrpts {
+			// excrptGrp = strings.Trim(excrptGrp, " ")
 			excrptGrpTotals[excrptGrp] = -1.0
 			grps = append(grps,
 				createExcrptGrp(i, excrptGrp, parentName, mappings))
@@ -197,12 +309,13 @@ func InitExcrptGrps() {
 	}
 }
 
-func createExcrptGrp(ind int, name, parent string, mappings []string) ExcrptGrp {
+func createExcrptGrp(ind int, name, parent string, data DataExcrpt) ExcrptGrp {
 	return ExcrptGrp{
-		ind:      ind,
-		name:     name,
-		mappings: mappings,
-		parent:   parent,
+		ind:          ind,
+		name:         name,
+		mappings:     data.Matches,
+		parent:       parent,
+		fixedExpense: data.FixedExpense,
 	}
 }
 
@@ -210,7 +323,8 @@ func createExcrptGrp(ind int, name, parent string, mappings []string) ExcrptGrp 
 Get excerpt group based on name OR index(ind).
 Both can be specified, but it's not necessary.
 If you don't want to use ind, make ind < 0.
-if you don't want to use name, make name = "".
+if you don't want to use name, make name = "". \n
+returnes err if not found
 */
 func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 	for _, parent := range excrptGrps {
@@ -221,4 +335,62 @@ func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 		}
 	}
 	return ExcrptGrp{}, errors.New("Excrpt grp: " + name + ", not found")
+}
+
+func UpdateExcrptSheet(path string) []*sheets.Request {
+	dates, amounts, descriptions, balances := util.ReadExcrptCsv(path)
+
+	return []*sheets.Request{
+		requests.MultiUpdateReqDate(dates, 1, 0, 1472288449),
+		requests.MultiUpdateReqNum(amounts, 1, 1, 1472288449),
+		requests.MultiUpdateReq(descriptions, 1, 2, 1472288449),
+		requests.MultiUpdateReqNum(balances, 1, 3, 1472288449),
+	}
+}
+
+/*
+Reads excrpts to update excrptGrpTotals and returns most recent account balance
+*/
+func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
+	isRightMonth := false
+	accBalance := -1.0
+	for _, elm := range excrpts.Values {
+		date, description := elm[0].(string), elm[2].(string)
+		s := strings.ReplaceAll(elm[1].(string), ",", ".")
+		amount, err := strconv.ParseFloat(s, 64)
+
+		if err != nil {
+			log.Println("Could not read amount for", date, ":", description, ":", elm[1].(string))
+		} else {
+			// Get excerpt month
+			if date != "Reserveret" {
+
+				exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
+				if err != nil {
+					log.Fatal("Could not read excerpt date", err)
+				}
+
+				if month == exrptMonth {
+					isRightMonth = true
+					if accBalance == -1.0 {
+						s := strings.ReplaceAll(elm[3].(string), ",", ".")
+
+						accBalance, err = strconv.ParseFloat(s, 64)
+						if err != nil {
+							log.Fatalln("Could not read account balance")
+						}
+					}
+
+				} else if exrptMonth < month {
+					break
+				}
+				if isRightMonth {
+					updateExcrptTotal(date, description, amount)
+				} // else {
+				// excrptgrps.UpdateResume(date, description, "Not handled", amount)
+				//	}
+			}
+		}
+	}
+	return accBalance
 }

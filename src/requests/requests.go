@@ -1,8 +1,6 @@
 package requests
 
 import (
-	"fmt"
-
 	"google.golang.org/api/sheets/v4"
 )
 
@@ -33,22 +31,95 @@ func CutPasteSingleReq(fromRow, fromCol, toRow, toCol int64) *sheets.Request {
 /*
 Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
 */
-func MultiUpdateReq(grpSums []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+func MultiUpdateReq(data []string, rowInd, colInd, sheetId int64) *sheets.Request {
 	var rowData []*sheets.RowData
 
-	for i := range grpSums {
-		fmt.Println(grpSums[i])
+	for i := range data {
 		rowData = append(rowData, &sheets.RowData{
 			Values: []*sheets.CellData{
 				{
 					UserEnteredValue: &sheets.ExtendedValue{
-						NumberValue: &grpSums[i],
+						StringValue: &data[i],
 					},
 				},
 			},
 		})
 	}
 
+	updateReq := &sheets.Request{
+		UpdateCells: &sheets.UpdateCellsRequest{
+			Fields: "*",
+			Start: &sheets.GridCoordinate{
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
+				SheetId:     sheetId,
+			},
+			Rows: rowData,
+		},
+	}
+	return updateReq
+}
+
+/*
+Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
+*/
+func MultiUpdateReqNum(data []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+	var rowData []*sheets.RowData
+
+	for i := range data {
+		rowData = append(rowData, &sheets.RowData{
+			Values: []*sheets.CellData{
+				{
+					UserEnteredValue: &sheets.ExtendedValue{
+						NumberValue: &data[i],
+					},
+					UserEnteredFormat: &sheets.CellFormat{
+						NumberFormat: &sheets.NumberFormat{
+							Type: "NUMBER",
+						},
+					},
+				},
+			},
+		})
+	}
+	updateReq := &sheets.Request{
+		UpdateCells: &sheets.UpdateCellsRequest{
+			Fields: "*",
+			Start: &sheets.GridCoordinate{
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
+				SheetId:     sheetId,
+			},
+			Rows: rowData,
+		},
+	}
+	return updateReq
+}
+
+/*
+Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
+*/
+func MultiUpdateReqDate(data []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+	var rowData []*sheets.RowData
+
+	for i := range data {
+		rowData = append(rowData, &sheets.RowData{
+			Values: []*sheets.CellData{
+				{
+					UserEnteredValue: &sheets.ExtendedValue{
+						NumberValue: &data[i],
+					},
+
+					UserEnteredFormat: &sheets.CellFormat{
+						NumberFormat: &sheets.NumberFormat{
+							Type:    "DATE",
+							Pattern: "yyyy/mm/dd",
+						},
+					},
+				},
+			},
+		})
+	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "*",
@@ -118,18 +189,4 @@ func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Requ
 		},
 	}
 	return updateReq
-}
-
-/*
-For each excerpt, get date, amount, describtion
-*/
-func GetExcerpts() {
-	// readRange := "Udtrœk!B2:C12"
-	// // Get from "udtrœks sheet"
-	// valRange, err := srv.Spreadsheets.Values.Get(1472288449, readRange).Do()
-	// if err != nil {
-	// 	log.Fatalf("Unable to perform get: %v", err)
-	// }
-	//
-	// return valRange
 }

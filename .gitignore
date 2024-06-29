@@ -27,6 +27,11 @@ credentials.json
 # json (for credentials)
 
 *.json
+!excrptGrpDataTemplate.json
 
 # vim session files
 *.vim
+
+# excerpt data
+*.csv
+*.csv#
