@@ -1,8 +1,8 @@
 package excrptgrps
 
 import (
-	"budgetAutomation/src/requests"
-	"budgetAutomation/src/util"
+	"budgetAutomation/model/requests"
+	"budgetAutomation/model/util"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	req "budgetAutomation/src/requests"
+	req "budgetAutomation/model/requests"
 
 	"google.golang.org/api/sheets/v4"
 )

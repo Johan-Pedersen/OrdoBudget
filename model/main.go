@@ -6,10 +6,10 @@ import (
 	"log"
 	"strings"
 
-	excrptgrps "budgetAutomation/src/excrptGrps"
-	util "budgetAutomation/src/util"
+	excrptgrps "budgetAutomation/model/excrptGrps"
+	util "budgetAutomation/model/util"
 
-	req "budgetAutomation/src/requests"
+	req "budgetAutomation/model/requests"
 
 	"google.golang.org/api/sheets/v4"
 )
