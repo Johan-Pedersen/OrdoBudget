@@ -1,19 +1,18 @@
 # CallStack
 
-
-- Lav "hash" funktion. Saa matches altid har den samme index
-    - det er maaskte ikke noedvendig, hvis vi laver det i en gui?
-    - Ikke strengt noedvendigt, men ville goere visningen noget nemmere
-
 - Refactor
+    - Omdan projektet til en MVC struktur
+    - Liste af excrptGrps skal vaere et 1D array 
+    - Brug multithreading til at match udtraek med excrptGrp
     - LoadExcrptTotal er lidt et maerkeligt navn, for det der goer hovedparten af logikken
-    - Anden datastruktur til lave opslag i ExcrptGrp listen
-    - Rename ExcrptGrp -> ExrptGrp
-- Update totals baseret på excel arket i stedet for sheets
-  - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
+    - Update totals baseret på excel arket i stedet for sheets
+        - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
+- byg gui app
+    - https://docs.fyne.io/started/
 - Validation
     - Skal kunne bruges til "debug" budgettet
     - Maaske mest interessent for de faste overfoerlser til faelles kontoen
+- Sloring af sheet-id?
 - Lav en quick way at opdatere matches paa, saa naar man ser en der burde have et match, saa kan man hurtigt opdatere den og man behoever ikke at huske at goere det bagefter
 - Skal kunne huske hvilke mappings du har lavet foer
     - Saa behoever man ikke at lave en config fil. Hvis den selv finder ud af det

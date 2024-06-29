@@ -303,10 +303,11 @@ nyt projekt: budgetautomation-414505
 - Saa skal man nok ikke goere den 2 dyb, saa er det nemmere hvis man ikke har noget parent.
     - Man kan vel hash parent + excrptGrp og saa faar man noget unikt ud. 
     - Hvis man bruger hashing, saa er der jo altid risikoen for collision.
+        - ss for collision vil jo altid vaere 1/n
 
 - Hvad vil vi gerne opnaa
     - Man kan paa konstant tid faa en excrptGrp baseret paa et givent udtraek
-        - 
+        - Nej, udtraekkene er jo det fulde udtraek, saa det kan man ikke bruge som key.
     - ExcrptGrps listen skal altid staa i den samme sorterede raekke foelge
         - Hvis dette gaar i mod foerste punkt, kan vi bare lave en sorterings algoritme til vissing af.
         - de skal godt nok have det samme nummer hver gang.
@@ -317,12 +318,42 @@ nyt projekt: budgetautomation-414505
 
 - Find en excrpt grp for et givent udtraek
     - Kan man nok ikke goere paa konstant tid. Da udtraekkene er lange og vi kun skal match paa et enkelt ord i den liste.
+    - Man kunne lave split paa alle ordene, og saa kan man bruge multi threads til at slaa alle ordene op paa samme tid.
+    - Og da det bare er en get, behoever de ikke faa en lock paa excrpts listen
+    - multithread losningen er dog ikke god hvis man skal have mellemrum i sine matches
 
 - Det er et dobbelt for-loop hver gang man skal finde en excrpt Grp
     - Fx. naar man skal lede efter en med et givent "index". 
+    - Hvis alle grupperne skal have et unikt index, saa givere det bedst mening bare at have det i et 1D Array
 
 - Hvilke situationer skal vi bruge det i 
     - Find excrptGrp der matcher et givent udtraek
     - Find excrptGrp der matcher et givent "index"
+        - hvis man bruger en 1D liste, kommer denne del automatisk
     - GetExcrptGrp baseret paa name, eller index
 
+
+### Find excrptGrp der matcher et givent udtraek
+
+- input 
+    - streng x, med n ord separeret af ' '
+- output
+    - liste af ord y1,y2,... yj, der indgaar i x.
+
+- subproblem, indgaar yi i x 
+    - contains(yi, x).
+    - Lob alle matches igennem.
+        - Det gor jeg nu, og er meget langsomt.
+
+- Men hvis man vil have alle matches, saa skal man jo ogsaa lobe alle matches igennem.
+- Er der nogen maade at skaere matches fra?
+
+- Multithreading er den bedste losning
+
+
+
+## Refactor
+
+### Omdan projektet til en MVC struktur
+### Liste af excrptGrps skal vaere et 1D array 
+### Update totals baseret på excel arket i stedet for sheets
