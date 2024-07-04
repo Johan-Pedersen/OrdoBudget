@@ -9,6 +9,7 @@
         - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
 - byg gui app
     - https://docs.fyne.io/started/
+- Tilknyt database?
 - Validation
     - Skal kunne bruges til "debug" budgettet
     - Maaske mest interessent for de faste overfoerlser til faelles kontoen
