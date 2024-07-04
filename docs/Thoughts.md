@@ -357,3 +357,17 @@ nyt projekt: budgetautomation-414505
 ### Omdan projektet til en MVC struktur
 ### Liste af excrptGrps skal vaere et 1D array 
 ### Update totals baseret på excel arket i stedet for sheets
+
+## GUI
+
+### links
+
+- https://docs.fyne.io/explore/widgets
+- https://pkg.go.dev/fyne.io/fyne/v2
+
+
+
+### Tanker
+
+- Aendre submit btn, til at sige kor
+

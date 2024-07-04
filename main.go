@@ -1,22 +1,31 @@
 package main
 
 import (
+	"log"
+
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
 func main() {
-	a := app.New()
-	w := a.NewWindow("Hello")
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Container")
+	myWindow.Resize(fyne.NewSize(300, 150))
+	moEntry := widget.NewEntry()
+	excrptEntry := widget.NewEntry()
 
-	hello := widget.NewLabel("Hello Fyne!")
-	w.SetContent(container.NewVBox(
-		hello,
-		widget.NewButton("Hi!", func() {
-			hello.SetText("Welcome :)")
-		}),
-	))
+	form := &widget.Form{
+		Items: []*widget.FormItem{ // we can specify items in the constructor
+			{Text: "Måned: ", Widget: moEntry},
+			{Text: "Bank udtræk: ", Widget: excrptEntry},
+		},
+		OnSubmit: func() { // optional, handle form submission
+			log.Println("Form submitted:", moEntry.Text)
+			myWindow.Close()
+		},
+	}
 
-	w.ShowAndRun()
+	myWindow.SetContent(form)
+	myWindow.ShowAndRun()
 }

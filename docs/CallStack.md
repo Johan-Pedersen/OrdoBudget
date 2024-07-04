@@ -1,5 +1,6 @@
 # CallStack
 
+- GUI
 - Refactor
     - Omdan projektet til en MVC struktur
     - Liste af excrptGrps skal vaere et 1D array 
