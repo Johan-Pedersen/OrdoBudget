@@ -35,25 +35,25 @@ type Data struct {
 
 type ExcrptGrp struct {
 	// Used to make lookup in excerptMappings array
-	ind int
+	Ind int
 
 	// Name of the ExcrptGrp
-	name string
+	Name string
 
 	// Matches for this excrptGrp
-	mappings []string
+	Mappings []string
 
 	// Defines the type of this excerpt
-	parent string
+	Parent string
 
 	// Determines if the initial group total value should be read from the sheet or start at 0
 	// Default is false
-	fixedExpense bool
+	FixedExpense bool
 }
 
 type ExcrptGrpParent struct {
-	name       string
-	excrptGrps []ExcrptGrp
+	Name       string
+	ExcrptGrps []ExcrptGrp
 }
 
 func isIgnored(parentName string) bool {
@@ -69,12 +69,12 @@ func updateExcrptTotal(date, excrpt string, amount float64) {
 
 	// Find correct excrpt grp
 	for _, parent := range excrptGrps {
-		for i := range parent.excrptGrps {
-			for _, match := range parent.excrptGrps[i].mappings {
+		for i := range parent.ExcrptGrps {
+			for _, match := range parent.ExcrptGrps[i].Mappings {
 				match = strings.ToLower(strings.Trim(match, " "))
 				if strings.Contains(excrpt, match) {
-					excrptGrpMatches = append(excrptGrpMatches, parent.excrptGrps[i])
-					if isIgnored(parent.name) {
+					excrptGrpMatches = append(excrptGrpMatches, parent.ExcrptGrps[i])
+					if isIgnored(parent.Name) {
 						ignored = true
 						break
 					}
@@ -90,7 +90,7 @@ func updateExcrptTotal(date, excrpt string, amount float64) {
 		excrptGrpTotals[excrptGrpName] += float64(amount)
 		UpdateResume(date, excrpt, excrptGrpName, amount)
 	} else {
-		UpdateResume(date, excrpt, excrptGrpMatches[0].name, amount)
+		UpdateResume(date, excrpt, excrptGrpMatches[0].Name, amount)
 	}
 }
 
@@ -116,9 +116,9 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []ExcrptG
 			}
 		}
 		for _, parent := range excrptGrps {
-			for _, excrptGrp := range parent.excrptGrps {
-				if excrptGrp.ind == ind {
-					grp = excrptGrp.name
+			for _, excrptGrp := range parent.ExcrptGrps {
+				if excrptGrp.Ind == ind {
+					grp = excrptGrp.Name
 					break
 				}
 			}
@@ -137,7 +137,7 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []ExcrptG
 		validInd := false
 
 		for _, v := range excrptGrpMatches {
-			fmt.Println(v.ind, ":", v.name)
+			fmt.Println(v.Ind, ":", v.Name)
 		}
 		for !validInd {
 			fmt.Scan(&ind)
@@ -149,9 +149,9 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []ExcrptG
 		}
 
 		for _, parent := range excrptGrps {
-			for _, excrptGrp := range parent.excrptGrps {
-				if excrptGrp.ind == ind {
-					grp = excrptGrp.name
+			for _, excrptGrp := range parent.ExcrptGrps {
+				if excrptGrp.Ind == ind {
+					grp = excrptGrp.Name
 					break
 				}
 			}
@@ -162,7 +162,7 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []ExcrptG
 
 		}
 	} else {
-		grp = excrptGrpMatches[0].name
+		grp = excrptGrpMatches[0].Name
 	}
 	return grp
 }
@@ -183,9 +183,9 @@ func PrintExcrptGrps() {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
 	for _, parent := range excrptGrps {
-		fmt.Println("\n************", parent.name, "************")
-		for _, excrptGrp := range parent.excrptGrps {
-			fmt.Println(excrptGrp.ind, ":", excrptGrp.name)
+		fmt.Println("\n************", parent.Name, "************")
+		for _, excrptGrp := range parent.ExcrptGrps {
+			fmt.Println(excrptGrp.Ind, ":", excrptGrp.Name)
 		}
 	}
 	fmt.Println("###################################################")
@@ -208,8 +208,8 @@ func GetTotal(excrptGrpName string) (float64, error) {
 	}
 
 	// Total should always be a positive number
-	total := excrptGrpTotals[excrptGrp.name] + 1
-	if excrptGrp.parent == "Indkomst efter skat" {
+	total := excrptGrpTotals[excrptGrp.Name] + 1
+	if excrptGrp.Parent == "Indkomst efter skat" {
 		return total, nil
 	} else {
 		return -1 * total, nil
@@ -259,7 +259,7 @@ func updateCommonGrps(excrptGrps *sheets.ValueRange, month, person int64) {
 		if len(elm) != 0 {
 			excrptGrp, notFound := GetExcrptGrp(elm[0].(string), -1)
 			if notFound == nil {
-				if excrptGrp.fixedExpense {
+				if excrptGrp.FixedExpense {
 
 					readRangeExrpt := "budget!" + A1Not + fmt.Sprint(i+1)
 					excrpts, readExcrptsErr := req.GetSheet().Values.Get(req.GetSpreadsheetId(), readRangeExrpt).Do()
@@ -269,7 +269,7 @@ func updateCommonGrps(excrptGrps *sheets.ValueRange, month, person int64) {
 					}
 
 					if len(excrpts.Values) == 0 {
-						excrptGrpTotals[excrptGrp.name] += 0.0
+						excrptGrpTotals[excrptGrp.Name] += 0.0
 					} else {
 
 						val := strings.Trim(excrpts.Values[0][0].(string), " ")
@@ -279,9 +279,9 @@ func updateCommonGrps(excrptGrps *sheets.ValueRange, month, person int64) {
 								log.Fatal(err)
 							}
 							// updateExcrptTotal("9999-99-99", excrptGrp.name, amount)
-							excrptGrpTotals[excrptGrp.name] += -1 * float64(amount)
+							excrptGrpTotals[excrptGrp.Name] += -1 * float64(amount)
 						} else {
-							excrptGrpTotals[excrptGrp.name] += 0.0
+							excrptGrpTotals[excrptGrp.Name] += 0.0
 						}
 					}
 				}
@@ -311,12 +311,16 @@ func createGrps(data Data) {
 
 func createExcrptGrp(ind int, name, parent string, data DataExcrpt) ExcrptGrp {
 	return ExcrptGrp{
-		ind:          ind,
-		name:         name,
-		mappings:     data.Matches,
-		parent:       parent,
-		fixedExpense: data.FixedExpense,
+		Ind:          ind,
+		Name:         name,
+		Mappings:     data.Matches,
+		Parent:       parent,
+		FixedExpense: data.FixedExpense,
 	}
+}
+
+func GetParents() []ExcrptGrpParent {
+	return excrptGrps
 }
 
 /*
@@ -328,13 +332,22 @@ returnes err if not found
 */
 func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 	for _, parent := range excrptGrps {
-		for _, excrptGrp := range parent.excrptGrps {
-			if strings.EqualFold(strings.Trim(excrptGrp.name, " "), strings.Trim(name, " ")) || excrptGrp.ind == ind {
+		for _, excrptGrp := range parent.ExcrptGrps {
+			if strings.EqualFold(strings.Trim(excrptGrp.Name, " "), strings.Trim(name, " ")) || excrptGrp.Ind == ind {
 				return excrptGrp, nil
 			}
 		}
 	}
 	return ExcrptGrp{}, errors.New("Excrpt grp: " + name + ", not found")
+}
+
+func GetChildren(parentName string) []ExcrptGrp {
+	for _, egp := range excrptGrps {
+		if egp.Name == parentName {
+			return egp.ExcrptGrps
+		}
+	}
+	return nil
 }
 
 func UpdateExcrptSheet(path string) []*sheets.Request {

@@ -4,6 +4,7 @@ import (
 	excrptgrps "budgetAutomation/model/excrptGrps"
 	"budgetAutomation/model/util"
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -22,6 +23,7 @@ func Submit(month int64, excrptPath string) {
 
 	excrptsFromSheets := getExcrptsFromSheet()
 
+	// Denne del skal jo kores i et andet window
 	accBalance := excrptgrps.LoadExcrptTotal(excrptsFromSheets, month)
 
 	updateReqs := updateBudgetReqs(budgetColA, accBalance, month, person)
@@ -103,4 +105,36 @@ func updateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 		}
 	}
 	return updateReqs
+}
+
+func GetExcrptGrps(parentName string) []excrptgrps.ExcrptGrp {
+	return excrptgrps.GetChildren(parentName)
+}
+
+func GetExcrptGrpsAsString(parentName string) []string {
+	excrptgrps := excrptgrps.GetChildren(parentName)
+
+	var names []string
+
+	for _, eg := range excrptgrps {
+		names = append(names, eg.Name)
+	}
+
+	return names
+}
+
+func GetParentsAsString() []string {
+	parents := excrptgrps.GetParents()
+
+	var names []string
+	for _, egp := range parents {
+		names = append(names, egp.Name)
+	}
+	fmt.Printf("len(parents): %v\n", len(parents))
+	fmt.Printf("len(names): %v\n", len(names))
+	return names
+}
+
+func GetParents() []excrptgrps.ExcrptGrpParent {
+	return excrptgrps.GetParents()
 }

@@ -16,6 +16,7 @@ func ReadExcrptCsv(path string) ([]float64, []float64, []string, []float64) {
 	// Open the CSV file
 	file, err := os.Open(path)
 	if err != nil {
+		print("Could not open excerpt file")
 		log.Fatalln("Coud not open excerpt file.", err)
 	}
 	defer file.Close()
