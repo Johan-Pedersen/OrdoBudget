@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -14,38 +15,11 @@ func handleExcrptsView(app fyne.App) {
 	// Er dette en case for databinding ?
 	excrpt := widget.NewEntry()
 
-	excrpt.Disable()
+	// excrpt.Disable()
 
 	// Denne skal dynamisk opdateres
 	excrpt.SetText("hew")
-	// tree := widget.NewTree(
-	// 	func(id widget.TreeNodeID) []widget.TreeNodeID {
-	// 		switch id {
-	// 		case "":
-	// 			return []widget.TreeNodeID{"a", "b", "c"}
-	// 		case "a":
-	// 			return []widget.TreeNodeID{"a1", "a2"}
-	// 		}
-	// 		return []string{}
-	// 	},
-	// 	func(id widget.TreeNodeID) bool {
-	// 		fmt.Printf("id: %v\n", id)
-	// 		return id == ""
-	// 		return id == "" || id == "a"
-	// 	},
-	// 	func(branch bool) fyne.CanvasObject {
-	// 		if branch {
-	// 			return widget.NewLabel("Branch template")
-	// 		}
-	// 		return widget.NewLabel("Leaf template")
-	// 	},
-	// 	func(id widget.TreeNodeID, branch bool, o fyne.CanvasObject) {
-	// 		text := id
-	// 		if branch {
-	// 			text += " (branch)"
-	// 		}
-	// 		o.(*widget.Label).SetText(text)
-	// 	})
+
 	excrptGrps := widget.NewTree(
 		// ChildUIs
 		func(tni widget.TreeNodeID) []widget.TreeNodeID {
@@ -86,7 +60,8 @@ func handleExcrptsView(app fyne.App) {
 			o.(*widget.Label).SetText(text)
 		},
 	)
-	window.SetContent(excrptGrps)
+	grid := container.NewGridWithColumns(2, excrptGrps, widget.NewLabel(""), widget.NewLabel(""), excrpt)
+	window.SetContent(grid)
 	window.Resize(fyne.NewSize(500, 1500))
 	window.SetFixedSize(true)
 	window.Show()
