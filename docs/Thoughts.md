@@ -469,3 +469,9 @@ nyt projekt: budgetautomation-414505
                 
                 - Man henter jo en hel batch og lober igennem dem.
                 - Man kan godt update view fra model. Der kommer ingen 
+
+## omdan projekt struktur
+
+- https://github.com/golang-standards/project-layout
+
+

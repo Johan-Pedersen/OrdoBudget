@@ -1,5 +1,6 @@
 # CallStack
 
+- omdan projekt struktur
 - Lav en test mode, saa den bare loader en predefinet datasaet
 - GUI
     - vis current excrpt
