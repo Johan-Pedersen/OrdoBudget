@@ -1,6 +1,8 @@
 # CallStack
 
+- Lav en test mode, saa den bare loader en predefinet datasaet
 - GUI
+    - vis current excrpt
 - Refactor
     - Omdan projektet til en MVC struktur
     - Liste af excrptGrps skal vaere et 1D array 
@@ -8,9 +10,12 @@
     - LoadExcrptTotal er lidt et maerkeligt navn, for det der goer hovedparten af logikken
     - Update totals baseret på excel arket i stedet for sheets
         - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
-- byg gui app
-    - https://docs.fyne.io/started/
+    - Flyt alt setup til at kore for "submit"
+    - Aendre tekst paa submit knap
+- Hvor skal / kan man se logs
 - Tilknyt database?
+- util fil i controller module
+- Kan man gore saa views kun kan see metoderne udstillet i controlleren
 - Validation
     - Skal kunne bruges til "debug" budgettet
     - Maaske mest interessent for de faste overfoerlser til faelles kontoen

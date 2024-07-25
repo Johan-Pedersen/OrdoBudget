@@ -21,6 +21,14 @@ nyt projekt: budgetautomation-414505
   - https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/
 - Sample requests
   - https://developers.google.com/sheets/api/samples
+- Google Sheets
+- https://docs.google.com/spreadsheets/d/1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc/edit?gid=1685114351#gid=1685114351
+
+### fyne
+
+- https://docs.fyne.io/explore/widgets
+- https://pkg.go.dev/fyne.io/fyne/v2
+- https://docs.fyne.io/started/
 
 ## Todo
 
@@ -364,10 +372,100 @@ nyt projekt: budgetautomation-414505
 
 - https://docs.fyne.io/explore/widgets
 - https://pkg.go.dev/fyne.io/fyne/v2
+- https://docs.fyne.io/started/
 
+### Databinging
+
+- Hvad er databinging
+    - Det synkronisere 2 datakilder 
+    - Det kan for exemlpel vaere smart at have en databinging mellem UI og Storage
+
+- Kan vi bruge databinging
+    - Man kan vel bruge det til form entry, men vil egenligt hellere have det gennem en anden "kanal"
+    - Man kan jo bruge det i alle data input fields og saa match dem med en variabel.
+        - Kraever det ikke at det er globale variable
+            - Kommer jo bare an paa hvordan det er lavet.
+        - Vil helst have at alt data kommer ind fra controlleren.
+
+- Skal man bruge data binding til at faa sin form data
+    - Hvad gjorde de for der fik databinging
+    - Det virker i hvertfald til det er en mulighed
+
+### vis current excrpt
+
+- Det er maaske oplagt at kigge paa noget databinding til dette
+- Hvad kan man ellers gore?
+    - Man skal jo bruge noget dynamisk opdatering
+
+- Man skal ogsaa kunne knytte en form for action til hver tree element
+    - Der har man en OnSelect funktion. Saa man kan laese excrtpTextfeltet og lave en update reg baseret paa det
 
 
 ### Tanker
 
 - Aendre submit btn, til at sige kor
 
+- Hvordan faar man data fra et submit
+    - Er det brug af callback
+        - Hvad er det
+
+- Alt setup kan vel saadan set gores for man trykker submit.
+
+- Hvad er en callback funktion
+    - continuation-passing style
+    - Et "callback" er en funktion, der kaldes af en anden funktion
+        - Hvor den forste funktion tager funktionen som en parameter
+        - Saa det er en hojer ordens funktion
+    - Og det er saa et callback fordi vi giver funktionen der skal kore i forskellige events
+
+    - Hvordan er den forskelligt fra en normal funktion
+    - Hvad er fordelene ved en callback funktion
+    - Hvorfor bruger fyne altid callback funktioner
+
+- NewTree
+    - ChildDIDs
+    - IsBranch
+    - CreatNode
+    - UpdateNode
+
+    - Hvorfor skal vi give disse callback funktioner?
+        - ChildUID, burde haandteres af strukturen
+        - IsBranch, virker ogsaa til at vaere en basal struktur opereation
+        - CreatNode, basal operation
+        - UpdateNode, Hvis det bare er objekter vi har, saa burde dette heller ikke repraesentere et problem.
+    - Hvor kommer tni fra?
+
+- Skal man give disse callBack funktioner hver gang
+
+#### vis current excrpt
+
+- Vi skal have en maade at vise current excrpt paa
+    - Dette skal vi bruge databinding
+- Vi skal vide hvordan man hugger excrptet op hvis vi skal laese det fra formen.
+    - Men behover vi det, vi har jo et current excrpt. Det laver vi bare en to string paa for at vise det i en 1-way databinding til feltet.
+    - Vi kan knytte den til vores current excrpt og bindingen tager bare toString metoden.
+- Naar vi skal bruge excrptet, saa bruger vi bare vores struct
+
+- Hvordan vil man saa gore det med et current excrpt
+    - design patterns?
+    - local currentExcrpt i controlleren, som man bare skal husk at update naar man kalder funktioner fra controlleren
+    - Men er dette noget der burde ligge i model?
+        - Fordi saa faar controllen lige pludselig logik og det skal den jo ikke
+        - Men der er ikke noget sted der giver mening at ligge det. Fordi modellen giver bare metoderne der kan kaldes fra controlleren. Men der er ikke noget sted at "persistere" / holde data.
+        - Controlleren manipulere jo model. Saa "current excrpt" skal jo ligge i model.
+        - Men det behover maaske ikke vaere en decideret varabel.
+            - Det er lidt den funktionelle maade at gore det paa
+        - Maaske kan man bare hente den man er kommet til?
+        - hvad gor vi nu?
+            - Vi henter alle values fra sheets og saa lober dem igennem 1 af gangen.
+            - Men hvordan ville man gore det 
+                - Det er jo lidt af en sideeffekt hvis model skulle update viewet
+            
+
+- Skal man give model/view med som argument i controlleren og model/view skal ogsaa have en instance af controlleren.
+    - Saa skal man i controlleren definere et model / view interface, som exposer de funktioner der skal vaere tilgaengelig i controlleren
+                - Men det kan jo heller ikke rigtig gaa igennem controlleren, ved at moddel kaleder en funktion i controlleren. Som updater viewet.
+                    - Det ville ogsaa give cirkulaere dependenciens
+                
+                - Man henter jo en hel batch og lober igennem dem.
+                - Man kan godt update view fra model. Der kommer ingen 
