@@ -474,4 +474,8 @@ nyt projekt: budgetautomation-414505
 
 - https://github.com/golang-standards/project-layout
 
+- Lav cmd, internal, ui, pakker
+- i internal, lav pakker baseret paa hvad denne del af koden giver.
+    - Lidt "grop by context" i DDD verdenen
+
 

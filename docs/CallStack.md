@@ -15,6 +15,7 @@
     - Aendre tekst paa submit knap
 - Hvor skal / kan man se logs
 - Tilknyt database?
+- Naar man laver en error skal ens fields blive repopulated.
 - util fil i controller module
 - Kan man gore saa views kun kan see metoderne udstillet i controlleren
 - Validation
