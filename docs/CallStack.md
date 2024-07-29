@@ -12,6 +12,10 @@
         - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
     - Flyt alt setup til at kore for "submit"
     - Aendre tekst paa submit knap
+- Brug flag til at bestemme hvilket pgm der skal kores
+- Naar man afbryder et run skal man rulle tilbage
+    - Ogsaa update af commongrps
+        - Gaar denne igennem for det andet.
 - Hvor skal / kan man se logs
 - Tilknyt database?
 - Naar man laver en error skal ens fields blive repopulated.

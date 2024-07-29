@@ -479,3 +479,33 @@ nyt projekt: budgetautomation-414505
     - Lidt "grop by context" i DDD verdenen
 
 
+## Lav en test mode, saa den bare loader en predefinet datasaet
+
+- Det er jo en form for debug mode
+- Hvad skal den gore
+    - Vi vil gerne undgaa at skulle load en hel masse naar man skal debug
+    - Data'en aendre sig jo ikke, saa det er bare et sporgsmaal om at hente data'en fra google sheets i stedet for at skulle upload den og hente den.
+    - Man kunne maaske ogsaa bare have noget test data man kunne load ind i vores structs.
+    - Saa gaar man helt uden om noget som helst API, saa kan man ogsaa kore det offline.
+        - Smart i toget
+
+    - Hvilke steps kan vi springe over
+        - Update af excrptSheet
+        - Read fra Udtraek
+        - Bestem Person
+        - Bestem mdr
+        - InitExcrptGrps
+- Hvordan aktivere man den 
+    - Man kan bare saette den som et flag inden man buider
+    - eller kan man vel give den som et flag naar man kore programmet
+        - kunne vare en sjov maade at gore det paa.
+
+- Hvad skal man bruge for at kalde LoadExcrptGrp
+    - Excpts der er hentet fra sheets
+        - Det skal man vel bare gemme som en JSON fil, man saa kan unmarshal naar man skal bruge den.
+        - Hvad skal vi saa unmarshal/decode fra JSON
+            - excrpts fra sheets.ValueRange
+            - excrptGrps
+            - excrptGrpTotals
+    
+

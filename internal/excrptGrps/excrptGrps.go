@@ -215,7 +215,26 @@ func GetTotal(excrptGrpName string) (float64, error) {
 	}
 }
 
-func InitExcrptGrps(excrptGrps *sheets.ValueRange, month, person int64) {
+func InitExcrptGrpsDebug() {
+	// Load ExcrptGrps
+
+	f1, err := os.Open("build/debug/JsonExcrptGrps")
+	if err != nil {
+		log.Fatal("Unable to open JSonExcrptsGrps")
+	}
+	defer f1.Close()                        // //Json decode
+	json.NewDecoder(f1).Decode(&excrptGrps) // if err != nil {
+	fmt.Printf("excrptGrps: %v\n", excrptGrps)
+
+	f2, err := os.Open("build/debug/JsonExcrptGrpTotals")
+	if err != nil {
+		log.Fatal("Unable to open JSonExcrptsGrpTotals")
+	}
+	defer f2.Close()                             // //Json decode
+	json.NewDecoder(f2).Decode(&excrptGrpTotals) // if err != nil {
+}
+
+func InitExcrptGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
 	// Open the JSON file
 	file, err := os.Open("storage/excrptGrpData.json")
 	if err != nil {
@@ -247,7 +266,7 @@ func InitExcrptGrps(excrptGrps *sheets.ValueRange, month, person int64) {
 	PrintExcrptGrpTotals()
 	PrintExcrptGrps()
 
-	updateCommonGrps(excrptGrps, month, person)
+	updateCommonGrps(sheetsGrpCol, month, person)
 }
 
 func updateCommonGrps(excrptGrps *sheets.ValueRange, month, person int64) {
