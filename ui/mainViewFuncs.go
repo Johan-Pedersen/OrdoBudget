@@ -17,14 +17,16 @@ func submitDebug() {
 	var person int64 = 1
 	var month int64 = 6
 
-	excrpts := debugGetExcrpts()
+	// excrpts := debugGetExcrpts()
+	debugGetExcrpts()
 	updateExcrptsSheetDebug()
 	excrptgrps.InitExcrptGrpsDebug()
 
 	sheetsGrpCol := getSheetsGrpCol()
 
 	// Denne del skal jo kores i et andet window
-	accBalance := excrptgrps.LoadExcrptTotal(excrpts, month)
+	// accBalance := excrptgrps.LoadExcrptTotal(excrpts, month)
+	accBalance := 0.0
 
 	updateReqs := updateBudgetReqs(sheetsGrpCol, accBalance, month, person)
 	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
@@ -48,10 +50,12 @@ func submit(month int64, excrptPath string) {
 	sheetsGrpCol := getSheetsGrpCol()
 	excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
 
-	excrptsFromSheets := getExcrptsFromSheet()
+	// excrptsFromSheets := getExcrptsFromSheet()
+	getExcrptsFromSheet()
 
 	// Denne del skal jo kores i et andet window
-	accBalance := excrptgrps.LoadExcrptTotal(excrptsFromSheets, month)
+	// accBalance := excrptgrps.LoadExcrptTotal(excrptsFromSheets, month)
+	accBalance := 0.0
 
 	updateReqs := updateBudgetReqs(sheetsGrpCol, accBalance, month, person)
 	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
