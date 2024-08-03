@@ -5,26 +5,55 @@ import (
 	req "budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"context"
+	"encoding/json"
 	"log"
+	"os"
 	"strings"
 
 	"google.golang.org/api/sheets/v4"
 )
+
+func submitDebug() {
+	var person int64 = 1
+	var month int64 = 6
+
+	excrpts := debugGetExcrpts()
+	updateExcrptsSheetDebug()
+	excrptgrps.InitExcrptGrpsDebug()
+
+	sheetsGrpCol := getSheetsGrpCol()
+
+	// Denne del skal jo kores i et andet window
+	accBalance := excrptgrps.LoadExcrptTotal(excrpts, month)
+
+	updateReqs := updateBudgetReqs(sheetsGrpCol, accBalance, month, person)
+	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
+		Requests: updateReqs,
+	}
+	// Execute the BatchUpdate request
+	sheet := req.GetSheet()
+	ctx := context.Background()
+	_, updateBudgetErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateReq).Context(ctx).Do()
+
+	if updateBudgetErr != nil {
+		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
+	}
+}
 
 func submit(month int64, excrptPath string) {
 	var person int64 = 1
 
 	updateExcrptSheet(excrptPath)
 
-	budgetColA := getBudgetColA()
-	excrptgrps.InitExcrptGrps(budgetColA, month, person)
+	sheetsGrpCol := getSheetsGrpCol()
+	excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
 
 	excrptsFromSheets := getExcrptsFromSheet()
 
 	// Denne del skal jo kores i et andet window
 	accBalance := excrptgrps.LoadExcrptTotal(excrptsFromSheets, month)
 
-	updateReqs := updateBudgetReqs(budgetColA, accBalance, month, person)
+	updateReqs := updateBudgetReqs(sheetsGrpCol, accBalance, month, person)
 	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
 		Requests: updateReqs,
 	}
@@ -41,16 +70,16 @@ func submit(month int64, excrptPath string) {
 /*
 Get all excrptGrps from the speadsheet
 */
-func getBudgetColA() *sheets.ValueRange {
+func getSheetsGrpCol() *sheets.ValueRange {
 	// Read all rows of col A in budget sheet.
-	budgetColARange := "A1:A"
+	sheetsGrpColRange := "A1:A"
 
 	sheet := req.GetSheet()
-	budgetColA, err := sheet.Values.Get(req.GetSpreadsheetId(), budgetColARange).Do()
+	sheetsGrpCol, err := sheet.Values.Get(req.GetSpreadsheetId(), sheetsGrpColRange).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
-	return budgetColA
+	return sheetsGrpCol
 }
 
 /*
@@ -103,4 +132,32 @@ func updateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 		}
 	}
 	return updateReqs
+}
+
+func debugGetExcrpts() *sheets.ValueRange {
+	// Read all rows of col A in budget sheet.
+
+	var excrpts *sheets.ValueRange
+	f3, err := os.Open("build/debug/JsonExcrptSheets")
+	if err != nil {
+		log.Fatal("Unable to open JSonExcrptSheets")
+	}
+	defer f3.Close()                     // //Json decode
+	json.NewDecoder(f3).Decode(&excrpts) // if err != nil {
+
+	return excrpts
+}
+
+func updateExcrptsSheetDebug() {
+	sheet := req.GetSheet()
+	ctx := context.Background()
+	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
+		Requests: excrptgrps.UpdateExcrptSheet("storage/excrptSheet.csv"),
+	}
+
+	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
+
+	if excrptUpdateErr != nil {
+		log.Fatalf("Unable to perform update excerpt sheet operation: %v", excrptUpdateErr)
+	}
 }

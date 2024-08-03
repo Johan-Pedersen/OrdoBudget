@@ -521,3 +521,5 @@ nyt projekt: budgetautomation-414505
         - Man kan tage imod input, og saa kalde en init funktion. Som bare tager input datasaet og mdr. 
         - Med et debug flag, kan man saa bestemme om det er debug init el. rigtig init man vil kore.
 
+- Vil det vaere smart at have en make fil
+    - Hvad ville man bruge den til
