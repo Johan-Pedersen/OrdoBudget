@@ -1,6 +1,9 @@
 # CallStack
 
-- Lav en test mode, saa den bare loader en predefinet datasaet
+- Saet debug mode op til at kore gui
+- Decouple ui og internal
+    - Lav et internal interface, der kan bruges af ui
+    - Vi kan sikkert bruge nogen patterns
 - GUI
     - vis current excrpt
 - Refactor

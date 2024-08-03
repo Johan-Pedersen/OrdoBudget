@@ -509,3 +509,15 @@ nyt projekt: budgetautomation-414505
             - excrptGrpTotals
     
 
+## Saet debug mode op til at kore gui
+
+- Saa hvordan skal vi gore det  
+    - Hver mode kan have en debug mode. Som saa loader predefined data 
+        - nok smartest. 
+        - Saa kan vi definere noget logik til at load det. (Som vi har gjort)
+        - Det er jo bare i init delen at man skal bestemme hvor man loader fra
+            - Man kan vel have en shared init del paa tvaers af cli og gui. 
+            - Der sker jo det samme, problemet opstaar bare i forhold til maaden at give input
+        - Man kan tage imod input, og saa kalde en init funktion. Som bare tager input datasaet og mdr. 
+        - Med et debug flag, kan man saa bestemme om det er debug init el. rigtig init man vil kore.
+

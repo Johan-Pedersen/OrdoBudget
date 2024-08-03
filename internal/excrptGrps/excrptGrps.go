@@ -224,7 +224,6 @@ func InitExcrptGrpsDebug() {
 	}
 	defer f1.Close()                        // //Json decode
 	json.NewDecoder(f1).Decode(&excrptGrps) // if err != nil {
-	fmt.Printf("excrptGrps: %v\n", excrptGrps)
 
 	f2, err := os.Open("build/debug/JsonExcrptGrpTotals")
 	if err != nil {
