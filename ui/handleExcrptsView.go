@@ -2,9 +2,11 @@ package ui
 
 import (
 	"fmt"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -12,13 +14,29 @@ func handleExcrptsView(app fyne.App) {
 	window := app.NewWindow("Handle excerpts")
 
 	// Er dette en case for databinding ?
-	excrpt := widget.NewEntry()
 
 	// excrpt.Disable()
 
-	// Denne skal dynamisk opdateres
-	excrpt.SetText("hew")
+	boundString := binding.NewString()
 
+	boundString.Set("hew")
+
+	excrpt := widget.NewEntryWithData(boundString)
+
+	excrptGrps := genExcrptGrpTreeWidget()
+
+	grid := container.NewGridWithColumns(2, excrptGrps, widget.NewLabel(""), widget.NewLabel(""), excrpt)
+	window.SetContent(grid)
+	window.Resize(fyne.NewSize(500, 1000))
+	window.SetFixedSize(true)
+	window.Show()
+	go func() {
+		time.Sleep(time.Second * 2)
+		boundString.Set("hew2")
+	}()
+}
+
+func genExcrptGrpTreeWidget() *widget.Tree {
 	excrptGrps := widget.NewTree(
 		// ChildUIs
 		func(tni widget.TreeNodeID) []widget.TreeNodeID {
@@ -59,9 +77,6 @@ func handleExcrptsView(app fyne.App) {
 			o.(*widget.Label).SetText(text)
 		},
 	)
-	grid := container.NewGridWithColumns(2, excrptGrps, widget.NewLabel(""), widget.NewLabel(""), excrpt)
-	window.SetContent(grid)
-	window.Resize(fyne.NewSize(500, 1500))
-	window.SetFixedSize(true)
-	window.Show()
+
+	return excrptGrps
 }
