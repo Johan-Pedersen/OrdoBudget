@@ -1,7 +1,7 @@
 package main
 
 import (
-	ui "budgetAutomation/ui"
+	gui "budgetAutomation/ui/gui"
 	"flag"
 
 	"fyne.io/fyne/v2/app"
@@ -13,5 +13,5 @@ func main() {
 	debugMode := flag.Bool("debug", false, "Run in debug mode")
 
 	flag.Parse()
-	ui.MainView(*debugMode, app)
+	gui.MainView(*debugMode, app)
 }
