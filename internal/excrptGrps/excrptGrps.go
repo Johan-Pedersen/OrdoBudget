@@ -59,9 +59,8 @@ func isIgnored(parentName string) bool {
 	return parentName == "Ignored"
 }
 
-func updateExcrptTotal(date, excrpt string, amount float64) {
+func findExcrptMatches(excrpt string) []ExcrptGrp {
 	var excrptGrpMatches []ExcrptGrp
-	ignored := false
 
 	// ignore case
 	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
@@ -72,29 +71,28 @@ func updateExcrptTotal(date, excrpt string, amount float64) {
 			for _, match := range parent.ExcrptGrps[i].Mappings {
 				match = strings.ToLower(strings.Trim(match, " "))
 				if strings.Contains(excrpt, match) {
-					excrptGrpMatches = append(excrptGrpMatches, parent.ExcrptGrps[i])
-					if isIgnored(parent.Name) {
-						ignored = true
-						break
+					if !isIgnored(parent.Name) {
+						excrptGrpMatches = append(excrptGrpMatches, parent.ExcrptGrps[i])
 					}
 				}
 			}
 		}
 	}
+	return excrptGrpMatches
+}
 
-	if !ignored {
-
-		excrptGrpName := selMatchGrp(date, excrpt, amount, excrptGrpMatches)
+func updateExcrptTotal(date, excrpt string, amount float64, excrptGrpName string) {
+	if excrptGrpName != "Ignored" {
 
 		excrptGrpTotals[excrptGrpName] += float64(amount)
 		UpdateResume(date, excrpt, excrptGrpName, amount)
-	} else {
-		UpdateResume(date, excrpt, excrptGrpMatches[0].Name, amount)
 	}
 }
 
 /*
 Select excrptGrp for given match
+
+Todo: Flyt tyl CLI ui del
 */
 func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []ExcrptGrp) string {
 	grp := ""
@@ -380,6 +378,7 @@ func UpdateExcrptSheet(path string) []*sheets.Request {
 
 /*
 Reads excrpts to update excrptGrpTotals and returns most recent account balance
+ToDo: Flyt til CLI ui del
 */
 func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
 	isRightMonth := false
@@ -415,7 +414,12 @@ func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
 					break
 				}
 				if isRightMonth {
-					updateExcrptTotal(date, description, amount)
+					matches := findExcrptMatches(description)
+					// If there is only a single match, the update is given
+					// Otherwise the correct match has to be made in the ui
+					if len(matches) == 1 {
+						updateExcrptTotal(date, description, amount, matches[0].Name)
+					}
 				} // else {
 				// excrptgrps.UpdateResume(date, description, "Not handled", amount)
 				//	}
