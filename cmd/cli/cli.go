@@ -42,13 +42,14 @@ func main() {
 		excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
-		excrptgrps.PrintExcrptGrps()
+		cli.PrintExcrptGrps()
+		cli.PrintExcrptGrps()
 
 	}
-	accBalance := excrptgrps.LoadExcrptTotal(excrpts, month)
+	accBalance := cli.LoadExcrptTotal(excrpts, month)
 
 	// find Excerpt Total for current month.
-	excrptgrps.PrintExcrptGrpTotals()
+	cli.PrintExcrptGrpTotals()
 	cli.UpdateBudget(sheetsGrpCol, accBalance, month, person)
-	excrptgrps.PrintResume()
+	cli.PrintResume()
 }

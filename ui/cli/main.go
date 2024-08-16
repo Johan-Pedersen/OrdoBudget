@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"google.golang.org/api/sheets/v4"
@@ -99,7 +100,7 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 	ctx := context.Background()
 	// Find excerpt grps to insert at
 
-	updateReqs := updateBudgetReqs(sheetsGrpCol, accBalance, month, person)
+	updateReqs := UpdateBudgetReqs(sheetsGrpCol, accBalance, month, person)
 	batchUpdateReq := &sheets.BatchUpdateSpreadsheetRequest{
 		Requests: updateReqs,
 	}
@@ -111,4 +112,159 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
 	}
 	log.Println("Data moved successfully!")
+}
+
+/*
+Reads excrpts to update excrptGrpTotals and returns most recent account balance
+*/
+func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
+	isRightMonth := false
+	accBalance := -1.0
+	for _, elm := range excrpts.Values {
+		date, description := elm[0].(string), elm[2].(string)
+		s := strings.ReplaceAll(elm[1].(string), ",", ".")
+		amount, err := strconv.ParseFloat(s, 64)
+
+		if err != nil {
+			log.Println("Could not read amount for", date, ":", description, ":", elm[1].(string))
+		} else {
+			// Get excerpt month
+			if date != "Reserveret" {
+
+				exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
+				if err != nil {
+					log.Fatal("Could not read excerpt date", err)
+				}
+
+				if month == exrptMonth {
+					isRightMonth = true
+					if accBalance == -1.0 {
+						s := strings.ReplaceAll(elm[3].(string), ",", ".")
+
+						accBalance, err = strconv.ParseFloat(s, 64)
+						if err != nil {
+							log.Fatalln("Could not read account balance")
+						}
+					}
+
+				} else if exrptMonth < month {
+					break
+				}
+				if isRightMonth {
+					matches := excrptgrps.FindExcrptMatches(description)
+					// If there is only a single match, the update is given
+					// Otherwise the correct match has to be made in the ui
+					if len(matches) == 1 {
+						excrptgrps.UpdateExcrptTotal(date, description, amount, matches[0].Name)
+					}
+				} // else {
+				// excrptgrps.UpdateResume(date, description, "Not handled", amount)
+				//	}
+			}
+		}
+	}
+	return accBalance
+}
+
+/*
+Select excrptGrp for given match
+
+*/
+func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []excrptgrps.ExcrptGrp) string {
+	grp := ""
+
+	if len(excrptGrpMatches) == 0 {
+
+		// Choose group to match
+		ind := -1
+		fmt.Println("Can't match to group:", date, excrpt, ":", amount)
+		fmt.Println("Select group")
+		validInd := false
+		for !validInd {
+			fmt.Scan(&ind)
+			if ind > -1 && ind <= len(excrptgrps.ExcrptGrpTotals) {
+				validInd = true
+			} else {
+				fmt.Println("Invalid grp number.\nPlease choose again")
+			}
+		}
+		for _, parent := range excrptgrps.ExcrptGrps {
+			for _, excrptGrp := range parent.ExcrptGrps {
+				if excrptGrp.Ind == ind {
+					grp = excrptGrp.Name
+					break
+				}
+			}
+
+			if grp != "" {
+				break
+			}
+
+		}
+	} else if len(excrptGrpMatches) > 1 {
+
+		// Choose group to match
+		ind := -1
+		fmt.Println("Matches multiple groups:", date, excrpt, ":", amount)
+		fmt.Println("Select group")
+		validInd := false
+
+		for _, v := range excrptGrpMatches {
+			fmt.Println(v.Ind, ":", v.Name)
+		}
+		for !validInd {
+			fmt.Scan(&ind)
+			if ind > -1 && ind <= len(excrptgrps.ExcrptGrpTotals) {
+				validInd = true
+			} else {
+				fmt.Println("Invalid grp number.\nPlease choose again")
+			}
+		}
+
+		for _, parent := range excrptgrps.ExcrptGrps {
+			for _, excrptGrp := range parent.ExcrptGrps {
+				if excrptGrp.Ind == ind {
+					grp = excrptGrp.Name
+					break
+				}
+			}
+
+			if grp != "" {
+				break
+			}
+
+		}
+	} else {
+		grp = excrptGrpMatches[0].Name
+	}
+	return grp
+}
+
+func PrintExcrptGrpTotals() {
+	fmt.Println("###################################################")
+	for k, v := range excrptgrps.ExcrptGrpTotals {
+		fmt.Println(k, ": ", v+1)
+	}
+	fmt.Println("###################################################")
+}
+
+func PrintExcrptGrps() {
+	fmt.Println("Excerpt groups")
+	fmt.Println("###################################################")
+	for _, parent := range excrptgrps.ExcrptGrps   {
+		fmt.Println("\n************", parent.Name, "************")
+		for _, excrptGrp := range parent.ExcrptGrps {
+			fmt.Println(excrptGrp.Ind, ":", excrptGrp.Name)
+		}
+	}
+	fmt.Println("###################################################")
+}
+
+func PrintResume() {
+	fmt.Println("Resume")
+	fmt.Println("###################################################")
+	for _, str := range excrptgrps.Resume {
+		fmt.Println(str)
+	}
+	fmt.Println("###################################################")
 }
