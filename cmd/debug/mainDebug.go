@@ -11,6 +11,7 @@ import (
 
 	excrptgrps "budgetAutomation/internal/excrptGrps"
 	util "budgetAutomation/internal/util"
+	"budgetAutomation/ui/cli"
 
 	req "budgetAutomation/internal/requests"
 
@@ -69,8 +70,8 @@ func main() {
 
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
-		excrptgrps.PrintExcrptGrps()
 
+		cli.PrintExcrptGrps()
 		// Get Date, Amount and description
 		readRangeExrpt := "Udtrœk!A2:D"
 		var readExcrptsErr error
@@ -79,10 +80,10 @@ func main() {
 			log.Fatalf("Unable to perform get: %v", readExcrptsErr)
 		}
 	}
-	accBalance := excrptgrps.LoadExcrptTotal(excrpts, month)
+	accBalance := cli.LoadExcrptTotal(excrpts, month)
 
 	// find Excerpt Total for current month.
-	excrptgrps.PrintExcrptGrpTotals()
+	cli.PrintExcrptGrpTotals()
 
 	// Find excerpt grps to insert at
 
@@ -99,7 +100,7 @@ func main() {
 	}
 	log.Println("Data moved successfully!")
 
-	excrptgrps.PrintResume()
+	cli.PrintResume()
 }
 
 func debugGetExcrpts() *sheets.ValueRange {
