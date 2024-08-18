@@ -437,38 +437,6 @@ nyt projekt: budgetautomation-414505
 
 - Skal man give disse callBack funktioner hver gang
 
-#### vis current excrpt
-
-- Vi skal have en maade at vise current excrpt paa
-    - Dette skal vi bruge databinding
-- Vi skal vide hvordan man hugger excrptet op hvis vi skal laese det fra formen.
-    - Men behover vi det, vi har jo et current excrpt. Det laver vi bare en to string paa for at vise det i en 1-way databinding til feltet.
-    - Vi kan knytte den til vores current excrpt og bindingen tager bare toString metoden.
-- Naar vi skal bruge excrptet, saa bruger vi bare vores struct
-
-- Hvordan vil man saa gore det med et current excrpt
-    - design patterns?
-    - local currentExcrpt i controlleren, som man bare skal husk at update naar man kalder funktioner fra controlleren
-    - Men er dette noget der burde ligge i model?
-        - Fordi saa faar controllen lige pludselig logik og det skal den jo ikke
-        - Men der er ikke noget sted der giver mening at ligge det. Fordi modellen giver bare metoderne der kan kaldes fra controlleren. Men der er ikke noget sted at "persistere" / holde data.
-        - Controlleren manipulere jo model. Saa "current excrpt" skal jo ligge i model.
-        - Men det behover maaske ikke vaere en decideret varabel.
-            - Det er lidt den funktionelle maade at gore det paa
-        - Maaske kan man bare hente den man er kommet til?
-        - hvad gor vi nu?
-            - Vi henter alle values fra sheets og saa lober dem igennem 1 af gangen.
-            - Men hvordan ville man gore det 
-                - Det er jo lidt af en sideeffekt hvis model skulle update viewet
-            
-
-- Skal man give model/view med som argument i controlleren og model/view skal ogsaa have en instance af controlleren.
-    - Saa skal man i controlleren definere et model / view interface, som exposer de funktioner der skal vaere tilgaengelig i controlleren
-                - Men det kan jo heller ikke rigtig gaa igennem controlleren, ved at moddel kaleder en funktion i controlleren. Som updater viewet.
-                    - Det ville ogsaa give cirkulaere dependenciens
-                
-                - Man henter jo en hel batch og lober igennem dem.
-                - Man kan godt update view fra model. Der kommer ingen 
 
 ## omdan projekt struktur
 
@@ -507,6 +475,7 @@ nyt projekt: budgetautomation-414505
             - excrpts fra sheets.ValueRange
             - excrptGrps
             - excrptGrpTotals
+
     
 
 ## Saet debug mode op til at kore gui
@@ -523,3 +492,85 @@ nyt projekt: budgetautomation-414505
 
 - Vil det vaere smart at have en make fil
     - Hvad ville man bruge den til
+
+## Decouple ui og internal
+
+- Man skulle maaske bygge det mere som et API?
+
+- Det handler bare om hvordan vi vil decouple front og backend
+
+- Det er maaske en fin ide at bygge det som et REST API
+
+- Giver det mening at bygge det som et API
+    - Det skal i hvertfald afkobles, fordi det er det reneste
+        - Det kan jo ogsaa gores med at lave et model interface, som man saa benytter i ui
+    - Lav et interface til decoupling, med de funktioner der skal bruges af ui, i en stateless maner.
+    - Det bliver svaert at lave den stateless, i forhold til at vide hvilken et excrpt der er det naeste og om vi har haft det excrpt for.
+    - Men det styre UI'en jo bare. Fordi ui siger bare giv mig alle excrpts.
+    - Dem gemmer de saa og fremviser
+    - i deres run tager de saa bare den naeste.
+    - backendens primare opgave er jo saadan set bare at hente og gemme data. og sorge for det bliver gjort korrekt
+
+- Men nu har vi ogsaa bare en cli, som skal understottes.
+    - Her kan man saa finde ud af om man vil have 1 interface til hver
+    - I princip er det jo det samme. pt, er cli'en bare bygget ind i backenden.
+        - Det skal den ikke vaere
+
+- Man skal tage alle inteaktionerne ud af furktionerne.
+- Saa updateExcrptTotal, skal bare returenere excrptGrpMatches, og saa er det ui's ansvar at vaelge det rigtige match
+- Er det saa viewet's ansvar at update excrptGrpTotals og update Resume med det rigtige
+    - Det ansvar burde bare ikke ligge i ui.
+    - Her kan man vel bruge en callback funktion -> 
+        - Det tror jeg ikke ville fungere saa godt med GUI
+- Hvordan sikre man sig saa at Resume og excrptGrpTotals bliver opdateret
+    - Det skal kaldes fra updateExcrptTotal funktionen, men input til UpdateResume og selve excrptGrpTotals updaten afhaenger af hvilken gruppe man har valgt
+
+- API'et skal bare return alle excrptGrpMatches
+    - Det skal vaere en anden funktion
+    - UI, kan saa gore hvad de vil med det 
+
+- UpdateExcrptTotal, skal kun update ExcrptGrpTotals array'et og ikke andet
+    - pt. gor den for meget
+    - Det er maaske fint at den kalder UpdateResume. Ellers glemmer man i UI at updateResume
+    
+    - Hvordan skal vi gore med state
+        - hvordan faar vi fat i excrptGrps
+        - Det giver ikke mening at give en pointer med, fordi i teorien behover API og app ikke at vaere paa samme maskine
+
+        - Ellers skal man til at sende excrptGrps og parents hver gang man faar et nyt excrpt
+        - og det virker meget upraktisk
+        -
+        - Det nemmeste virker til at have "Serverside" caching, som nu. Og hvor der ikke findes en enkelt decideret server, saa virker dette fint.
+
+
+- Haandtering af flere matches for 1 udtraek
+    - Det er jo op til ui'en at bestemme hvordan man vil haandtere denne konflikt. Vi skal bare vide hvilken en vi skal update.
+    - Men det er maaske det forkerte sted dette ansvar ligger
+    - Vi skal nok bare udstille en funktion der henter alle matches, og saa skal ui lave en funktion der haandere konflikten.
+    - Eller saa skal man sige tandle total tager en hojre ordens funktion, saa man er tvunget til at bestemme det. 
+    - Men det er jo ikke saa tit at gui funktioner returnere en vaerdi, saa det vil ikke passe saa godt.
+    - vi maa bare angive dem hver for sig
+
+    - Det traels ved forst at haandtere dobbelt matches el no-matches i ui. Er at man skal finde dem igen.
+        - Men maaske kan man gore noget smart.
+        - Men man kan jo ikke vide om det er det ene eller det andet
+
+## lav ui/cli del
+
+
+## graens mellem ui og internal
+
+- Hvor er graensen mellem interal og hvad skal ligge i ui
+    - Internals ansvar
+        - Det kan ikke kun vaere de metoder der kan ligge i begge ui's
+        - Det skal vaere byggeklodserne / frameworket til appliktionen
+        - Saa hvis ikke det er en byggeklods, skal den ikke ligge her
+    - ui's ansvar
+        - Det skal bare vare limen / brugen af internals
+
+## handle excrpts i gui
+
+- Databinding til vise current excrpt
+- Hvis et excrpt har flere matches, saa er det kun dem der skal vises i dropdownen.
+    - ellers, er det dem alle der skal vises.
+- Naar man dobbelt klikker paa en gruppe, skal totals opdateres og der skal hentes et nyt current excrpt.
