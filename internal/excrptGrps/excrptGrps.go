@@ -49,11 +49,13 @@ func FindExcrptMatches(excrpt string) []ExcrptGrp {
 }
 
 func UpdateExcrptTotal(date, excrpt string, amount float64, excrptGrpName string) {
-	if excrptGrpName != "Ignored" {
+	tmpAmount := amount
 
-		ExcrptGrpTotals[excrptGrpName] += float64(amount)
-		UpdateResume(date, excrpt, excrptGrpName, amount)
+	if excrptGrpName == "Ignored" {
+		tmpAmount = 0
 	}
+	ExcrptGrpTotals[excrptGrpName] += float64(tmpAmount)
+	UpdateResume(date, excrpt, excrptGrpName, tmpAmount)
 }
 
 func UpdateResume(date, excrpt, excrptGrpName string, amount float64) {

@@ -156,10 +156,11 @@ func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
 					// Otherwise the correct match has to be made in the ui
 					if len(matches) == 1 {
 						excrptgrps.UpdateExcrptTotal(date, description, amount, matches[0].Name)
+					} else {
+						selMatch := selMatchGrp(date, description, amount, matches)
+						excrptgrps.UpdateExcrptTotal(date, description, amount, selMatch)
 					}
-				} // else {
-				// excrptgrps.UpdateResume(date, description, "Not handled", amount)
-				//	}
+				}
 			}
 		}
 	}
@@ -251,7 +252,7 @@ func PrintExcrptGrpTotals() {
 func PrintExcrptGrps() {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
-	for _, parent := range excrptgrps.ExcrptGrps   {
+	for _, parent := range excrptgrps.ExcrptGrps {
 		fmt.Println("\n************", parent.Name, "************")
 		for _, excrptGrp := range parent.ExcrptGrps {
 			fmt.Println(excrptGrp.Ind, ":", excrptGrp.Name)
