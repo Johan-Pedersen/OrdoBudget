@@ -54,6 +54,7 @@ func UpdateExcrptTotal(date, excrpt string, amount float64, excrptGrpName string
 	if excrptGrpName == "Ignored" {
 		tmpAmount = 0
 	}
+
 	ExcrptGrpTotals[excrptGrpName] += float64(tmpAmount)
 	UpdateResume(date, excrpt, excrptGrpName, tmpAmount)
 }
@@ -236,4 +237,60 @@ func UpdateExcrptSheet(path string) []*sheets.Request {
 		requests.MultiUpdateReq(descriptions, 1, 2, 1472288449),
 		requests.MultiUpdateReqNum(balances, 1, 3, 1472288449),
 	}
+}
+
+/*
+Reads excrpts to update excrptGrpTotals and returns most recent account balance
+*/
+// func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64, selMatchGrp func(string, string, float64, []ExcrptGrp) string) float64 {
+func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64, selMatchGrp func(...interface{}) string) float64 {
+	isRightMonth := false
+	accBalance := -1.0
+	for _, elm := range excrpts.Values {
+		date, description := elm[0].(string), elm[2].(string)
+		s := strings.ReplaceAll(elm[1].(string), ",", ".")
+		amount, err := strconv.ParseFloat(s, 64)
+
+		if err != nil {
+			log.Println("Could not read amount for", date, ":", description, ":", elm[1].(string))
+		} else {
+			// Get excerpt month
+			if date != "Reserveret" {
+
+				exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
+				if err != nil {
+					// ToDo: skal ikke vaere fatal. Skal nok bare skip
+					log.Fatal("Could not read excerpt date", err)
+				}
+
+				if month == exrptMonth {
+					isRightMonth = true
+					if accBalance == -1.0 {
+						s := strings.ReplaceAll(elm[3].(string), ",", ".")
+
+						accBalance, err = strconv.ParseFloat(s, 64)
+						if err != nil {
+							// ToDo: skal ikke vaere fatal. Skal nok bare skip
+							log.Fatalln("Could not read account balance")
+						}
+					}
+
+				} else if exrptMonth < month {
+					break
+				}
+				if isRightMonth {
+					matches := FindExcrptMatches(description)
+					// If there is only a single match, the update is given
+					// Otherwise the correct match has to be made in the ui
+					if len(matches) == 1 {
+						UpdateExcrptTotal(date, description, amount, matches[0].Name)
+					} else {
+						selMatch := selMatchGrp(date, description, amount, matches)
+						UpdateExcrptTotal(date, description, amount, selMatch)
+					}
+				}
+			}
+		}
+	}
+	return accBalance
 }

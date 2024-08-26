@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 
 	"google.golang.org/api/sheets/v4"
@@ -114,57 +113,8 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 	log.Println("Data moved successfully!")
 }
 
-/*
-Reads excrpts to update excrptGrpTotals and returns most recent account balance
-*/
-func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64) float64 {
-	isRightMonth := false
-	accBalance := -1.0
-	for _, elm := range excrpts.Values {
-		date, description := elm[0].(string), elm[2].(string)
-		s := strings.ReplaceAll(elm[1].(string), ",", ".")
-		amount, err := strconv.ParseFloat(s, 64)
-
-		if err != nil {
-			log.Println("Could not read amount for", date, ":", description, ":", elm[1].(string))
-		} else {
-			// Get excerpt month
-			if date != "Reserveret" {
-
-				exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
-				if err != nil {
-					log.Fatal("Could not read excerpt date", err)
-				}
-
-				if month == exrptMonth {
-					isRightMonth = true
-					if accBalance == -1.0 {
-						s := strings.ReplaceAll(elm[3].(string), ",", ".")
-
-						accBalance, err = strconv.ParseFloat(s, 64)
-						if err != nil {
-							log.Fatalln("Could not read account balance")
-						}
-					}
-
-				} else if exrptMonth < month {
-					break
-				}
-				if isRightMonth {
-					matches := excrptgrps.FindExcrptMatches(description)
-					// If there is only a single match, the update is given
-					// Otherwise the correct match has to be made in the ui
-					if len(matches) == 1 {
-						excrptgrps.UpdateExcrptTotal(date, description, amount, matches[0].Name)
-					} else {
-						selMatch := selMatchGrp(date, description, amount, matches)
-						excrptgrps.UpdateExcrptTotal(date, description, amount, selMatch)
-					}
-				}
-			}
-		}
-	}
-	return accBalance
+func findMatchGrps(excrpts *sheets.ValueRange, month int64) {
+	excrptgrps.LoadExcrptTotal(excrpts, month, ...)
 }
 
 /*
