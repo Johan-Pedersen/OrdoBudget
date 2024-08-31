@@ -21,6 +21,14 @@ nyt projekt: budgetautomation-414505
   - https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/
 - Sample requests
   - https://developers.google.com/sheets/api/samples
+- Google Sheets
+- https://docs.google.com/spreadsheets/d/1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc/edit?gid=1685114351#gid=1685114351
+
+### fyne
+
+- https://docs.fyne.io/explore/widgets
+- https://pkg.go.dev/fyne.io/fyne/v2
+- https://docs.fyne.io/started/
 
 ## Todo
 
@@ -357,3 +365,212 @@ nyt projekt: budgetautomation-414505
 ### Omdan projektet til en MVC struktur
 ### Liste af excrptGrps skal vaere et 1D array 
 ### Update totals baseret på excel arket i stedet for sheets
+
+## GUI
+
+### links
+
+- https://docs.fyne.io/explore/widgets
+- https://pkg.go.dev/fyne.io/fyne/v2
+- https://docs.fyne.io/started/
+
+### Databinging
+
+- Hvad er databinging
+    - Det synkronisere 2 datakilder 
+    - Det kan for exemlpel vaere smart at have en databinging mellem UI og Storage
+
+- Kan vi bruge databinging
+    - Man kan vel bruge det til form entry, men vil egenligt hellere have det gennem en anden "kanal"
+    - Man kan jo bruge det i alle data input fields og saa match dem med en variabel.
+        - Kraever det ikke at det er globale variable
+            - Kommer jo bare an paa hvordan det er lavet.
+        - Vil helst have at alt data kommer ind fra controlleren.
+
+- Skal man bruge data binding til at faa sin form data
+    - Hvad gjorde de for der fik databinging
+    - Det virker i hvertfald til det er en mulighed
+
+### vis current excrpt
+
+- Det er maaske oplagt at kigge paa noget databinding til dette
+- Hvad kan man ellers gore?
+    - Man skal jo bruge noget dynamisk opdatering
+
+- Man skal ogsaa kunne knytte en form for action til hver tree element
+    - Der har man en OnSelect funktion. Saa man kan laese excrtpTextfeltet og lave en update reg baseret paa det
+
+
+### Tanker
+
+- Aendre submit btn, til at sige kor
+
+- Hvordan faar man data fra et submit
+    - Er det brug af callback
+        - Hvad er det
+
+- Alt setup kan vel saadan set gores for man trykker submit.
+
+- Hvad er en callback funktion
+    - continuation-passing style
+    - Et "callback" er en funktion, der kaldes af en anden funktion
+        - Hvor den forste funktion tager funktionen som en parameter
+        - Saa det er en hojer ordens funktion
+    - Og det er saa et callback fordi vi giver funktionen der skal kore i forskellige events
+
+    - Hvordan er den forskelligt fra en normal funktion
+    - Hvad er fordelene ved en callback funktion
+    - Hvorfor bruger fyne altid callback funktioner
+
+- NewTree
+    - ChildDIDs
+    - IsBranch
+    - CreatNode
+    - UpdateNode
+
+    - Hvorfor skal vi give disse callback funktioner?
+        - ChildUID, burde haandteres af strukturen
+        - IsBranch, virker ogsaa til at vaere en basal struktur opereation
+        - CreatNode, basal operation
+        - UpdateNode, Hvis det bare er objekter vi har, saa burde dette heller ikke repraesentere et problem.
+    - Hvor kommer tni fra?
+
+- Skal man give disse callBack funktioner hver gang
+
+
+## omdan projekt struktur
+
+- https://github.com/golang-standards/project-layout
+
+- Lav cmd, internal, ui, pakker
+- i internal, lav pakker baseret paa hvad denne del af koden giver.
+    - Lidt "grop by context" i DDD verdenen
+
+
+## Lav en test mode, saa den bare loader en predefinet datasaet
+
+- Det er jo en form for debug mode
+- Hvad skal den gore
+    - Vi vil gerne undgaa at skulle load en hel masse naar man skal debug
+    - Data'en aendre sig jo ikke, saa det er bare et sporgsmaal om at hente data'en fra google sheets i stedet for at skulle upload den og hente den.
+    - Man kunne maaske ogsaa bare have noget test data man kunne load ind i vores structs.
+    - Saa gaar man helt uden om noget som helst API, saa kan man ogsaa kore det offline.
+        - Smart i toget
+
+    - Hvilke steps kan vi springe over
+        - Update af excrptSheet
+        - Read fra Udtraek
+        - Bestem Person
+        - Bestem mdr
+        - InitExcrptGrps
+- Hvordan aktivere man den 
+    - Man kan bare saette den som et flag inden man buider
+    - eller kan man vel give den som et flag naar man kore programmet
+        - kunne vare en sjov maade at gore det paa.
+
+- Hvad skal man bruge for at kalde LoadExcrptGrp
+    - Excpts der er hentet fra sheets
+        - Det skal man vel bare gemme som en JSON fil, man saa kan unmarshal naar man skal bruge den.
+        - Hvad skal vi saa unmarshal/decode fra JSON
+            - excrpts fra sheets.ValueRange
+            - excrptGrps
+            - excrptGrpTotals
+
+    
+
+## Saet debug mode op til at kore gui
+
+- Saa hvordan skal vi gore det  
+    - Hver mode kan have en debug mode. Som saa loader predefined data 
+        - nok smartest. 
+        - Saa kan vi definere noget logik til at load det. (Som vi har gjort)
+        - Det er jo bare i init delen at man skal bestemme hvor man loader fra
+            - Man kan vel have en shared init del paa tvaers af cli og gui. 
+            - Der sker jo det samme, problemet opstaar bare i forhold til maaden at give input
+        - Man kan tage imod input, og saa kalde en init funktion. Som bare tager input datasaet og mdr. 
+        - Med et debug flag, kan man saa bestemme om det er debug init el. rigtig init man vil kore.
+
+- Vil det vaere smart at have en make fil
+    - Hvad ville man bruge den til
+
+## Decouple ui og internal
+
+- Man skulle maaske bygge det mere som et API?
+
+- Det handler bare om hvordan vi vil decouple front og backend
+
+- Det er maaske en fin ide at bygge det som et REST API
+
+- Giver det mening at bygge det som et API
+    - Det skal i hvertfald afkobles, fordi det er det reneste
+        - Det kan jo ogsaa gores med at lave et model interface, som man saa benytter i ui
+    - Lav et interface til decoupling, med de funktioner der skal bruges af ui, i en stateless maner.
+    - Det bliver svaert at lave den stateless, i forhold til at vide hvilken et excrpt der er det naeste og om vi har haft det excrpt for.
+    - Men det styre UI'en jo bare. Fordi ui siger bare giv mig alle excrpts.
+    - Dem gemmer de saa og fremviser
+    - i deres run tager de saa bare den naeste.
+    - backendens primare opgave er jo saadan set bare at hente og gemme data. og sorge for det bliver gjort korrekt
+
+- Men nu har vi ogsaa bare en cli, som skal understottes.
+    - Her kan man saa finde ud af om man vil have 1 interface til hver
+    - I princip er det jo det samme. pt, er cli'en bare bygget ind i backenden.
+        - Det skal den ikke vaere
+
+- Man skal tage alle inteaktionerne ud af furktionerne.
+- Saa updateExcrptTotal, skal bare returenere excrptGrpMatches, og saa er det ui's ansvar at vaelge det rigtige match
+- Er det saa viewet's ansvar at update excrptGrpTotals og update Resume med det rigtige
+    - Det ansvar burde bare ikke ligge i ui.
+    - Her kan man vel bruge en callback funktion -> 
+        - Det tror jeg ikke ville fungere saa godt med GUI
+- Hvordan sikre man sig saa at Resume og excrptGrpTotals bliver opdateret
+    - Det skal kaldes fra updateExcrptTotal funktionen, men input til UpdateResume og selve excrptGrpTotals updaten afhaenger af hvilken gruppe man har valgt
+
+- API'et skal bare return alle excrptGrpMatches
+    - Det skal vaere en anden funktion
+    - UI, kan saa gore hvad de vil med det 
+
+- UpdateExcrptTotal, skal kun update ExcrptGrpTotals array'et og ikke andet
+    - pt. gor den for meget
+    - Det er maaske fint at den kalder UpdateResume. Ellers glemmer man i UI at updateResume
+    
+    - Hvordan skal vi gore med state
+        - hvordan faar vi fat i excrptGrps
+        - Det giver ikke mening at give en pointer med, fordi i teorien behover API og app ikke at vaere paa samme maskine
+
+        - Ellers skal man til at sende excrptGrps og parents hver gang man faar et nyt excrpt
+        - og det virker meget upraktisk
+        -
+        - Det nemmeste virker til at have "Serverside" caching, som nu. Og hvor der ikke findes en enkelt decideret server, saa virker dette fint.
+
+
+- Haandtering af flere matches for 1 udtraek
+    - Det er jo op til ui'en at bestemme hvordan man vil haandtere denne konflikt. Vi skal bare vide hvilken en vi skal update.
+    - Men det er maaske det forkerte sted dette ansvar ligger
+    - Vi skal nok bare udstille en funktion der henter alle matches, og saa skal ui lave en funktion der haandere konflikten.
+    - Eller saa skal man sige tandle total tager en hojre ordens funktion, saa man er tvunget til at bestemme det. 
+    - Men det er jo ikke saa tit at gui funktioner returnere en vaerdi, saa det vil ikke passe saa godt.
+    - vi maa bare angive dem hver for sig
+
+    - Det traels ved forst at haandtere dobbelt matches el no-matches i ui. Er at man skal finde dem igen.
+        - Men maaske kan man gore noget smart.
+        - Men man kan jo ikke vide om det er det ene eller det andet
+
+## lav ui/cli del
+
+
+## graens mellem ui og internal
+
+- Hvor er graensen mellem interal og hvad skal ligge i ui
+    - Internals ansvar
+        - Det kan ikke kun vaere de metoder der kan ligge i begge ui's
+        - Det skal vaere byggeklodserne / frameworket til appliktionen
+        - Saa hvis ikke det er en byggeklods, skal den ikke ligge her
+    - ui's ansvar
+        - Det skal bare vare limen / brugen af internals
+
+## handle excrpts i gui
+
+- Databinding til vise current excrpt
+- Hvis et excrpt har flere matches, saa er det kun dem der skal vises i dropdownen.
+    - ellers, er det dem alle der skal vises.
+- Naar man dobbelt klikker paa en gruppe, skal totals opdateres og der skal hentes et nyt current excrpt.

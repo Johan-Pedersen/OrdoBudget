@@ -1,14 +1,21 @@
 # CallStack
 
+- handle excrpts i gui
+- GUI, kan ikke handle at aabne chid Ignored
 - Refactor
-    - Omdan projektet til en MVC struktur
     - Liste af excrptGrps skal vaere et 1D array 
     - Brug multithreading til at match udtraek med excrptGrp
     - LoadExcrptTotal er lidt et maerkeligt navn, for det der goer hovedparten af logikken
-    - Update totals baseret på excel arket i stedet for sheets
-        - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
-- byg gui app
-    - https://docs.fyne.io/started/
+    - Aendre tekst paa submit knap
+- Update totals baseret på excel arket i stedet for sheets
+    - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
+- Naar man afbryder et run skal man rulle tilbage
+    - Ogsaa update af commongrps
+        - Gaar denne igennem for det andet.
+- Hvor skal / kan man se logs
+- Tilknyt database?
+- Naar man laver en error skal ens fields blive repopulated.
+- util fil i controller module
 - Validation
     - Skal kunne bruges til "debug" budgettet
     - Maaske mest interessent for de faste overfoerlser til faelles kontoen
