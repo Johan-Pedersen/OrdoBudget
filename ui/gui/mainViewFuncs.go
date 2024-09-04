@@ -51,7 +51,6 @@ func submit(month int64, excrptPath string) {
 	excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
 
 	// excrptsFromSheets := getExcrptsFromSheet()
-	getExcrptsFromSheet()
 
 	// Denne del skal jo kores i et andet window
 	// accBalance := excrptgrps.LoadExcrptTotal(excrptsFromSheets, month)
