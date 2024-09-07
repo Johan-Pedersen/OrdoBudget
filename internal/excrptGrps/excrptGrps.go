@@ -229,7 +229,28 @@ func GetChildren(parentName string) []ExcrptGrp {
 }
 
 func UpdateExcrptSheet(path string) []*sheets.Request {
-	dates, amounts, descriptions, balances := util.ReadExcrptCsv(path)
+	excrpts := util.ReadExcrptCsv(path)
+
+	var dates []float64
+
+	for _, exc := range excrpts {
+		dates = append(dates, exc.Date)
+	}
+
+	var amounts []float64
+	for _, exc := range excrpts {
+		amounts = append(amounts, exc.Amount)
+	}
+
+	var descriptions []string
+	for _, exc := range excrpts {
+		descriptions = append(descriptions, exc.Description)
+	}
+
+	var balances []float64
+	for _, exc := range excrpts {
+		balances = append(balances, exc.Balance)
+	}
 
 	return []*sheets.Request{
 		requests.MultiUpdateReqDate(dates, 1, 0, 1472288449),

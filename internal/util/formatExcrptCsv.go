@@ -1,6 +1,7 @@
 package util
 
 import (
+	excrpt "budgetAutomation/internal/excrpt"
 	"encoding/csv"
 	"log"
 	"os"
@@ -12,7 +13,7 @@ import (
 /*
 Denne er lidt overflødig
 */
-func ReadExcrptCsv(path string) ([]float64, []float64, []string, []float64) {
+func ReadExcrptCsv(path string) []excrpt.Excrpt {
 	// Open the CSV file
 	file, err := os.Open(path)
 	if err != nil {
@@ -31,11 +32,7 @@ func ReadExcrptCsv(path string) ([]float64, []float64, []string, []float64) {
 	reader.Comma = ';'
 	// Read all records from the CSV file
 
-	// Print each record
-	var dates []float64
-	var amounts []float64
-	var descriptions []string
-	var balances []float64
+	var excrpts []excrpt.Excrpt
 
 	i := 0
 	for {
@@ -56,25 +53,23 @@ func ReadExcrptCsv(path string) ([]float64, []float64, []string, []float64) {
 			} else {
 				// Google sheets calculate dates as - days since Dec 30, 1899
 				baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
-				days := int(date.Sub(baseDate).Hours() / 24)
-				dates = append(dates, float64(days))
+				days := float64(date.Sub(baseDate).Hours() / 24)
 				amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
 				if err != nil {
 					log.Fatal(err)
 				}
-				amounts = append(amounts, amount)
 
-				descriptions = append(descriptions, row[5])
 				balance, err := strconv.ParseFloat(strings.ReplaceAll(row[6], ",", "."), 64)
 				if err != nil {
 					log.Fatal(err)
 				}
-				balances = append(balances, balance)
+
+				excrpts = append(excrpts, excrpt.CreateExcrpt(days, amount, balance, row[5]))
 				//
 			}
 		}
 
 		i++
 	}
-	return dates, amounts, descriptions, balances
+	return excrpts
 }

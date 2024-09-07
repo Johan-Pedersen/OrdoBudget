@@ -113,10 +113,6 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 	log.Println("Data moved successfully!")
 }
 
-func findMatchGrps(excrpts *sheets.ValueRange, month int64) {
-	excrptgrps.LoadExcrptTotal(excrpts, month, ...)
-}
-
 /*
 Select excrptGrp for given match
 
