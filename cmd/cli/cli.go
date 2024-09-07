@@ -5,8 +5,6 @@ import (
 	"flag"
 
 	excrptgrps "budgetAutomation/internal/excrptGrps"
-
-	"google.golang.org/api/sheets/v4"
 )
 
 func main() {
@@ -20,7 +18,7 @@ func main() {
 	// Which month from 1-12 should be handled
 	var month int64
 
-	var excrpts *sheets.ValueRange
+	// var excrpts *sheets.ValueRange
 	sheetsGrpCol := cli.GetSheetsGrpCol()
 	// Update excerpt sheet, before we begin
 	cli.UpdateExcrptsSheet()
@@ -31,7 +29,7 @@ func main() {
 		person = 1
 		month = 6
 
-		excrpts = cli.DebugGetExcrpts()
+		// excrpts = cli.DebugGetExcrpts()
 
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrpsDebug()
@@ -39,14 +37,15 @@ func main() {
 	} else {
 
 		cli.GetPersonAndMonth(&person, &month)
-		excrpts = cli.GetExcrpts()
+		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
 		cli.PrintExcrptGrps()
 		cli.PrintExcrptGrps()
 
 	}
-	accBalance := cli.LoadExcrptTotal(excrpts, month)
+	// accBalance := cli.LoadExcrptTotal(excrpts, month)
+	accBalance := 0.0
 
 	// find Excerpt Total for current month.
 	cli.PrintExcrptGrpTotals()
