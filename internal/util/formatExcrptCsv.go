@@ -3,6 +3,8 @@ package util
 import (
 	excrpt "budgetAutomation/internal/excrpt"
 	"encoding/csv"
+	"errors"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -13,7 +15,9 @@ import (
 /*
 Denne er lidt overflødig
 */
-func ReadExcrptCsv(path string) []excrpt.Excrpt {
+func ReadExcrptCsv(path string, month int64) []excrpt.Excrpt {
+	monthTime := time.Month(month)
+
 	// Open the CSV file
 	file, err := os.Open(path)
 	if err != nil {
@@ -35,36 +39,48 @@ func ReadExcrptCsv(path string) []excrpt.Excrpt {
 	var excrpts []excrpt.Excrpt
 
 	i := 0
+
 	for {
 		row, err := reader.Read()
 		// Dont read header-line
 		if i > 0 {
 			if err != nil {
-				// Check for end of file
-				if err.Error() == "EOF" {
+				if errors.Is(err, io.EOF) {
 					break
-				} else {
-					log.Fatal("Error:", err)
 				}
+				log.Fatal("Error:", err)
 			}
+
+			cmpMth := time.Date(0, monthTime, 1, 0, 0, 0, 0, time.UTC)
+			//
 			date, err := time.Parse("2006/01/02", row[0])
 			if err != nil {
-				log.Println("Skipping this excerpt")
+				log.Printf("Could not parse date. Skipping row %d", i)
 			} else {
-				// Google sheets calculate dates as - days since Dec 30, 1899
-				baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
-				days := float64(date.Sub(baseDate).Hours() / 24)
-				amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
-				if err != nil {
-					log.Fatal(err)
-				}
 
-				balance, err := strconv.ParseFloat(strings.ReplaceAll(row[6], ",", "."), 64)
-				if err != nil {
-					log.Fatal(err)
-				}
+				cmpCurMth := time.Date(0, date.Month(), 1, 0, 0, 0, 0, time.UTC)
 
-				excrpts = append(excrpts, excrpt.CreateExcrpt(days, amount, balance, row[5]))
+				if cmpMth.Equal(cmpCurMth) {
+
+					// Google sheets calculate dates as - days since Dec 30, 1899
+					baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
+					days := float64(date.Sub(baseDate).Hours() / 24)
+					amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					balance, err := strconv.ParseFloat(strings.ReplaceAll(row[6], ",", "."), 64)
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					excrpts = append(excrpts, excrpt.CreateExcrpt(days, amount, balance, row[5]))
+
+					// All following excrpts will be before our month of interest
+				} else if cmpMth.Before(cmpCurMth) {
+					break
+				}
 				//
 			}
 		}

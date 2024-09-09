@@ -228,8 +228,8 @@ func GetChildren(parentName string) []ExcrptGrp {
 	return nil
 }
 
-func UpdateExcrptSheet(path string) []*sheets.Request {
-	excrpts := util.ReadExcrptCsv(path)
+func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
+	excrpts := util.ReadExcrptCsv(path, month)
 
 	var dates []float64
 

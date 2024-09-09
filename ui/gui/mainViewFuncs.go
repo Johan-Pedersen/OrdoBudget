@@ -45,7 +45,7 @@ func submitDebug() {
 func submit(month int64, excrptPath string) {
 	var person int64 = 1
 
-	updateExcrptSheet(excrptPath)
+	updateExcrptSheet(excrptPath, month)
 
 	sheetsGrpCol := getSheetsGrpCol()
 	excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
@@ -88,13 +88,13 @@ func getSheetsGrpCol() *sheets.ValueRange {
 /*
 Update the temporary sheet to hold excrpts
 */
-func updateExcrptSheet(excrptPath string) {
+func updateExcrptSheet(excrptPath string, month int64) {
 	sheet := req.GetSheet()
 	ctx := context.Background()
 
 	// Update excerpt sheet, before we begin
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: excrptgrps.UpdateExcrptSheet(excrptPath),
+		Requests: excrptgrps.UpdateExcrptSheet(excrptPath, month),
 	}
 
 	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
@@ -155,7 +155,7 @@ func updateExcrptsSheetDebug() {
 	sheet := req.GetSheet()
 	ctx := context.Background()
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: excrptgrps.UpdateExcrptSheet("storage/excrptSheet.csv"),
+		Requests: excrptgrps.UpdateExcrptSheet("storage/excrptSheet.csv", 4),
 	}
 
 	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
