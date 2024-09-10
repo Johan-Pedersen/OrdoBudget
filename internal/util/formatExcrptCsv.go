@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -15,19 +14,11 @@ import (
 /*
 Denne er lidt overflødig
 */
-func ReadExcrptCsv(path string, month int64) []excrpt.Excrpt {
+func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
 	monthTime := time.Month(month)
 
-	// Open the CSV file
-	file, err := os.Open(path)
-	if err != nil {
-		print("Could not open excerpt file")
-		log.Fatalln("Coud not open excerpt file.", err)
-	}
-	defer file.Close()
-
 	// Create a new CSV ReadExcrptCsv
-	reader := csv.NewReader(file)
+	reader := csv.NewReader(r)
 
 	// Dont test on number of fields
 	reader.FieldsPerRecord = -1

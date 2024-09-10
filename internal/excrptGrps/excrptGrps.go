@@ -229,7 +229,15 @@ func GetChildren(parentName string) []ExcrptGrp {
 }
 
 func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
-	excrpts := util.ReadExcrptCsv(path, month)
+	// open the csv file
+	file, err := os.Open(path)
+	if err != nil {
+		print("could not open excerpt file")
+		log.Fatalln("coud not open excerpt file.", err)
+	}
+	defer file.Close()
+
+	excrpts := util.ReadExcrptCsv(file, month)
 
 	var dates []float64
 

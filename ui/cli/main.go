@@ -71,11 +71,11 @@ func GetSheetsGrpCol() *sheets.ValueRange {
 	return sheetsGrpCol
 }
 
-func UpdateExcrptsSheet() {
+func UpdateExcrptsSheet(month int64) {
 	sheet := req.GetSheet()
 	ctx := context.Background()
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: excrptgrps.UpdateExcrptSheet("storage/excrptSheet.csv"),
+		Requests: excrptgrps.UpdateExcrptSheet("storage/excrptSheet.csv", month),
 	}
 
 	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()

@@ -20,8 +20,6 @@ func main() {
 
 	// var excrpts *sheets.ValueRange
 	sheetsGrpCol := cli.GetSheetsGrpCol()
-	// Update excerpt sheet, before we begin
-	cli.UpdateExcrptsSheet()
 	// Debug mode
 	if *debugMode {
 
@@ -29,6 +27,8 @@ func main() {
 		person = 1
 		month = 6
 
+		// Update excerpt sheet, before we begin
+		cli.UpdateExcrptsSheet(month)
 		// excrpts = cli.DebugGetExcrpts()
 
 		// Initialize and print excerpt groups
@@ -37,6 +37,8 @@ func main() {
 	} else {
 
 		cli.GetPersonAndMonth(&person, &month)
+		// Update excerpt sheet, before we begin
+		cli.UpdateExcrptsSheet(month)
 		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
