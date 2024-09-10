@@ -8,3 +8,10 @@ func CreateExcrpt(date, amount, balance float64, description string) Excrpt {
 		Balance:     balance,
 	}
 }
+
+func (e Excrpt) Equals(exc Excrpt) bool {
+	return exc.Date == e.Date &&
+		e.Amount == exc.Amount &&
+		e.Balance == exc.Balance &&
+		e.Description == exc.Description
+}
