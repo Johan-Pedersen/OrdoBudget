@@ -1,8 +1,11 @@
 package main
 
 import (
+	"budgetAutomation/internal/util"
 	"budgetAutomation/ui/cli"
 	"flag"
+	"log"
+	"os"
 
 	excrptgrps "budgetAutomation/internal/excrptGrps"
 )
@@ -38,15 +41,34 @@ func main() {
 
 		cli.GetPersonAndMonth(&person, &month)
 		// Update excerpt sheet, before we begin
-		cli.UpdateExcrptsSheet(month)
+		// cli.UpdateExcrptsSheet(month)
 		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
 		cli.PrintExcrptGrps()
-		cli.PrintExcrptGrps()
 
 	}
+
+	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/storage/excrptSheet.csv")
+	if err != nil {
+		log.Fatalln("Could not open excrpt file", err)
+	}
+	// Read excrpts from csv
+	excrpts := util.ReadExcrptCsv(reader, month)
+
+	// Auto find matches
+	// create upd requests for match
+
+	matches := excrptgrps.FindUpdMatches(&excrpts)
+
+	// Decide unknown matches
+
+	// Create upd requests for match
+
+	// Update budget -> API kald
+
 	// accBalance := cli.LoadExcrptTotal(excrpts, month)
+
 	accBalance := 0.0
 
 	// find Excerpt Total for current month.

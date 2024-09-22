@@ -48,15 +48,14 @@ func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
 			date, err := time.Parse("2006/01/02", elms[0])
 			if err != nil {
 				log.Printf("Could not parse date. Skipping row %d", i)
+
+				// date can be "reserveret", and we only want to account for excrpts which has been taken from the account
 			} else {
 
 				cmpCurMth := time.Date(0, date.Month(), 1, 0, 0, 0, 0, time.UTC)
 
 				if cmpMth.Equal(cmpCurMth) {
 
-					// Google sheets calculate dates as - days since Dec 30, 1899
-					baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
-					days := float64(date.Sub(baseDate).Hours() / 24)
 					amount, err := strconv.ParseFloat(elms[1]+"."+elms[2], 64)
 					if err != nil {
 						log.Fatal(err)
@@ -80,7 +79,7 @@ func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
 						}
 					}
 
-					excrpts = append(excrpts, excrpt.CreateExcrpt(days, amount, balance, description))
+					excrpts = append(excrpts, excrpt.CreateExcrpt(amount, balance, date.Format("2006/01/02"), description))
 
 					fmt.Printf("excrpts: %v\n", excrpts)
 					// All following excrpts will be before our month of interest

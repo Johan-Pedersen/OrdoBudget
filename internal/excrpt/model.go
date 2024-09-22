@@ -1,7 +1,7 @@
 package excrpt
 
 type Excrpt struct {
-	Date        float64
+	Date        string
 	Amount      float64
 	Description string
 	Balance     float64

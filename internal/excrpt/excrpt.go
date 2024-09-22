@@ -1,6 +1,6 @@
 package excrpt
 
-func CreateExcrpt(date, amount, balance float64, description string) Excrpt {
+func CreateExcrpt(amount, balance float64, date, description string) Excrpt {
 	return Excrpt{
 		Date:        date,
 		Amount:      amount,

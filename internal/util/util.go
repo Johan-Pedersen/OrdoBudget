@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"time"
 )
 
 /*
@@ -50,4 +51,20 @@ func CheckCurMonth(curMonth, exrptMonth int64) (bool, int64) {
 	}
 
 	return isNewMonth, curMonth
+}
+
+/*
+Converts from str date formate (2006/01/02) to days since Dec 30, 1899
+
+Google sheets calculate dates as - days since Dec 30, 1899
+*/
+func ConvertDateToFloat(dateStr string) float64 {
+	date, err := time.Parse("2006/01/02", dateStr)
+	if err != nil {
+		log.Fatal("Could not parse date")
+	}
+	baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
+	days := float64(date.Sub(baseDate).Hours() / 24)
+
+	return days
 }

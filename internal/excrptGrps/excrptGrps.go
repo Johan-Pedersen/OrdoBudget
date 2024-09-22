@@ -1,6 +1,7 @@
 package excrptgrps
 
 import (
+	"budgetAutomation/internal/excrpt"
 	"budgetAutomation/internal/requests"
 	req "budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
@@ -242,7 +243,7 @@ func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
 	var dates []float64
 
 	for _, exc := range excrpts {
-		dates = append(dates, exc.Date)
+		dates = append(dates, util.ConvertDateToFloat(exc.Date))
 	}
 
 	var amounts []float64
@@ -269,57 +270,20 @@ func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
 }
 
 /*
-Reads excrpts to update excrptGrpTotals and returns most recent account balance
+Find matches for excrpts and updates ExcrptTotal iff only 1 match is found, otherwise the found excrpts are added to the return
 */
-// func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64, selMatchGrp func(string, string, float64, []ExcrptGrp) string) float64 {
-func LoadExcrptTotal(excrpts *sheets.ValueRange, month int64, selMatchGrp func(...interface{}) string) float64 {
-	isRightMonth := false
-	accBalance := -1.0
-	for _, elm := range excrpts.Values {
-		date, description := elm[0].(string), elm[2].(string)
-		s := strings.ReplaceAll(elm[1].(string), ",", ".")
-		amount, err := strconv.ParseFloat(s, 64)
+func FindUpdMatches(excrpts *[]excrpt.Excrpt) map[excrpt.Excrpt][]ExcrptGrp {
+	ret := make(map[excrpt.Excrpt][]ExcrptGrp)
 
-		if err != nil {
-			log.Println("Could not read amount for", date, ":", description, ":", elm[1].(string))
+	for _, excrpt := range *excrpts {
+		matches := FindExcrptMatches(excrpt.Description)
+		// If there is only a single match, the update is given
+		// Otherwise the correct match has to be made in the ui
+		if len(matches) == 1 {
+			UpdateExcrptTotal(excrpt.Date, excrpt.Description, excrpt.Amount, matches[0].Name)
 		} else {
-			// Get excerpt month
-			if date != "Reserveret" {
-
-				exrptMonth, err := strconv.ParseInt(strings.Split(date, "/")[1], 0, 64)
-				if err != nil {
-					// ToDo: skal ikke vaere fatal. Skal nok bare skip
-					log.Fatal("Could not read excerpt date", err)
-				}
-
-				if month == exrptMonth {
-					isRightMonth = true
-					if accBalance == -1.0 {
-						s := strings.ReplaceAll(elm[3].(string), ",", ".")
-
-						accBalance, err = strconv.ParseFloat(s, 64)
-						if err != nil {
-							// ToDo: skal ikke vaere fatal. Skal nok bare skip
-							log.Fatalln("Could not read account balance")
-						}
-					}
-
-				} else if exrptMonth < month {
-					break
-				}
-				if isRightMonth {
-					matches := FindExcrptMatches(description)
-					// If there is only a single match, the update is given
-					// Otherwise the correct match has to be made in the ui
-					if len(matches) == 1 {
-						UpdateExcrptTotal(date, description, amount, matches[0].Name)
-					} else {
-						selMatch := selMatchGrp(date, description, amount, matches)
-						UpdateExcrptTotal(date, description, amount, selMatch)
-					}
-				}
-			}
+			ret[excrpt] = matches
 		}
 	}
-	return accBalance
+	return ret
 }

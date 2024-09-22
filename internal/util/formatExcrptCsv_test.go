@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestNotLatestMth(t *testing.T) {
@@ -17,8 +16,8 @@ func TestNotLatestMth(t *testing.T) {
 	}
 	excrpts := ReadExcrptCsv(reader, 5)
 
-	e1 := excrpt.CreateExcrpt(convertDate("2024/05/12"), -24, 8129.67, "test5")
-	e2 := excrpt.CreateExcrpt(convertDate("2024/05/07"), -414, 8153.67, "test6 test6.2 oeu")
+	e1 := excrpt.CreateExcrpt(-24, 8129.67, "2024/05/12", "test5")
+	e2 := excrpt.CreateExcrpt(-414, 8153.67, "2024/05/07", "test6 test6.2 oeu")
 
 	expectedExcrpts := [2]excrpt.Excrpt{e1, e2}
 
@@ -38,10 +37,10 @@ func TestNormCase(t *testing.T) {
 	}
 	excrpts := ReadExcrptCsv(reader, 6)
 
-	e1 := excrpt.CreateExcrpt(convertDate("2024/06/12"), -24, 2988.78, "test1")
-	e2 := excrpt.CreateExcrpt(convertDate("2024/06/07"), -414, 3012.78, "test2 test2.2 oeu")
-	e3 := excrpt.CreateExcrpt(convertDate("2024/06/06"), -1399.89, 3426.78, "test3")
-	e4 := excrpt.CreateExcrpt(convertDate("2024/06/06"), 207, 8336.67, "Test 4")
+	e1 := excrpt.CreateExcrpt(-24, 2988.78, "2024/06/12", "test1")
+	e2 := excrpt.CreateExcrpt(-414, 3012.78, "2024/06/07", "test2 test2.2 oeu")
+	e3 := excrpt.CreateExcrpt(-1399.89, 3426.78, "2024/06/06", "test3")
+	e4 := excrpt.CreateExcrpt(207, 8336.67, "2024/06/06", "Test 4")
 
 	expectedExcrpts := [4]excrpt.Excrpt{e1, e2, e3, e4}
 
@@ -74,16 +73,4 @@ func TestNotCorrectMth(t *testing.T) {
 	if len(excrpts) != 0 {
 		t.Error("Number of excrpts should be 0")
 	}
-}
-
-// Google sheets calculate dates as - days since Dec 30, 1899
-func convertDate(dateStr string) float64 {
-	date, err := time.Parse("2006/01/02", dateStr)
-	if err != nil {
-		log.Fatal("Could not parse date")
-	}
-	baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
-	days := float64(date.Sub(baseDate).Hours() / 24)
-
-	return days
 }
