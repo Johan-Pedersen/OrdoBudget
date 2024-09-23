@@ -4,7 +4,6 @@ import (
 	excrpt "budgetAutomation/internal/excrpt"
 	"encoding/csv"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -39,7 +38,6 @@ func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
 				}
 				log.Fatal("Error:", err)
 			}
-
 			elms := strings.Split(row[0][:len(row[0])-1], ",")
 
 			cmpMth := time.Date(0, monthTime, 1, 0, 0, 0, 0, time.UTC)
@@ -81,7 +79,6 @@ func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
 
 					excrpts = append(excrpts, excrpt.CreateExcrpt(amount, balance, date.Format("2006/01/02"), description))
 
-					fmt.Printf("excrpts: %v\n", excrpts)
 					// All following excrpts will be before our month of interest
 				} else if cmpCurMth.Before(cmpMth) {
 					break

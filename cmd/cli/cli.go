@@ -69,12 +69,10 @@ func main() {
 
 	// Update budget -> API kald
 
+	cli.UpdateBudget(sheetsGrpCol, 0.0, month, person)
 	// accBalance := cli.LoadExcrptTotal(excrpts, month)
-
-	accBalance := 0.0
 
 	// find Excerpt Total for current month.
 	cli.PrintExcrptGrpTotals()
-	cli.UpdateBudget(sheetsGrpCol, accBalance, month, person)
 	cli.PrintResume()
 }
