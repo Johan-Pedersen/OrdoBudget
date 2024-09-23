@@ -18,7 +18,7 @@ import (
 
 var ExcrptGrpTotals = map[string]float64{}
 
-var ExcrptGrps = []ExcrptGrpParent{}
+var ExcrptGrpParents = []ExcrptGrpParent{}
 
 var Resume = []string{}
 
@@ -33,7 +33,7 @@ func FindExcrptMatches(excrpt string) []ExcrptGrp {
 	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
 
 	// Find correct excrpt grp
-	for _, parent := range ExcrptGrps {
+	for _, parent := range ExcrptGrpParents {
 		for i := range parent.ExcrptGrps {
 			for _, match := range parent.ExcrptGrps[i].Mappings {
 				match = strings.ToLower(strings.Trim(match, " "))
@@ -86,8 +86,8 @@ func InitExcrptGrpsDebug() {
 	if err != nil {
 		log.Fatal("Unable to open JSonExcrptsGrps")
 	}
-	defer f1.Close()                        // //Json decode
-	json.NewDecoder(f1).Decode(&ExcrptGrps) // if err != nil {
+	defer f1.Close()                              // //Json decode
+	json.NewDecoder(f1).Decode(&ExcrptGrpParents) // if err != nil {
 
 	f2, err := os.Open("build/debug/JsonExcrptGrpTotals")
 	if err != nil {
@@ -183,7 +183,7 @@ func createGrps(data Data) {
 			i += 1
 		}
 		parent := ExcrptGrpParent{parentName, grps}
-		ExcrptGrps = append(ExcrptGrps, parent)
+		ExcrptGrpParents = append(ExcrptGrpParents, parent)
 	}
 }
 
@@ -198,7 +198,7 @@ func createExcrptGrp(ind int, name, parent string, data DataExcrpt) ExcrptGrp {
 }
 
 func GetParents() []ExcrptGrpParent {
-	return ExcrptGrps
+	return ExcrptGrpParents
 }
 
 /*
@@ -209,7 +209,7 @@ if you don't want to use name, make name = "". \n
 returnes err if not found
 */
 func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
-	for _, parent := range ExcrptGrps {
+	for _, parent := range ExcrptGrpParents {
 		for _, excrptGrp := range parent.ExcrptGrps {
 			if strings.EqualFold(strings.Trim(excrptGrp.Name, " "), strings.Trim(name, " ")) || excrptGrp.Ind == ind {
 				return excrptGrp, nil
@@ -220,7 +220,7 @@ func GetExcrptGrp(name string, ind int) (ExcrptGrp, error) {
 }
 
 func GetChildren(parentName string) []ExcrptGrp {
-	for _, egp := range ExcrptGrps {
+	for _, egp := range ExcrptGrpParents {
 		if egp.Name == parentName {
 			return egp.ExcrptGrps
 		}

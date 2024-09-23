@@ -63,6 +63,8 @@ func main() {
 
 	// Decide unknown matches
 
+	cli.DecideExcrptGrps(matches)
+
 	// Create upd requests for match
 
 	// Update budget -> API kald
