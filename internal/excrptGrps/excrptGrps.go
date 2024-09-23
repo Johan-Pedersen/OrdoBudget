@@ -2,7 +2,6 @@ package excrptgrps
 
 import (
 	"budgetAutomation/internal/excrpt"
-	"budgetAutomation/internal/requests"
 	req "budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"encoding/json"
@@ -262,10 +261,10 @@ func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
 	}
 
 	return []*sheets.Request{
-		requests.MultiUpdateReqDate(dates, 1, 0, 1472288449),
-		requests.MultiUpdateReqNum(amounts, 1, 1, 1472288449),
-		requests.MultiUpdateReq(descriptions, 1, 2, 1472288449),
-		requests.MultiUpdateReqNum(balances, 1, 3, 1472288449),
+		req.MultiUpdateReqDate(dates, 1, 0, 1472288449),
+		req.MultiUpdateReqNum(amounts, 1, 1, 1472288449),
+		req.MultiUpdateReq(descriptions, 1, 2, 1472288449),
+		req.MultiUpdateReqNum(balances, 1, 3, 1472288449),
 	}
 }
 
