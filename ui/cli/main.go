@@ -224,11 +224,11 @@ func DecideExcrptGrps(matches map[excrpt.Excrpt][]grps.ExcrptGrp) {
 	excrptGrpInd := -1
 	for excrpt, excrptGrps := range matches {
 		if len(excrptGrps) == 0 {
-			fmt.Println("No matches found for ", excrpt, ". Please choose a match")
 			PrintExcrptGrps()
+			fmt.Println("No matches found for ", excrpt, ". Please choose a match")
 		} else {
-			fmt.Println(len(excrptGrps), " matches found for ", excrpt, ". Please choose a match")
 			printFoundExcrptGrps(excrptGrps)
+			fmt.Println(len(excrptGrps), " matches found for ", excrpt, ". Please choose a match")
 		}
 
 		fmt.Scan(excrptGrpInd)

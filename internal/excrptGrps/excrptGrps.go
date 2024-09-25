@@ -38,9 +38,8 @@ func FindExcrptMatches(excrpt string) []ExcrptGrp {
 			for _, match := range parent.ExcrptGrps[i].Mappings {
 				match = strings.ToLower(strings.Trim(match, " "))
 				if strings.Contains(excrpt, match) {
-					if !isIgnored(parent.Name) {
-						excrptGrpMatches = append(excrptGrpMatches, parent.ExcrptGrps[i])
-					}
+					excrptGrpMatches = append(excrptGrpMatches, parent.ExcrptGrps[i])
+					break
 				}
 			}
 		}
@@ -51,7 +50,7 @@ func FindExcrptMatches(excrpt string) []ExcrptGrp {
 func UpdateExcrptTotal(date, excrpt string, amount float64, excrptGrpName string) {
 	tmpAmount := amount
 
-	if excrptGrpName == "Ignored" {
+	if isIgnored(excrptGrpName) {
 		tmpAmount = 0
 	}
 
