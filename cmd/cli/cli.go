@@ -1,12 +1,13 @@
 package main
 
 import (
+	"budgetAutomation/internal/util"
 	"budgetAutomation/ui/cli"
 	"flag"
+	"log"
+	"os"
 
 	excrptgrps "budgetAutomation/internal/excrptGrps"
-
-	"google.golang.org/api/sheets/v4"
 )
 
 func main() {
@@ -20,10 +21,8 @@ func main() {
 	// Which month from 1-12 should be handled
 	var month int64
 
-	var excrpts *sheets.ValueRange
+	// var excrpts *sheets.ValueRange
 	sheetsGrpCol := cli.GetSheetsGrpCol()
-	// Update excerpt sheet, before we begin
-	cli.UpdateExcrptsSheet()
 	// Debug mode
 	if *debugMode {
 
@@ -31,7 +30,9 @@ func main() {
 		person = 1
 		month = 6
 
-		excrpts = cli.DebugGetExcrpts()
+		// Update excerpt sheet, before we begin
+		cli.UpdateExcrptsSheet(month)
+		// excrpts = cli.DebugGetExcrpts()
 
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrpsDebug()
@@ -39,17 +40,39 @@ func main() {
 	} else {
 
 		cli.GetPersonAndMonth(&person, &month)
-		excrpts = cli.GetExcrpts()
+		// Update excerpt sheet, before we begin
+		// cli.UpdateExcrptsSheet(month)
+		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
 		cli.PrintExcrptGrps()
-		cli.PrintExcrptGrps()
 
 	}
-	accBalance := cli.LoadExcrptTotal(excrpts, month)
+
+	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/storage/excrptSheet.csv")
+	if err != nil {
+		log.Fatalln("Could not open excrpt file", err)
+	}
+	// Read excrpts from csv
+	excrpts := util.ReadExcrptCsv(reader, month)
+
+	// Auto find matches
+	// create upd requests for match
+
+	matches := excrptgrps.FindUpdMatches(&excrpts)
+
+	// Decide unknown matches
+
+	cli.DecideExcrptGrps(matches)
+
+	// Create upd requests for match
+
+	// Update budget -> API kald
+
+	cli.UpdateBudget(sheetsGrpCol, 0.0, month, person)
+	// accBalance := cli.LoadExcrptTotal(excrpts, month)
 
 	// find Excerpt Total for current month.
 	cli.PrintExcrptGrpTotals()
-	cli.UpdateBudget(sheetsGrpCol, accBalance, month, person)
 	cli.PrintResume()
 }
