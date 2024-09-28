@@ -1,7 +1,7 @@
 package main
 
 import (
-	"budgetAutomation/internal/util"
+	"budgetAutomation/internal/parser"
 	"budgetAutomation/ui/cli"
 	"flag"
 	"log"
@@ -54,7 +54,7 @@ func main() {
 		log.Fatalln("Could not open excrpt file", err)
 	}
 	// Read excrpts from csv
-	excrpts := util.ReadExcrptCsv(reader, month)
+	excrpts := parser.ReadExcrptCsv(reader, month)
 
 	// Auto find matches
 	// create upd requests for match

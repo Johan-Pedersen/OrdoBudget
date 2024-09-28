@@ -2,6 +2,7 @@ package excrptgrps
 
 import (
 	"budgetAutomation/internal/excrpt"
+	"budgetAutomation/internal/parser"
 	req "budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"encoding/json"
@@ -236,7 +237,7 @@ func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
 	}
 	defer file.Close()
 
-	excrpts := util.ReadExcrptCsv(file, month)
+	excrpts := parser.ReadExcrptCsv(file, month)
 
 	var dates []float64
 
