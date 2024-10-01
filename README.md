@@ -6,21 +6,21 @@
 - make a parent grp for each groupe of expenses, i.e fixed expenses, Car expenses, insurance, Loans, variable expenses ...
 -
 
-## ExcrptGrp 
+## Entry 
 
 ```
-type ExcrptGrp struct {
+type Entry struct {
     // Used to make lookup in excerptMappings array
     ind int
 
-    // Name of the ExcrptGrp
+    // Name of the entry
     name string
 
-    // Matches for this excrptGrp
+    // Matches for this entry
     mappings []string
 
     // Defines the type of this excerpt
-    parent string
+    GroupName string
 
     // Determines if the initial group total value should be read from the sheet or start at 0
     // Default is false
@@ -31,7 +31,7 @@ type ExcrptGrp struct {
 - fixedExpense
     - Is used for fixed expenses which rarely change
 
-- Parent: Ignored
+- Group: Ignored
     - Matches are not ignored.
 
 

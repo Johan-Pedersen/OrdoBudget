@@ -7,7 +7,6 @@ nyt projekt: budgetautomation-414505
 
 - Parent: ignored
   - Det er til udtrœk som fx "johan til fœlles", som ikke har nogen decideret gruppe og bliver håndteret gennem sheets, uden om dette system.
-
   
 
 ## nyttige links
@@ -574,3 +573,208 @@ nyt projekt: budgetautomation-414505
 - Hvis et excrpt har flere matches, saa er det kun dem der skal vises i dropdownen.
     - ellers, er det dem alle der skal vises.
 - Naar man dobbelt klikker paa en gruppe, skal totals opdateres og der skal hentes et nyt current excrpt.
+
+### vis current Excrpt
+
+- Problemet er at man skal update bindet naar man har assignet et excrpt til en grp.
+
+- Men vi kan have et async loop til at korer alle excrpts i gennem
+- Det staar og lytter paa en channel, og mens det gor det er det blocking
+    - Saa vi ikke updater bind for den er klar.
+
+- Det er det loop updater vores string binding
+
+- vi skal ogsaa have en function der kaldes onSelect
+    - Den skal skrive paa channel'en og tage den selected value, samt excrpt(Maaske fra bind?) og saa update Totals
+    - Kan vi faa fat paa excrptet som struct i stedet for string
+
+- Vil man hente excrpts over i en struct?
+
+## fix loadExcrptTotals
+
+- Vi skal finde en maade hvor metoden baade kan bruges af cli og gui
+- Til det kraeves at man har en metode til at bestemme hvilken gruppe man skal tage naar der er flere matches.
+
+- Man kan maaske splitte algoritmen mere ud, saa den i sig selv ikke laver lige saa meget?
+- Man kunne ogsaa bare faa den til at returnere alle excrpts der er tvivl om, og saa kna ui delen selv tage stilling til hvad der skal ske med dem.
+
+- Man vil jo gerne have at en metode kun gor 1 ting
+- Maaske skulle man lade en anden metode finde alle matches og saa kalde dem i et loop med updateExcrptsTotal.
+
+- Saa adskiller man det med at finde og update, hvor loadExcptsTotals prover at gore det hele.
+
+- tidskomplektiteten er det samme. Det er bare en enkelt faktor i forskel.
+    - Det er ogsaa den mest simple losning
+
+- UI'en skal have selMachtGrp funktionen.
+- naar de har gjort det kan de kalde UpdateExcrptTotal
+- for at de kan kalde den, saa skal man forst decode excrpts.Values, og det er nok der loadExcrpts kommer ind i spil.
+    - Her vil det jo hjalpe hvis man havede en struct til at laese excrpts.Values over i. fordi saa kunne man bare have en funktion der gjorde det. 
+    - Saa har man en collection af excrpts, som ui derefter kan bruge.
+
+- Hvorfor skal Date i Excrpt struct vaere float
+    - Kan det betale sig at lave den til en date type
+    - Man kan sige det fungere nu?
+
+- Hvad er dens ansvar
+    - UI skal sorge for at finde finde / definere alle matches
+    - Derefter skal vi kore dem alle i gennem og UpdateExcrptTotals
+    
+    - Man kan laese alle excrpts fra CSV'en. De bliver saa laest over i en excrpt struct.
+        - Men laeser LoadExcrptTotal filen paa samme maade som ReadExcrptFromCSV
+            - Nej, ReadExcrptCsv er ikke lige saa haardfor
+            - Den laeser ogsaa hele CSV filen uafh af mdr og ikke ligesaa god error handling
+    - Men hvis vi flytter over til at laese fra csv filen, kommer det med at vi ikke skal laese excrpts fra sheets automatisk.
+        - Men det er saa lidt en anden opgave ligepludslig
+        - Skal have rene linjer, saa tingene ikke flyder sammen og bliver forvirrende.
+
+
+- Todo:
+    - ReadExcrptsCsv
+        - laes over i excrpt struct -> J
+            - Den skal forfines, saa den er mere haardfor
+    - funktion til at finde matches for CLI og GUI 
+    - funktion til udregning af account balance
+        - update af totals
+    - vis excrpts og excrptGrps i GUI
+        - stor del
+    - Ryd op saa man ikke laengere updater 'temp' sheets med variable
+
+
+- funktionen ligger det forkerte sted
+
+### Test ReadExcrptCsv
+
+- empty file
+- malformed file
+- good file
+- test cmpMonth functionality.
+
+- maaske skal vi se om vi kan input strings, i stedet for vi skal have saa mange test filer liggende.
+
+
+### implementer hele flowet for cli
+
+- Den "eneste" forskel paa ui's er hvordan man finder matches. Ellers så er alt det andet faktis det samme.
+    - Man kan saa bare have koden til at stå 1 faelles sted. 
+    - Eller som vi har gjort nu, hvor vi har lavet en "backend", begge ui's bruger
+    - Man kan samle ui's, saa man faktisk kalder den samme fil hver gang og saa bestemme med flag om man korer cli eller gui. De kan saa begge korer den samme read excrpts og auto-find matches. 
+    - 
+
+- i alle steps, lober/haandtere man samtlige excrpts.
+    - Det er jo ikke eksponentielt bare en faktor, men det er stadig mange gange
+    - Den eneste man kan skralde vaek er "update totals"
+    - Man kan ogsaa smide update budget loopet vaek
+        - Hver gang man har defineret et match, saa kan man lave en update-req
+        - i samme omgang kan man update totals
+
+- Hvorfor har vi en totals
+    - Den har vaeret til, saa man forst kunne finde alle excrpts og matches. For der efter at upload dem til google sheets.
+    - Men hvis vi laver requestet med det samme, saa er der ingen grund til at skulle gemme det i totals.
+    - grunden til vi har totals, er fordi for vi updater, saa skal man finde det totale for hver excrptGrp inden man updater sheets.
+
+    - Men det kan man saa komme uden om hvis man kan laegge en vaerdi til det der allered staar i cellen.
+
+- bliver det for meget i forheld til man ogsaa skal vide hvilken celle man skal opdatere.
+    - Man kan jo bare hente kolonnen med alle grupperne ud og ligge det over i et map.
+    - Saa kan man slaa excrptGrp'en op i mappet for at se hvilken raekke det skal ligge paa 
+
+- Saa skal man ogsaa have logik til at bestemme hvornaar skal man overskrie cellen og hvornaar skal man ligge til.
+    - Tror der er mange ting der kan gaa galt i det flow
+
+- Kan det vaere fordi Kirsch golf matcher baade paa "kirsh golf" og "golf"
+
+#### laes exclpts fra csv -> J
+#### auto find matches
+
+- Er der forskel paa en et match en excrptGrp
+    - ExcrptGrp er selve structen
+    - et match er et faktisk math mellem ExcrptGrp og excrpt
+    - Men det bliver indkaplset i instantieringen af et excrptGrp
+
+- Meget af denne logik ligger allerede i excrptgrps -> skal den det 
+    - Man skal bare rette den til saa man hver gang opdater totals.
+        - Det gor vi maaske allerede
+
+    - Det var i hvert fald svaert at finde om jeg haved denne logik.
+        - Men jeg taenkte heller ikke rigtig over hvad excrptGrps faktis stod for?
+        - Foler maaske den skal flyttes.
+
+
+
+- Hvordan skal vi opdele pakkerne
+    - Hvilke ansvars omraader har vi
+    - parser giver god mening, fordi her skal vi parse forskellige filer fra div banker
+    - 
+
+    - Laerser fra CSV
+        - parseren
+        - Til det horer ogsaa excepts.
+
+    - Find auto-matches
+        - ved hver match bliver balance updated
+        
+
+    - Find resterende matches
+        - update balances ved hver match
+
+
+    - Update google sheets
+
+- Excrpt skal ligge i parser pakken 
+    - Hvordan skal man haandtere det med at have defineret typer osv.
+
+- Ansvars omraader i Entry
+
+    - Balance collection
+        - haandtering af balance
+        - bruger entry
+    - Resume collection
+
+    - Entries collection
+        - Init collection
+        - create
+    - Groups collection
+        - Create
+
+    - google sheets updates
+        - UpdateCommonGrps
+        - UpdateExcrptSheet
+        
+    - Find matches
+        - Matcher excrpts med entries + groups
+
+- Entries + Groups
+
+- Balance + Resume
+    - Benytter entries + Groups
+
+- Entry pakken kan kaldes accounting
+    - Kan holde Entries + Groups + Balance + resume
+    - Er det for generelt
+        - excrpts kan ogsaa vaere i accouting
+            - vi saetter en granse for hvad der horere til input, og hvad der er accunting
+    - budget
+        - Vi har typerne til at efterligne budget
+        - budget kan ogsaa holde alt.
+
+- google Sheets
+    - Benytter excrpts
+    - ingen grund til at ligge her
+
+
+- find matches
+
+
+- InitExcrptGrps / initEtriese skal ligge i parser
+
+
+- Skal man have en accounting pakke til alt med Balanc, Resume og CommonGrps
+    - Skal CommonGrps ikke hedde fixedExpenses?
+        - Det er vel ikke nodvendigvis "fixed expenses", det er bare hvad den bliver brugt til
+
+- matches pakke 
+    - til at finde matches
+    - skal bruge func til updateBalance fra accunting
+    - skal accutning bruge matches, vel ikke rigtig
+    - matces skal vel bare kaldes af ui?

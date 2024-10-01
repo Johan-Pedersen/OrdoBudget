@@ -1,7 +1,7 @@
 package ui
 
 import (
-	excrptgrps "budgetAutomation/internal/excrptGrps"
+	"budgetAutomation/internal/accounting"
 	req "budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"context"
@@ -20,7 +20,7 @@ func submitDebug() {
 	// excrpts := debugGetExcrpts()
 	debugGetExcrpts()
 	updateExcrptsSheetDebug()
-	excrptgrps.InitExcrptGrpsDebug()
+	accounting.InitEntriesDebug()
 
 	sheetsGrpCol := getSheetsGrpCol()
 
@@ -48,7 +48,7 @@ func submit(month int64, excrptPath string) {
 	updateExcrptSheet(excrptPath, month)
 
 	sheetsGrpCol := getSheetsGrpCol()
-	excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
+	accounting.InitExcrptGrps(sheetsGrpCol, month, person)
 
 	// excrptsFromSheets := getExcrptsFromSheet()
 
@@ -94,7 +94,7 @@ func updateExcrptSheet(excrptPath string, month int64) {
 
 	// Update excerpt sheet, before we begin
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: excrptgrps.UpdateExcrptSheet(excrptPath, month),
+		Requests: req.UpdateExcrptSheet(excrptPath, month),
 	}
 
 	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
@@ -121,7 +121,7 @@ func updateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
 
-			total, notFoundErr := excrptgrps.GetTotal(elm[0].(string))
+			total, notFoundErr := accounting.GetTotal(elm[0].(string))
 
 			if notFoundErr == nil {
 				if total != 0.0 {
@@ -155,7 +155,7 @@ func updateExcrptsSheetDebug() {
 	sheet := req.GetSheet()
 	ctx := context.Background()
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: excrptgrps.UpdateExcrptSheet("storage/excrptSheet.csv", 4),
+		Requests: req.UpdateExcrptSheet("storage/excrptSheet.csv", 4),
 	}
 
 	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
