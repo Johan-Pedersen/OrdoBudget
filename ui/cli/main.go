@@ -2,7 +2,7 @@ package cli
 
 import (
 	"budgetAutomation/internal/accounting"
-	"budgetAutomation/internal/excrpt"
+	"budgetAutomation/internal/parser"
 	req "budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"context"
@@ -221,7 +221,7 @@ func PrintResume() {
 /*
 Decide entries / matchs of the excrpts belonging to multiple or none, pre-defined excrptGrps
 */
-func DecideEntries(matches map[excrpt.Excrpt][]accounting.Entry) {
+func DecideEntries(matches map[parser.Excrpt][]accounting.Entry) {
 	entryInd := -1
 	for excrpt, excrptGrps := range matches {
 		if len(excrptGrps) == 0 {

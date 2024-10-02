@@ -1,7 +1,7 @@
 package accounting
 
 import (
-	"budgetAutomation/internal/excrpt"
+	"budgetAutomation/internal/parser"
 	"budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"encoding/json"
@@ -194,8 +194,8 @@ func GetEntries(grpName string) []Entry {
 /*
 Find matches for excrpts and updates ExcrptTotal iff only 1 match is found, otherwise the found excrpts are added to the return
 */
-func FindUpdMatches(excrpts *[]excrpt.Excrpt) map[excrpt.Excrpt][]Entry {
-	ret := make(map[excrpt.Excrpt][]Entry)
+func FindUpdMatches(excrpts *[]parser.Excrpt) map[parser.Excrpt][]Entry {
+	ret := make(map[parser.Excrpt][]Entry)
 
 	for _, excrpt := range *excrpts {
 		matches := FindExcrptMatches(excrpt.Description)

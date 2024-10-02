@@ -1,7 +1,6 @@
 package parser
 
 import (
-	excrpt "budgetAutomation/internal/excrpt"
 	"fmt"
 	"log"
 	"os"
@@ -16,10 +15,10 @@ func TestNotLatestMth(t *testing.T) {
 	}
 	excrpts := ReadExcrptCsv(reader, 5)
 
-	e1 := excrpt.CreateExcrpt(-24, 8129.67, "2024/05/12", "test5")
-	e2 := excrpt.CreateExcrpt(-414, 8153.67, "2024/05/07", "test6 test6.2 oeu")
+	e1 := CreateExcrpt(-24, 8129.67, "2024/05/12", "test5")
+	e2 := CreateExcrpt(-414, 8153.67, "2024/05/07", "test6 test6.2 oeu")
 
-	expectedExcrpts := [2]excrpt.Excrpt{e1, e2}
+	expectedExcrpts := [2]Excrpt{e1, e2}
 
 	for i := 0; i < len(expectedExcrpts); i++ {
 		if !excrpts[i].Equals(expectedExcrpts[i]) {
@@ -37,12 +36,12 @@ func TestNormCase(t *testing.T) {
 	}
 	excrpts := ReadExcrptCsv(reader, 6)
 
-	e1 := excrpt.CreateExcrpt(-24, 2988.78, "2024/06/12", "test1")
-	e2 := excrpt.CreateExcrpt(-414, 3012.78, "2024/06/07", "test2 test2.2 oeu")
-	e3 := excrpt.CreateExcrpt(-1399.89, 3426.78, "2024/06/06", "test3")
-	e4 := excrpt.CreateExcrpt(207, 8336.67, "2024/06/06", "Test 4")
+	e1 := CreateExcrpt(-24, 2988.78, "2024/06/12", "test1")
+	e2 := CreateExcrpt(-414, 3012.78, "2024/06/07", "test2 test2.2 oeu")
+	e3 := CreateExcrpt(-1399.89, 3426.78, "2024/06/06", "test3")
+	e4 := CreateExcrpt(207, 8336.67, "2024/06/06", "Test 4")
 
-	expectedExcrpts := [4]excrpt.Excrpt{e1, e2, e3, e4}
+	expectedExcrpts := [4]Excrpt{e1, e2, e3, e4}
 
 	for i := 0; i < len(expectedExcrpts); i++ {
 		if !excrpts[i].Equals(expectedExcrpts[i]) {

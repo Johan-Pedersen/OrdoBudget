@@ -1,7 +1,6 @@
 package parser
 
 import (
-	excrpt "budgetAutomation/internal/excrpt"
 	"encoding/csv"
 	"errors"
 	"io"
@@ -11,7 +10,7 @@ import (
 	"time"
 )
 
-func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
+func ReadExcrptCsv(r io.Reader, month int64) []Excrpt {
 	monthTime := time.Month(month)
 
 	// Create a new CSV ReadExcrptCsv
@@ -24,7 +23,7 @@ func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
 	reader.Comma = ';'
 	// Read all records from the CSV file
 
-	var excrpts []excrpt.Excrpt
+	var excrpts []Excrpt
 
 	i := 0
 
@@ -77,7 +76,7 @@ func ReadExcrptCsv(r io.Reader, month int64) []excrpt.Excrpt {
 						}
 					}
 
-					excrpts = append(excrpts, excrpt.CreateExcrpt(amount, balance, date.Format("2006/01/02"), description))
+					excrpts = append(excrpts, CreateExcrpt(amount, balance, date.Format("2006/01/02"), description))
 
 					// All following excrpts will be before our month of interest
 				} else if cmpCurMth.Before(cmpMth) {
