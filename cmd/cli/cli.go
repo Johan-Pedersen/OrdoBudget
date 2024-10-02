@@ -1,13 +1,12 @@
 package main
 
 import (
-	"budgetAutomation/internal/util"
+	"budgetAutomation/internal/accounting"
+	"budgetAutomation/internal/parser"
 	"budgetAutomation/ui/cli"
 	"flag"
 	"log"
 	"os"
-
-	excrptgrps "budgetAutomation/internal/excrptGrps"
 )
 
 func main() {
@@ -35,7 +34,7 @@ func main() {
 		// excrpts = cli.DebugGetExcrpts()
 
 		// Initialize and print excerpt groups
-		excrptgrps.InitExcrptGrpsDebug()
+		accounting.InitEntriesDebug()
 
 	} else {
 
@@ -44,7 +43,7 @@ func main() {
 		// cli.UpdateExcrptsSheet(month)
 		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
-		excrptgrps.InitExcrptGrps(sheetsGrpCol, month, person)
+		accounting.InitExcrptGrps(sheetsGrpCol, month, person)
 		cli.PrintExcrptGrps()
 
 	}
@@ -54,16 +53,16 @@ func main() {
 		log.Fatalln("Could not open excrpt file", err)
 	}
 	// Read excrpts from csv
-	excrpts := util.ReadExcrptCsv(reader, month)
+	excrpts := parser.ReadExcrptCsv(reader, month)
 
 	// Auto find matches
 	// create upd requests for match
 
-	matches := excrptgrps.FindUpdMatches(&excrpts)
+	matches := accounting.FindUpdMatches(&excrpts)
 
 	// Decide unknown matches
 
-	cli.DecideExcrptGrps(matches)
+	cli.DecideEntries(matches)
 
 	// Create upd requests for match
 

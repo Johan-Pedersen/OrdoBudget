@@ -1,14 +1,91 @@
 # CallStack
 
-- handle excrpts i gui
-- GUI, kan ikke handle at aabne chid Ignored
+- package responsibility
+
+- Build til et andet system
+    - https://www.digitalocean.com/community/tutorials/how-to-build-and-install-go-programs
+    - https://www.digitalocean.com/community/tutorials/building-go-applications-for-different-operating-systems-and-architectures
+    - https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-build-tags
+    - For at byg til windows hvor en terminal bliver aabnet
+        - https://www.digitalocean.com/community/tutorials/using-ldflags-to-set-version-information-for-go-applications
+
+- **REFACTOR** -> se uber-go/guide og "100 Go mistakes"
+- 100 Go mistakes
+    - interfaces
+        - Er der et sted man ville m. fordel bruge interfaces?
+    - Package naming: Navngiv i forhold til hvad pakken skal give og ikke hvad den indeholder
+        - Kort, Udtryksfuldt og et enkelt lowercase ord (by convention)
+    - Grupper pakker i forhold til context
+    - error management
+    - testing-
+
+- Lav Groups til en liste af pointers
+    - (bidirectional assosianion using pointers)
+    - Lav Entry til at holde en pointer til en Group
+    - Lav Group til at holde en liste af Entry pointers
+
+    - Hvad faar man ud af at bruge pointers
+        - Ingen risiko for et infinite deep copy loop
+        - Objekterne i sig selv er mindre, hvilket er smart naar go har det med at kopiere objekter hele tiden saa det er nok smart
+
+- Vi har en masse stutter
+    - entry.entry
+    - excrpt.excrpt
+    - parser.parser
+
+- Skal Balances, Groups og Resume vaere exported
+    - De burde vaere private med getter og setter metoder
+
+
+- naming
+    - skal excrptGrp hedde match?
+    - Skal man ogsaa have json handling i excrptGrp pakken
+        - skal ligge i util?
+        - Det bliver jo bare brugt til hurtige debug runs
+    - Rename JsonExcrptGrps
+ 
+        
+- Hvad laver updateCommonGrps
+    - hvorfor laeser den fra sheets
+        - Det er der ingen grund til
+
+- excrptGrps pakken ejer funktioner der ikke passer ind / refactoring
+    - UpdateResume
+    - GetTotal
+    - UpdateExcrptSheet
+    - LoadExcrptTotal
+    - UpdateExcrptTotal
+- excrptgrps skal renames til excrptgrp
+    - skal ikke have noget 's'
+- UpdateBudgetReqs skal ikke ligge cli
+    - Det er en faelles funktion som bruges af alt UI
+- Det skal vaere tydeligt hvilke "sheets" der har hvilket id
+- ReadExcrptCsv burde ikke ligge i formatExcrptCsv filen
+- har baade getExcrpts og getExcrptsFromSheets, der begge gor det samme
 - Refactor
     - Liste af excrptGrps skal vaere et 1D array 
     - Brug multithreading til at match udtraek med excrptGrp
     - LoadExcrptTotal er lidt et maerkeligt navn, for det der goer hovedparten af logikken
     - Aendre tekst paa submit knap
-- Update totals baseret på excel arket i stedet for sheets
-    - der er ingen grund til at upload udtrœk til google sheets for at hente dem ned igen når man skal update Totals
+- Kan man lave log.Fatal mere specifik 
+
+- Maaske tilfoj accBalance til updateTotals funktion
+    - Skal accBalance fjernes
+- Den "eneste" forskel paa ui's er hvordan man finder matches. Ellers så er alt det andet faktis det samme.
+    - Man kan saa bare have koden til at stå 1 faelles sted. 
+    - Eller som vi har gjort nu, hvor vi har lavet en "backend", begge ui's bruger
+    - Man kan samle ui's, saa man faktisk kalder den samme fil hver gang og saa bestemme med flag om man korer cli eller gui. De kan saa begge korer den samme read excrpts og auto-find matches. 
+- format haandtering af csv filen
+    - Tror den fucker op hvis man har odt format vs text csv
+    - Den pt kan den kun klare text csv
+- Lav flow for gui delen
+- Man skal ogsaa kunne traekke ud for flere aar af gangen.
+    - Saa man skal baade angive aar og mdr
+- Flyt ui's til at blive kort fra den samme fil
+    - Den "eneste" forskel paa ui's er hvordan man finder matches for ukendte excrpts el. excrpts m. flere matches.
+    - resten er ens
+- handle excrpts i gui
+- GUI, kan ikke handle at aabne chid Ignored
 - Naar man afbryder et run skal man rulle tilbage
     - Ogsaa update af commongrps
         - Gaar denne igennem for det andet.
@@ -28,20 +105,21 @@
 - Dette budget viser kun for budget konto'en, måske skal man også kunne se sine andre konti
 - Lœs udtrœk fra PDF og ikke kun csv filer
 - håndtering af lån og renter
+- Kan man bruge concurrency
 
+- Visning af excerptgrps skal ske i sortet rœkkefølge
+  - Så det er den samme hver gang
+  - Rimlig involved. Ved ikke helt hvordan vi skal gøre det på en god måde når vi gerne vil beholde parents.
+  - Det skal ogsaa gerne vises i sammen raekkefolge paa gui'en. Saa det er alligevel noget der skal fixes
 - Definer protokol for overførsler
   - Hvordan kan man håndtere den her situation med a-kassen. Hvor man tilføjer flere penge end hvad man havde planlagt
     - Denne situation skal ikke overskrive a-kasse beløbet men ligge til det 
     - Overfører samlet set x kr for forsikringer. y af de kr går til a-kasse.
     - Jeg overfører y kr til a-kasse. de bliver kun trukket hver 3 mdr. så skal det gœlde at 3y = hvad jeg betaler til a-kassen.
-- Kan man lave log.Fatal mere specifik 
 - Håndtering forskellig formattering af udtrœkkene
   - 1.000.000 vs 1000000
   - 1000,00 vs 1000.00
   - og dets permutationer
-- Visning af excerptgrps skal ske i sortet rœkkefølge
-  - Så det er den samme hver gang
-  - Rimlig involved. Ved ikke helt hvordan vi skal gøre det på en god måde når vi gerne vil beholde parents.
 - opsœtning af excrptGrpData
   - Skal også vœre muligt at tilføje/fjerne opdelinger
   - Skal indsert i lowercase
@@ -49,4 +127,3 @@
 - Skal man gøre noget specifikt for at håndtere  kvartalvis/iregulœre overførsler til anden konto
 - Kunne laese fra pdf filer
     - Kan blive et problem med formateringen.
-

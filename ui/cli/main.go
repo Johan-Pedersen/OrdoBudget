@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"budgetAutomation/internal/excrpt"
-	grps "budgetAutomation/internal/excrptGrps"
+	"budgetAutomation/internal/accounting"
+	"budgetAutomation/internal/parser"
 	req "budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"context"
@@ -21,7 +21,7 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
 
-			total, notFoundErr := grps.GetTotal(elm[0].(string))
+			total, notFoundErr := accounting.GetTotal(elm[0].(string))
 
 			if notFoundErr == nil {
 				if total != 0.0 {
@@ -76,7 +76,7 @@ func UpdateExcrptsSheet(month int64) {
 	sheet := req.GetSheet()
 	ctx := context.Background()
 	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: grps.UpdateExcrptSheet("storage/excrptSheet.csv", month),
+		Requests: req.UpdateExcrptSheet("storage/excrptSheet.csv", month),
 	}
 
 	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
@@ -118,7 +118,7 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 Select excrptGrp for given match
 
 */
-func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []grps.ExcrptGrp) string {
+func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []accounting.Entry) string {
 	grp := ""
 
 	if len(excrptGrpMatches) == 0 {
@@ -130,14 +130,14 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []grps.Ex
 		validInd := false
 		for !validInd {
 			fmt.Scan(&ind)
-			if ind > -1 && ind <= len(grps.ExcrptGrpTotals) {
+			if ind > -1 && ind <= len(accounting.Balances) {
 				validInd = true
 			} else {
 				fmt.Println("Invalid grp number.\nPlease choose again")
 			}
 		}
-		for _, parent := range grps.ExcrptGrpParents {
-			for _, excrptGrp := range parent.ExcrptGrps {
+		for _, parent := range accounting.Groups {
+			for _, excrptGrp := range parent.Entries {
 				if excrptGrp.Ind == ind {
 					grp = excrptGrp.Name
 					break
@@ -160,17 +160,18 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []grps.Ex
 		for _, v := range excrptGrpMatches {
 			fmt.Println(v.Ind, ":", v.Name)
 		}
+
 		for !validInd {
 			fmt.Scan(&ind)
-			if ind > -1 && ind <= len(grps.ExcrptGrpTotals) {
+			if ind > -1 && ind <= len(accounting.Balances) {
 				validInd = true
 			} else {
 				fmt.Println("Invalid grp number.\nPlease choose again")
 			}
 		}
 
-		for _, parent := range grps.ExcrptGrpParents {
-			for _, excrptGrp := range parent.ExcrptGrps {
+		for _, parent := range accounting.Groups {
+			for _, excrptGrp := range parent.Entries {
 				if excrptGrp.Ind == ind {
 					grp = excrptGrp.Name
 					break
@@ -190,7 +191,7 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []grps.Ex
 
 func PrintExcrptGrpTotals() {
 	fmt.Println("###################################################")
-	for k, v := range grps.ExcrptGrpTotals {
+	for k, v := range accounting.Balances {
 		fmt.Println(k, ": ", v+1)
 	}
 	fmt.Println("###################################################")
@@ -199,9 +200,9 @@ func PrintExcrptGrpTotals() {
 func PrintExcrptGrps() {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
-	for _, parent := range grps.ExcrptGrpParents {
+	for _, parent := range accounting.Groups {
 		fmt.Println("\n************", parent.Name, "************")
-		for _, excrptGrp := range parent.ExcrptGrps {
+		for _, excrptGrp := range parent.Entries {
 			fmt.Println(excrptGrp.Ind, ":", excrptGrp.Name)
 		}
 	}
@@ -211,17 +212,17 @@ func PrintExcrptGrps() {
 func PrintResume() {
 	fmt.Println("Resume")
 	fmt.Println("###################################################")
-	for _, str := range grps.Resume {
+	for _, str := range accounting.Resume {
 		fmt.Println(str)
 	}
 	fmt.Println("###################################################")
 }
 
 /*
-Decide excrptGrps / matchs of the excrpts belonging to multiple or none, pre-defined excrptGrps
+Decide entries / matchs of the excrpts belonging to multiple or none, pre-defined excrptGrps
 */
-func DecideExcrptGrps(matches map[excrpt.Excrpt][]grps.ExcrptGrp) {
-	excrptGrpInd := -1
+func DecideEntries(matches map[parser.Excrpt][]accounting.Entry) {
+	entryInd := -1
 	for excrpt, excrptGrps := range matches {
 		if len(excrptGrps) == 0 {
 			PrintExcrptGrps()
@@ -231,28 +232,28 @@ func DecideExcrptGrps(matches map[excrpt.Excrpt][]grps.ExcrptGrp) {
 			fmt.Println(len(excrptGrps), " matches found for ", excrpt, ". Please choose a match")
 		}
 
-		fmt.Scan(excrptGrpInd)
+		fmt.Scan(entryInd)
 		validInd := false
 		var (
-			excrptGrp grps.ExcrptGrp
+			excrptGrp accounting.Entry
 			getGrpErr error
 		)
 		for !validInd {
-			fmt.Scan(&excrptGrpInd)
+			fmt.Scan(&entryInd)
 
-			excrptGrp, getGrpErr = grps.GetExcrptGrp("", excrptGrpInd)
+			excrptGrp, getGrpErr = accounting.GetEntry("", entryInd)
 
-			if getGrpErr == nil || excrptGrpInd > -1 && excrptGrpInd <= len(grps.ExcrptGrpTotals) {
+			if getGrpErr == nil || entryInd > -1 && entryInd <= len(accounting.Balances) {
 				validInd = true
 			} else {
 				fmt.Println("Invalid index.\nPlease choose again")
 			}
 		}
-		grps.UpdateExcrptTotal(excrpt.Date, excrpt.Description, excrpt.Amount, excrptGrp.Name)
+		accounting.UpdateBalance(excrpt.Date, excrpt.Description, excrpt.Amount, excrptGrp.Name)
 	}
 }
 
-func printFoundExcrptGrps(excrptGrps []grps.ExcrptGrp) {
+func printFoundExcrptGrps(excrptGrps []accounting.Entry) {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
 	for _, excrptGrp := range excrptGrps {

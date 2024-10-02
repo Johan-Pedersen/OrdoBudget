@@ -1,6 +1,11 @@
 package requests
 
 import (
+	"budgetAutomation/internal/parser"
+	"budgetAutomation/internal/util"
+	"log"
+	"os"
+
 	"google.golang.org/api/sheets/v4"
 )
 
@@ -190,3 +195,44 @@ func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Requ
 	}
 	return updateReq
 }
+
+func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
+	// open the csv file
+	file, err := os.Open(path)
+	if err != nil {
+		print("could not open excerpt file")
+		log.Fatalln("coud not open excerpt file.", err)
+	}
+	defer file.Close()
+
+	excrpts := parser.ReadExcrptCsv(file, month)
+
+	var dates []float64
+
+	for _, exc := range excrpts {
+		dates = append(dates, util.ConvertDateToFloat(exc.Date))
+	}
+
+	var amounts []float64
+	for _, exc := range excrpts {
+		amounts = append(amounts, exc.Amount)
+	}
+
+	var descriptions []string
+	for _, exc := range excrpts {
+		descriptions = append(descriptions, exc.Description)
+	}
+
+	var balances []float64
+	for _, exc := range excrpts {
+		balances = append(balances, exc.Balance)
+	}
+
+	return []*sheets.Request{
+		MultiUpdateReqDate(dates, 1, 0, 1472288449),
+		MultiUpdateReqNum(amounts, 1, 1, 1472288449),
+		MultiUpdateReq(descriptions, 1, 2, 1472288449),
+		MultiUpdateReqNum(balances, 1, 3, 1472288449),
+	}
+}
+

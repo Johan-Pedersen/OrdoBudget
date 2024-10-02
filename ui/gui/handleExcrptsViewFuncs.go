@@ -1,12 +1,8 @@
 package ui
 
-import (
-	excrptgrps "budgetAutomation/internal/excrptGrps"
-	"fmt"
-)
-
-func getExcrptGrps(parentName string) []excrptgrps.ExcrptGrp {
-	return excrptgrps.GetChildren(parentName)
+/*
+func getExcrptGrps(parentName string) []accounting.Entry {
+	return accounting.GetChildren(parentName)
 }
 
 func getExcrptGrpsAsString(parentName string) []string {
@@ -22,7 +18,7 @@ func getExcrptGrpsAsString(parentName string) []string {
 }
 
 func getParentsAsString() []string {
-	parents := excrptgrps.GetParents()
+	parents := accounting.GetParents()
 
 	var names []string
 	for _, egp := range parents {
@@ -36,3 +32,4 @@ func getParentsAsString() []string {
 func getParents() []excrptgrps.ExcrptGrpParent {
 	return excrptgrps.GetParents()
 }
+*/
