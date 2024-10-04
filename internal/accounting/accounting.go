@@ -26,27 +26,6 @@ func isIgnored(groupName string) bool {
 	return groupName == "Ignored"
 }
 
-func FindExcrptMatches(excrpt string) []Entry {
-	var matches []Entry
-
-	// ignore case
-	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
-
-	// Find correct excrpt grp
-	for _, parent := range Groups {
-		for i := range parent.Entries {
-			for _, match := range parent.Entries[i].Mappings {
-				match = strings.ToLower(strings.Trim(match, " "))
-				if strings.Contains(excrpt, match) {
-					matches = append(matches, parent.Entries[i])
-					break
-				}
-			}
-		}
-	}
-	return matches
-}
-
 func UpdateBalance(date, excrpt string, amount float64, GroupName string) {
 	tmpAmount := amount
 
@@ -191,6 +170,27 @@ func GetEntries(grpName string) []Entry {
 	return nil
 }
 
+func FindMatches(excrpt string) []Entry {
+	var matches []Entry
+
+	// ignore case
+	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
+
+	// Find correct excrpt grp
+	for _, grp := range Groups {
+		for i := range grp.Entries {
+			for _, match := range grp.Entries[i].Mappings {
+				match = strings.ToLower(strings.Trim(match, " "))
+				if strings.Contains(excrpt, match) {
+					matches = append(matches, grp.Entries[i])
+					break
+				}
+			}
+		}
+	}
+	return matches
+}
+
 /*
 Find matches for excrpts and updates ExcrptTotal iff only 1 match is found, otherwise the found excrpts are added to the return
 */
@@ -198,7 +198,7 @@ func FindUpdMatches(excrpts *[]parser.Excrpt) map[parser.Excrpt][]Entry {
 	ret := make(map[parser.Excrpt][]Entry)
 
 	for _, excrpt := range *excrpts {
-		matches := FindExcrptMatches(excrpt.Description)
+		matches := FindMatches(excrpt.Description)
 		// If there is only a single match, the update is given
 		// Otherwise the correct match has to be made in the ui
 		if len(matches) == 1 {

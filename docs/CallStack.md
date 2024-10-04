@@ -2,6 +2,10 @@
 
 - package responsibility
 
+- Vi har en masse stutter
+    - excrpt.excrpt
+    - parser.parser
+
 - Build til et andet system
     - https://www.digitalocean.com/community/tutorials/how-to-build-and-install-go-programs
     - https://www.digitalocean.com/community/tutorials/building-go-applications-for-different-operating-systems-and-architectures
@@ -28,10 +32,6 @@
         - Ingen risiko for et infinite deep copy loop
         - Objekterne i sig selv er mindre, hvilket er smart naar go har det med at kopiere objekter hele tiden saa det er nok smart
 
-- Vi har en masse stutter
-    - entry.entry
-    - excrpt.excrpt
-    - parser.parser
 
 - Skal Balances, Groups og Resume vaere exported
     - De burde vaere private med getter og setter metoder

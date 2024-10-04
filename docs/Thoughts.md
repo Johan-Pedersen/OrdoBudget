@@ -701,7 +701,6 @@ nyt projekt: budgetautomation-414505
         - Foler maaske den skal flyttes.
 
 
-
 - Hvordan skal vi opdele pakkerne
     - Hvilke ansvars omraader har vi
     - parser giver god mening, fordi her skal vi parse forskellige filer fra div banker
