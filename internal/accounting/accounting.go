@@ -57,7 +57,7 @@ func GetTotal(EntryName string) (float64, error) {
 	}
 }
 
-func InitEntriesDebug() {
+func InitGrpsDebug() {
 	// Load ExcrptGrps
 
 	f1, err := os.Open("build/debug/JsonExcrptGrps")
@@ -75,7 +75,7 @@ func InitEntriesDebug() {
 	json.NewDecoder(f2).Decode(&Balances) // if err != nil {
 }
 
-func InitExcrptGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
+func InitGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
 	// Open the JSON file
 	file, err := os.Open("storage/excrptGrpData.json")
 	if err != nil {

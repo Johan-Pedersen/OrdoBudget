@@ -772,8 +772,3 @@ nyt projekt: budgetautomation-414505
     - Skal CommonGrps ikke hedde fixedExpenses?
         - Det er vel ikke nodvendigvis "fixed expenses", det er bare hvad den bliver brugt til
 
-- matches pakke 
-    - til at finde matches
-    - skal bruge func til updateBalance fra accunting
-    - skal accutning bruge matches, vel ikke rigtig
-    - matces skal vel bare kaldes af ui?

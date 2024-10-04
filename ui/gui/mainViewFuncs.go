@@ -20,7 +20,7 @@ func submitDebug() {
 	// excrpts := debugGetExcrpts()
 	debugGetExcrpts()
 	updateExcrptsSheetDebug()
-	accounting.InitEntriesDebug()
+	accounting.InitGrpsDebug()
 
 	sheetsGrpCol := getSheetsGrpCol()
 
@@ -48,7 +48,7 @@ func submit(month int64, excrptPath string) {
 	updateExcrptSheet(excrptPath, month)
 
 	sheetsGrpCol := getSheetsGrpCol()
-	accounting.InitExcrptGrps(sheetsGrpCol, month, person)
+	accounting.InitGrps(sheetsGrpCol, month, person)
 
 	// excrptsFromSheets := getExcrptsFromSheet()
 

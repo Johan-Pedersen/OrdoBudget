@@ -34,7 +34,7 @@ func main() {
 		// excrpts = cli.DebugGetExcrpts()
 
 		// Initialize and print excerpt groups
-		accounting.InitEntriesDebug()
+		accounting.InitGrpsDebug()
 
 	} else {
 
@@ -43,7 +43,7 @@ func main() {
 		// cli.UpdateExcrptsSheet(month)
 		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
-		accounting.InitExcrptGrps(sheetsGrpCol, month, person)
+		accounting.InitGrps(sheetsGrpCol, month, person)
 		cli.PrintExcrptGrps()
 
 	}
