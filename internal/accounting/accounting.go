@@ -60,16 +60,16 @@ func GetTotal(EntryName string) (float64, error) {
 func InitGrpsDebug() {
 	// Load ExcrptGrps
 
-	f1, err := os.Open("build/debug/JsonExcrptGrps")
+	f1, err := os.Open("build/debug/JsonEntries")
 	if err != nil {
-		log.Fatal("Unable to open JSonExcrptsGrps")
+		log.Fatal("Unable to open JsonEntries")
 	}
 	defer f1.Close()                    // //Json decode
 	json.NewDecoder(f1).Decode(&Groups) // if err != nil {
 
-	f2, err := os.Open("build/debug/JsonExcrptGrpTotals")
+	f2, err := os.Open("build/debug/JsonBalances")
 	if err != nil {
-		log.Fatal("Unable to open JSonExcrptsGrpTotals")
+		log.Fatal("Unable to open JSonBalances")
 	}
 	defer f2.Close()                      // //Json decode
 	json.NewDecoder(f2).Decode(&Balances) // if err != nil {
@@ -77,7 +77,7 @@ func InitGrpsDebug() {
 
 func InitGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
 	// Open the JSON file
-	file, err := os.Open("storage/excrptGrpData.json")
+	file, err := os.Open("storage/entryData.json")
 	if err != nil {
 		log.Fatalln("Error opening file:", err)
 		return

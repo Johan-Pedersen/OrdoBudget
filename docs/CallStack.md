@@ -1,25 +1,9 @@
 # CallStack
 
-- package responsibility
-
-- Vi har en masse stutter
-    - excrpt.excrpt
-    - parser.parser
-
-- Build til et andet system
-    - https://www.digitalocean.com/community/tutorials/how-to-build-and-install-go-programs
-    - https://www.digitalocean.com/community/tutorials/building-go-applications-for-different-operating-systems-and-architectures
-    - https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-build-tags
-    - For at byg til windows hvor en terminal bliver aabnet
-        - https://www.digitalocean.com/community/tutorials/using-ldflags-to-set-version-information-for-go-applications
-
 - **REFACTOR** -> se uber-go/guide og "100 Go mistakes"
 - 100 Go mistakes
     - interfaces
         - Er der et sted man ville m. fordel bruge interfaces?
-    - Package naming: Navngiv i forhold til hvad pakken skal give og ikke hvad den indeholder
-        - Kort, Udtryksfuldt og et enkelt lowercase ord (by convention)
-    - Grupper pakker i forhold til context
     - error management
     - testing-
 
@@ -44,6 +28,7 @@
         - Det bliver jo bare brugt til hurtige debug runs
     - Rename JsonExcrptGrps
  
+- Update readme
         
 - Hvad laver updateCommonGrps
     - hvorfor laeser den fra sheets
@@ -75,6 +60,13 @@
     - Man kan saa bare have koden til at stå 1 faelles sted. 
     - Eller som vi har gjort nu, hvor vi har lavet en "backend", begge ui's bruger
     - Man kan samle ui's, saa man faktisk kalder den samme fil hver gang og saa bestemme med flag om man korer cli eller gui. De kan saa begge korer den samme read excrpts og auto-find matches. 
+- Build til et andet system
+    - https://www.digitalocean.com/community/tutorials/how-to-build-and-install-go-programs
+    - https://www.digitalocean.com/community/tutorials/building-go-applications-for-different-operating-systems-and-architectures
+    - https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-build-tags
+    - For at byg til windows hvor en terminal bliver aabnet
+        - https://www.digitalocean.com/community/tutorials/using-ldflags-to-set-version-information-for-go-applications
+
 - format haandtering af csv filen
     - Tror den fucker op hvis man har odt format vs text csv
     - Den pt kan den kun klare text csv
