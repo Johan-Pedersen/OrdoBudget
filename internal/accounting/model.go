@@ -1,15 +1,5 @@
 package accounting
 
-type DataExcrpt struct {
-	Matches      []string
-	FixedExpense bool
-}
-
-// Marshal and unmarshal json
-type Data struct {
-	Mappings map[string]map[string]DataExcrpt
-}
-
 type Entry struct {
 	// Used to make lookup in excerptMappings array
 	Ind int

@@ -1,5 +1,17 @@
 # CallStack
 
+- Ryd op efter gammel config metode
+    - accouting.createEntry
+    - RM data klasse
+    - rm local config filer
+
+- Group Ignored har bug
+    - for aug, assginer den ikke automatisk til madkonto
+
+
+- Fix UpdateCommonGrps
+    - Skal heller ikke hedde CommonGrp, skal bare vaere en fixedExpense
+
 - **REFACTOR** -> se uber-go/guide og "100 Go mistakes"
 - 100 Go mistakes
     - interfaces
@@ -16,32 +28,24 @@
         - Ingen risiko for et infinite deep copy loop
         - Objekterne i sig selv er mindre, hvilket er smart naar go har det med at kopiere objekter hele tiden saa det er nok smart
 
+- pakke til accounting requests
+
+- rename package requests -> request
+    - ental
+
+- Der en del funktioner der hedder det samme/naesten det samme
+    - accounting.UpdateBudgetReqs gui.updateBudgetReqs
+        - Gor naesten 1-1 det samme.
+        - Slet gui.updateBudgetReqs
+
+- Ret GetTotal funktionen til GetBalance
 
 - Skal Balances, Groups og Resume vaere exported
     - De burde vaere private med getter og setter metoder
 
 
-- naming
-    - skal excrptGrp hedde match?
-    - Skal man ogsaa have json handling i excrptGrp pakken
-        - skal ligge i util?
-        - Det bliver jo bare brugt til hurtige debug runs
-    - Rename JsonExcrptGrps
- 
 - Update readme
         
-- Hvad laver updateCommonGrps
-    - hvorfor laeser den fra sheets
-        - Det er der ingen grund til
-
-- excrptGrps pakken ejer funktioner der ikke passer ind / refactoring
-    - UpdateResume
-    - GetTotal
-    - UpdateExcrptSheet
-    - LoadExcrptTotal
-    - UpdateExcrptTotal
-- excrptgrps skal renames til excrptgrp
-    - skal ikke have noget 's'
 - UpdateBudgetReqs skal ikke ligge cli
     - Det er en faelles funktion som bruges af alt UI
 - Det skal vaere tydeligt hvilke "sheets" der har hvilket id

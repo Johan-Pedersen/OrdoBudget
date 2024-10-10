@@ -21,7 +21,7 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
 
-			total, notFoundErr := accounting.GetTotal(elm[0].(string))
+			total, notFoundErr := accounting.GetBalance(elm[0].(string))
 
 			if notFoundErr == nil {
 				if total != 0.0 {

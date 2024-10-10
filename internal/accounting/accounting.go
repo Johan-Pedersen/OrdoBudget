@@ -41,7 +41,7 @@ func UpdateResume(date, excrpt, GroupName string, amount float64) {
 	Resume = append(Resume, date+" "+excrpt+" "+strconv.FormatFloat(amount, 'f', -1, 64)+": "+GroupName)
 }
 
-func GetTotal(EntryName string) (float64, error) {
+func GetBalance(EntryName string) (float64, error) {
 	entry, err := GetEntry(EntryName, -1)
 	//
 	if err != nil {
@@ -49,11 +49,11 @@ func GetTotal(EntryName string) (float64, error) {
 	}
 
 	// Total should always be a positive number
-	total := Balances[entry.Name] + 1
+	balance := Balances[entry.Name] + 1
 	if entry.GroupName == "Indkomst efter skat" {
-		return total, nil
+		return balance, nil
 	} else {
-		return -1 * total, nil
+		return -1 * balance, nil
 	}
 }
 
@@ -82,7 +82,7 @@ func InitGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
 	// initialize excerpt grps with -1 as total
 	createGrps(config)
 
-	updateCommonGrps(sheetsGrpCol, month, person)
+	updateFixedExpenses(sheetsGrpCol, month, person)
 }
 
 func createGrps(config *sheets.ValueRange) {
@@ -129,16 +129,6 @@ func createGrps(config *sheets.ValueRange) {
 			grp.Entries = append(grp.Entries, entry)
 			Balances[entry.Name] = -1.0
 		}
-	}
-}
-
-func createEntry(ind int, name, groupName string, data DataExcrpt) Entry {
-	return Entry{
-		Ind:          ind,
-		Name:         name,
-		Mappings:     data.Matches,
-		GroupName:    groupName,
-		FixedExpense: data.FixedExpense,
 	}
 }
 
@@ -216,7 +206,7 @@ func FindUpdMatches(excrpts *[]parser.Excrpt) map[parser.Excrpt][]Entry {
 	return ret
 }
 
-func updateCommonGrps(sheetEntries *sheets.ValueRange, month, person int64) {
+func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
 	// Get Date, Amount and description
 
 	A1Not := util.MonthToA1Notation(month, person)
