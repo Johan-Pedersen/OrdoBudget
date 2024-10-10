@@ -1,13 +1,13 @@
 package accounting
 
 import (
+	"budgetAutomation/internal/config"
 	"budgetAutomation/internal/parser"
 	"budgetAutomation/internal/requests"
 	"budgetAutomation/internal/util"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"strconv"
@@ -77,52 +77,58 @@ func InitGrpsDebug() {
 
 func InitGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
 	// Open the JSON file
-	file, err := os.Open("storage/entryData.json")
-	if err != nil {
-		log.Fatalln("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Read the JSON data from the file
-	jsonData, err := io.ReadAll(file)
-	if err != nil {
-		log.Fatalln("Error reading JSON data:", err)
-		return
-	}
-
-	// Create an instance of the struct to hold the unmarshaled data
-	var data Data
-
-	// Unmarshal the JSON data into the struct
-	err = json.Unmarshal(jsonData, &data)
-	if err != nil {
-		log.Fatalln("Error unmarshaling JSON data:", err)
-		return
-	}
+	config := config.GetConfig()
 
 	// initialize excerpt grps with -1 as total
-	createGrps(data)
+	createGrps(config)
 
 	updateCommonGrps(sheetsGrpCol, month, person)
 }
 
-func createGrps(data Data) {
-	i := 0
+func createGrps(config *sheets.ValueRange) {
 	// Init excrptGrp Totals
-	for groupName, excrpts := range data.Mappings {
+	var grp Group
+	for i, elm := range config.Values {
+		if len(elm) == 1 {
+			if grp.Name != "" {
+				Groups = append(Groups, grp)
+			}
+			grp = Group{}
+			grp.Name = elm[0].(string)
 
-		// parentName = strings.Trim(parentName, " ")
-		entries := []Entry{}
-		for entryName, mappings := range excrpts {
-			// excrptGrp = strings.Trim(excrptGrp, " ")
-			Balances[entryName] = -1.0
-			entries = append(entries,
-				createEntry(i, entryName, groupName, mappings))
-			i += 1
+			// Needed to filter out blanklines
+		} else if len(elm) > 1 {
+
+			var matches []string
+
+			// Are there any matches
+			if len(elm) == 3 {
+				str := strings.ToLower(elm[2].(string))
+				tmp := strings.Split(str, ",")
+				for _, v := range tmp {
+					v = strings.TrimSpace(v)
+					// Make sure accidental whitespace is ignored
+					if len(v) != 0 {
+						matches = append(matches, v)
+					}
+				}
+			}
+
+			fixedExpense, err := strconv.ParseBool(elm[1].(string))
+			if err != nil {
+				log.Fatal("Cannot parse fixed expense of", elm[0].(string))
+			}
+
+			entry := Entry{
+				Ind:          i,
+				Name:         elm[0].(string),
+				Mappings:     matches,
+				GroupName:    grp.Name,
+				FixedExpense: fixedExpense,
+			}
+			grp.Entries = append(grp.Entries, entry)
+			Balances[entry.Name] = -1.0
 		}
-		group := Group{groupName, entries}
-		Groups = append(Groups, group)
 	}
 }
 
