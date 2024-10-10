@@ -189,7 +189,7 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []account
 	return grp
 }
 
-func PrintExcrptGrpTotals() {
+func PrintBalances() {
 	fmt.Println("###################################################")
 	for k, v := range accounting.Balances {
 		fmt.Println(k, ": ", v+1)

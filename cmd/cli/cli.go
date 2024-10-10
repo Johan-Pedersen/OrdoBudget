@@ -22,6 +22,7 @@ func main() {
 
 	// var excrpts *sheets.ValueRange
 	sheetsGrpCol := cli.GetSheetsGrpCol()
+
 	// Debug mode
 	if *debugMode {
 
@@ -39,12 +40,14 @@ func main() {
 	} else {
 
 		cli.GetPersonAndMonth(&person, &month)
+
 		// Update excerpt sheet, before we begin
 		// cli.UpdateExcrptsSheet(month)
 		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		accounting.InitGrps(sheetsGrpCol, month, person)
 		cli.PrintExcrptGrps()
+		cli.PrintBalances()
 
 	}
 
@@ -72,6 +75,6 @@ func main() {
 	// accBalance := cli.LoadExcrptTotal(excrpts, month)
 
 	// find Excerpt Total for current month.
-	cli.PrintExcrptGrpTotals()
+	cli.PrintBalances()
 	cli.PrintResume()
 }
