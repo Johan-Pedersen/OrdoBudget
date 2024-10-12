@@ -46,9 +46,7 @@ func main() {
 		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		accounting.InitGrps(sheetsGrpCol, month, person)
-		cli.PrintExcrptGrps()
-		cli.PrintBalances()
-
+		cli.PrintEntries()
 	}
 
 	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/storage/excrptSheet.csv")

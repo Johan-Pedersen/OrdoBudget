@@ -21,11 +21,11 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
 
-			total, notFoundErr := accounting.GetBalance(elm[0].(string))
+			balance, notFoundErr := accounting.GetBalance(elm[0].(string))
 
 			if notFoundErr == nil {
-				if total != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month, person), 1685114351))
+				if balance != 0.0 {
+					updateReqs = append(updateReqs, req.SingleUpdateReq(balance, int64(i), util.MonthToColInd(month, person), 1685114351))
 				} else {
 					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month, person), 1685114351))
 				}
@@ -197,7 +197,7 @@ func PrintBalances() {
 	fmt.Println("###################################################")
 }
 
-func PrintExcrptGrps() {
+func PrintEntries() {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
 	for _, parent := range accounting.Groups {
@@ -219,44 +219,42 @@ func PrintResume() {
 }
 
 /*
-Decide entries / matchs of the excrpts belonging to multiple or none, pre-defined excrptGrps
+Decide entries / matchs of the excrpts belonging to multiple or none, pre-defined entries
 */
-func DecideEntries(matches map[parser.Excrpt][]accounting.Entry) {
-	entryInd := -1
-	for excrpt, excrptGrps := range matches {
-		if len(excrptGrps) == 0 {
-			PrintExcrptGrps()
+func DecideEntries(allMatches map[parser.Excrpt][]accounting.Entry) {
+	var entry accounting.Entry
+	var entryErr error
+
+	for excrpt, matches := range allMatches {
+		if len(matches) == 0 {
+			PrintEntries()
 			fmt.Println("No matches found for ", excrpt, ". Please choose a match")
+
 		} else {
-			printFoundExcrptGrps(excrptGrps)
-			fmt.Println(len(excrptGrps), " matches found for ", excrpt, ". Please choose a match")
+			printFoundEntries(matches)
+			fmt.Println(len(matches), " matches found for ", excrpt, ". Please choose a match")
 		}
 
-		fmt.Scan(entryInd)
+		entryInd := -1
 		validInd := false
-		var (
-			excrptGrp accounting.Entry
-			getGrpErr error
-		)
 		for !validInd {
 			fmt.Scan(&entryInd)
-
-			excrptGrp, getGrpErr = accounting.GetEntry("", entryInd)
-
-			if getGrpErr == nil || entryInd > -1 && entryInd <= len(accounting.Balances) {
+			entry, entryErr = accounting.GetEntry("", entryInd)
+			if entryErr == nil {
 				validInd = true
 			} else {
-				fmt.Println("Invalid index.\nPlease choose again")
+				// Man gaar bare videre til naeste match uden at update noget
+				log.Println("Could not find entry.\nPlease choose again")
 			}
 		}
-		accounting.UpdateBalance(excrpt.Date, excrpt.Description, excrpt.Amount, excrptGrp.Name)
+		accounting.UpdateBalance(excrpt.Date, excrpt.Description, excrpt.Amount, entry.Name)
 	}
 }
 
-func printFoundExcrptGrps(excrptGrps []accounting.Entry) {
+func printFoundEntries(entries []accounting.Entry) {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
-	for _, excrptGrp := range excrptGrps {
+	for _, excrptGrp := range entries {
 		fmt.Println(excrptGrp.Ind, ":", excrptGrp.Name)
 	}
 	fmt.Println("###################################################")

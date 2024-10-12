@@ -23,7 +23,7 @@ var Groups = []Group{}
 var Resume = []string{}
 
 func isIgnored(groupName string) bool {
-	return groupName == "Ignored"
+	return strings.ToUpper(groupName) == "IGNORED"
 }
 
 func UpdateBalance(date, excrpt string, amount float64, GroupName string) {
@@ -48,9 +48,10 @@ func GetBalance(EntryName string) (float64, error) {
 		return 0, err
 	}
 
-	// Total should always be a positive number
+	// Balance should always be a positive number
 	balance := Balances[entry.Name] + 1
-	if entry.GroupName == "Indkomst efter skat" {
+
+	if entry.GroupName == "INDKOMST EFTER SKAT" {
 		return balance, nil
 	} else {
 		return -1 * balance, nil
@@ -94,7 +95,7 @@ func createGrps(config *sheets.ValueRange) {
 				Groups = append(Groups, grp)
 			}
 			grp = Group{}
-			grp.Name = elm[0].(string)
+			grp.Name = strings.TrimSpace(strings.ToUpper(elm[0].(string)))
 
 			// Needed to filter out blanklines
 		} else if len(elm) > 1 {
@@ -130,6 +131,8 @@ func createGrps(config *sheets.ValueRange) {
 			Balances[entry.Name] = -1.0
 		}
 	}
+	// Make sure to append ignore group
+	Groups = append(Groups, grp)
 }
 
 func GetGroups() []Group {
@@ -170,13 +173,13 @@ func FindMatches(excrpt string) []Entry {
 	var matches []Entry
 
 	// ignore case
-	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
+	excrpt = strings.ToLower(strings.TrimSpace(excrpt))
 
 	// Find correct excrpt grp
 	for _, grp := range Groups {
 		for i := range grp.Entries {
 			for _, match := range grp.Entries[i].Mappings {
-				match = strings.ToLower(strings.Trim(match, " "))
+				match = strings.ToLower(strings.TrimSpace(match))
 				if strings.Contains(excrpt, match) {
 					matches = append(matches, grp.Entries[i])
 					break
@@ -188,7 +191,7 @@ func FindMatches(excrpt string) []Entry {
 }
 
 /*
-Find matches for excrpts and updates ExcrptTotal iff only 1 match is found, otherwise the found excrpts are added to the return
+Find matches for excrpts and updates Ballance iff only 1 match is found, otherwise the found excrpts are added to the return
 */
 func FindUpdMatches(excrpts *[]parser.Excrpt) map[parser.Excrpt][]Entry {
 	ret := make(map[parser.Excrpt][]Entry)
