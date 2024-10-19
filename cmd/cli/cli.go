@@ -4,9 +4,12 @@ import (
 	"budgetAutomation/internal/accounting"
 	"budgetAutomation/internal/parser"
 	"budgetAutomation/ui/cli"
+	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -48,7 +51,12 @@ func main() {
 		accounting.InitGrps(sheetsGrpCol, month, person)
 	}
 
-	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/storage/excrptSheet.csv")
+	ioReader := bufio.NewReader(os.Stdin)
+	fmt.Println("Enter input file name")
+	input, _ := ioReader.ReadString('\n')
+	input = strings.TrimSpace(input)
+
+	reader, err := os.Open(input)
 	if err != nil {
 		log.Fatalln("Could not open excrpt file", err)
 	}

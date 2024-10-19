@@ -273,3 +273,10 @@ func printFoundEntries(entries []accounting.Entry) {
 	}
 	fmt.Println("###################################################")
 }
+
+func GetinputFile() {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Enter input file name")
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+}
