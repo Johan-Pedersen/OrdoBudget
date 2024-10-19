@@ -1,26 +1,16 @@
 package accounting
 
-type DataExcrpt struct {
-	Matches      []string
-	FixedExpense bool
-}
-
-// Marshal and unmarshal json
-type Data struct {
-	Mappings map[string]map[string]DataExcrpt
-}
-
 type Entry struct {
 	// Used to make lookup in excerptMappings array
 	Ind int
 
-	// Name of the ExcrptGrp
+	// Name of Entry
 	Name string
 
-	// Matches for this excrptGrp
+	// Matches for this Entry
 	Mappings []string
 
-	// Defines the type of this excerpt
+	// Defines the type of this Entry
 	GroupName string
 
 	// Determines if the initial group total value should be read from the sheet or start at 0

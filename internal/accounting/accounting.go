@@ -1,13 +1,13 @@
 package accounting
 
 import (
+	"budgetAutomation/internal/config"
 	"budgetAutomation/internal/parser"
-	"budgetAutomation/internal/requests"
+	"budgetAutomation/internal/request"
 	"budgetAutomation/internal/util"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"strconv"
@@ -23,28 +23,7 @@ var Groups = []Group{}
 var Resume = []string{}
 
 func isIgnored(groupName string) bool {
-	return groupName == "Ignored"
-}
-
-func FindExcrptMatches(excrpt string) []Entry {
-	var matches []Entry
-
-	// ignore case
-	excrpt = strings.ToLower(strings.Trim(excrpt, " "))
-
-	// Find correct excrpt grp
-	for _, parent := range Groups {
-		for i := range parent.Entries {
-			for _, match := range parent.Entries[i].Mappings {
-				match = strings.ToLower(strings.Trim(match, " "))
-				if strings.Contains(excrpt, match) {
-					matches = append(matches, parent.Entries[i])
-					break
-				}
-			}
-		}
-	}
-	return matches
+	return strings.ToUpper(groupName) == "IGNORED"
 }
 
 func UpdateBalance(date, excrpt string, amount float64, GroupName string) {
@@ -62,103 +41,98 @@ func UpdateResume(date, excrpt, GroupName string, amount float64) {
 	Resume = append(Resume, date+" "+excrpt+" "+strconv.FormatFloat(amount, 'f', -1, 64)+": "+GroupName)
 }
 
-func GetTotal(EntryName string) (float64, error) {
+func GetBalance(EntryName string) (float64, error) {
 	entry, err := GetEntry(EntryName, -1)
 	//
 	if err != nil {
 		return 0, err
 	}
 
-	// Total should always be a positive number
-	total := Balances[entry.Name] + 1
-	if entry.GroupName == "Indkomst efter skat" {
-		return total, nil
+	// Balance should always be a positive number
+	balance := Balances[entry.Name] + 1
+
+	if entry.GroupName == "INDKOMST EFTER SKAT" {
+		return balance, nil
 	} else {
-		return -1 * total, nil
+		return -1 * balance, nil
 	}
 }
 
-func InitEntriesDebug() {
+func InitGrpsDebug() {
 	// Load ExcrptGrps
 
-	f1, err := os.Open("build/debug/JsonExcrptGrps")
+	f1, err := os.Open("build/debug/JsonEntries")
 	if err != nil {
-		log.Fatal("Unable to open JSonExcrptsGrps")
+		log.Fatal("Unable to open JsonEntries")
 	}
 	defer f1.Close()                    // //Json decode
 	json.NewDecoder(f1).Decode(&Groups) // if err != nil {
 
-	f2, err := os.Open("build/debug/JsonExcrptGrpTotals")
+	f2, err := os.Open("build/debug/JsonBalances")
 	if err != nil {
-		log.Fatal("Unable to open JSonExcrptsGrpTotals")
+		log.Fatal("Unable to open JSonBalances")
 	}
 	defer f2.Close()                      // //Json decode
 	json.NewDecoder(f2).Decode(&Balances) // if err != nil {
 }
 
-func InitExcrptGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
+func InitGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
 	// Open the JSON file
-	file, err := os.Open("storage/excrptGrpData.json")
-	if err != nil {
-		log.Fatalln("Error opening file:", err)
-		return
-	}
-	defer file.Close()
-
-	// Read the JSON data from the file
-	jsonData, err := io.ReadAll(file)
-	if err != nil {
-		log.Fatalln("Error reading JSON data:", err)
-		return
-	}
-
-	// Create an instance of the struct to hold the unmarshaled data
-	var data Data
-
-	// Unmarshal the JSON data into the struct
-	err = json.Unmarshal(jsonData, &data)
-	if err != nil {
-		log.Fatalln("Error unmarshaling JSON data:", err)
-		return
-	}
+	config := config.GetConfig()
 
 	// initialize excerpt grps with -1 as total
-	createGrps(data)
+	createGrps(config)
 
-	updateCommonGrps(sheetsGrpCol, month, person)
+	updateFixedExpenses(sheetsGrpCol, month, person)
 }
 
-func createGrps(data Data) {
-	i := 0
+func createGrps(config *sheets.ValueRange) {
 	// Init excrptGrp Totals
-	for groupName, excrpts := range data.Mappings {
+	var grp Group
+	for i, elm := range config.Values {
+		if len(elm) == 1 {
+			if grp.Name != "" {
+				Groups = append(Groups, grp)
+			}
+			grp = Group{}
+			grp.Name = strings.TrimSpace(strings.ToUpper(elm[0].(string)))
 
-		// parentName = strings.Trim(parentName, " ")
-		entries := []Entry{}
-		for entryName, mappings := range excrpts {
-			// excrptGrp = strings.Trim(excrptGrp, " ")
-			Balances[entryName] = -1.0
-			entries = append(entries,
-				createEntry(i, entryName, groupName, mappings))
-			i += 1
+			// Needed to filter out blanklines
+		} else if len(elm) > 1 {
+
+			var matches []string
+
+			// Are there any matches
+			if len(elm) == 3 {
+				str := strings.ToLower(elm[2].(string))
+				tmp := strings.Split(str, ",")
+				for _, v := range tmp {
+					v = strings.TrimSpace(v)
+					// Make sure accidental whitespace is ignored
+					if len(v) != 0 {
+						matches = append(matches, v)
+					}
+				}
+			}
+
+			fixedExpense, err := strconv.ParseBool(elm[1].(string))
+			if err != nil {
+				log.Fatal("Cannot parse fixed expense of", elm[0].(string))
+			}
+
+			entry := Entry{
+				Ind:          i,
+				Name:         elm[0].(string),
+				Mappings:     matches,
+				GroupName:    grp.Name,
+				FixedExpense: fixedExpense,
+			}
+			grp.Entries = append(grp.Entries, entry)
+			Balances[entry.Name] = -1.0
 		}
-		group := Group{groupName, entries}
-		Groups = append(Groups, group)
 	}
-}
-
-func createEntry(ind int, name, groupName string, data DataExcrpt) Entry {
-	return Entry{
-		Ind:          ind,
-		Name:         name,
-		Mappings:     data.Matches,
-		GroupName:    groupName,
-		FixedExpense: data.FixedExpense,
-	}
-}
-
-func GetGroups() []Group {
-	return Groups
+	// Make sure to append ignore group
+	Groups = append(Groups, grp)
 }
 
 /*
@@ -191,14 +165,35 @@ func GetEntries(grpName string) []Entry {
 	return nil
 }
 
+func FindMatches(excrpt string) []Entry {
+	var matches []Entry
+
+	// ignore case
+	excrpt = strings.ToLower(strings.TrimSpace(excrpt))
+
+	// Find correct excrpt grp
+	for _, grp := range Groups {
+		for i := range grp.Entries {
+			for _, match := range grp.Entries[i].Mappings {
+				match = strings.ToLower(strings.TrimSpace(match))
+				if strings.Contains(excrpt, match) {
+					matches = append(matches, grp.Entries[i])
+					break
+				}
+			}
+		}
+	}
+	return matches
+}
+
 /*
-Find matches for excrpts and updates ExcrptTotal iff only 1 match is found, otherwise the found excrpts are added to the return
+Find matches for excrpts and updates Ballance iff only 1 match is found, otherwise the found excrpts are added to the return
 */
 func FindUpdMatches(excrpts *[]parser.Excrpt) map[parser.Excrpt][]Entry {
 	ret := make(map[parser.Excrpt][]Entry)
 
 	for _, excrpt := range *excrpts {
-		matches := FindExcrptMatches(excrpt.Description)
+		matches := FindMatches(excrpt.Description)
 		// If there is only a single match, the update is given
 		// Otherwise the correct match has to be made in the ui
 		if len(matches) == 1 {
@@ -210,7 +205,7 @@ func FindUpdMatches(excrpts *[]parser.Excrpt) map[parser.Excrpt][]Entry {
 	return ret
 }
 
-func updateCommonGrps(sheetEntries *sheets.ValueRange, month, person int64) {
+func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
 	// Get Date, Amount and description
 
 	A1Not := util.MonthToA1Notation(month, person)
@@ -221,7 +216,7 @@ func updateCommonGrps(sheetEntries *sheets.ValueRange, month, person int64) {
 				if entry.FixedExpense {
 
 					readRange := "budget!" + A1Not + fmt.Sprint(i+1)
-					excrpts, readExcrptsErr := requests.GetSheet().Values.Get(requests.GetSpreadsheetId(), readRange).Do()
+					excrpts, readExcrptsErr := request.GetSheet().Values.Get(request.GetSpreadsheetId(), readRange).Do()
 
 					if readExcrptsErr != nil {
 						log.Fatalf("Unable to perform get: %v", readExcrptsErr)

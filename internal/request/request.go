@@ -1,4 +1,4 @@
-package requests
+package request
 
 import (
 	"budgetAutomation/internal/parser"
@@ -235,4 +235,3 @@ func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
 		MultiUpdateReqNum(balances, 1, 3, 1472288449),
 	}
 }
-

@@ -3,13 +3,15 @@ package cli
 import (
 	"budgetAutomation/internal/accounting"
 	"budgetAutomation/internal/parser"
-	req "budgetAutomation/internal/requests"
+	req "budgetAutomation/internal/request"
 	"budgetAutomation/internal/util"
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"google.golang.org/api/sheets/v4"
@@ -21,11 +23,11 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
 
-			total, notFoundErr := accounting.GetTotal(elm[0].(string))
+			balance, notFoundErr := accounting.GetBalance(elm[0].(string))
 
 			if notFoundErr == nil {
-				if total != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(total, int64(i), util.MonthToColInd(month, person), 1685114351))
+				if balance != 0.0 {
+					updateReqs = append(updateReqs, req.SingleUpdateReq(balance, int64(i), util.MonthToColInd(month, person), 1685114351))
 				} else {
 					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month, person), 1685114351))
 				}
@@ -189,7 +191,7 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []account
 	return grp
 }
 
-func PrintExcrptGrpTotals() {
+func PrintBalances() {
 	fmt.Println("###################################################")
 	for k, v := range accounting.Balances {
 		fmt.Println(k, ": ", v+1)
@@ -197,7 +199,7 @@ func PrintExcrptGrpTotals() {
 	fmt.Println("###################################################")
 }
 
-func PrintExcrptGrps() {
+func PrintEntries() {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
 	for _, parent := range accounting.Groups {
@@ -219,44 +221,54 @@ func PrintResume() {
 }
 
 /*
-Decide entries / matchs of the excrpts belonging to multiple or none, pre-defined excrptGrps
+Decide entries / matchs of the excrpts belonging to multiple or none, pre-defined entries
 */
-func DecideEntries(matches map[parser.Excrpt][]accounting.Entry) {
-	entryInd := -1
-	for excrpt, excrptGrps := range matches {
-		if len(excrptGrps) == 0 {
-			PrintExcrptGrps()
+func DecideEntries(allMatches map[parser.Excrpt][]accounting.Entry) {
+	var entry accounting.Entry
+	var entryErr error
+
+	for excrpt, matches := range allMatches {
+		if len(matches) == 0 {
+			PrintEntries()
 			fmt.Println("No matches found for ", excrpt, ". Please choose a match")
+
 		} else {
-			printFoundExcrptGrps(excrptGrps)
-			fmt.Println(len(excrptGrps), " matches found for ", excrpt, ". Please choose a match")
+			printFoundEntries(matches)
+			fmt.Println(len(matches), " matches found for ", excrpt, ". Please choose a match")
 		}
 
-		fmt.Scan(entryInd)
+		reader := bufio.NewReader(os.Stdin)
 		validInd := false
-		var (
-			excrptGrp accounting.Entry
-			getGrpErr error
-		)
 		for !validInd {
-			fmt.Scan(&entryInd)
+			input, _ := reader.ReadString('\n')
+			input = strings.TrimSpace(input)
 
-			excrptGrp, getGrpErr = accounting.GetEntry("", entryInd)
+			// Check if user wants to exit
+			if strings.ToLower(input) == "exit" {
+				os.Exit(0)
+			}
 
-			if getGrpErr == nil || entryInd > -1 && entryInd <= len(accounting.Balances) {
-				validInd = true
+			num, err := strconv.Atoi(input)
+			if err != nil {
+				fmt.Println("Invalid input. Please enter an integer.")
 			} else {
-				fmt.Println("Invalid index.\nPlease choose again")
+				entry, entryErr = accounting.GetEntry("", num)
+				if entryErr == nil {
+					validInd = true
+				} else {
+					// Man gaar bare videre til naeste match uden at update noget
+					log.Println("Could not find entry.\nPlease choose again")
+				}
 			}
 		}
-		accounting.UpdateBalance(excrpt.Date, excrpt.Description, excrpt.Amount, excrptGrp.Name)
+		accounting.UpdateBalance(excrpt.Date, excrpt.Description, excrpt.Amount, entry.Name)
 	}
 }
 
-func printFoundExcrptGrps(excrptGrps []accounting.Entry) {
+func printFoundEntries(entries []accounting.Entry) {
 	fmt.Println("Excerpt groups")
 	fmt.Println("###################################################")
-	for _, excrptGrp := range excrptGrps {
+	for _, excrptGrp := range entries {
 		fmt.Println(excrptGrp.Ind, ":", excrptGrp.Name)
 	}
 	fmt.Println("###################################################")

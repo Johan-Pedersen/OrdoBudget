@@ -2,7 +2,7 @@ package ui
 
 import (
 	"budgetAutomation/internal/accounting"
-	req "budgetAutomation/internal/requests"
+	req "budgetAutomation/internal/request"
 	"budgetAutomation/internal/util"
 	"context"
 	"encoding/json"
@@ -20,7 +20,7 @@ func submitDebug() {
 	// excrpts := debugGetExcrpts()
 	debugGetExcrpts()
 	updateExcrptsSheetDebug()
-	accounting.InitEntriesDebug()
+	accounting.InitGrpsDebug()
 
 	sheetsGrpCol := getSheetsGrpCol()
 
@@ -48,7 +48,7 @@ func submit(month int64, excrptPath string) {
 	updateExcrptSheet(excrptPath, month)
 
 	sheetsGrpCol := getSheetsGrpCol()
-	accounting.InitExcrptGrps(sheetsGrpCol, month, person)
+	accounting.InitGrps(sheetsGrpCol, month, person)
 
 	// excrptsFromSheets := getExcrptsFromSheet()
 
@@ -121,7 +121,7 @@ func updateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
 
-			total, notFoundErr := accounting.GetTotal(elm[0].(string))
+			total, notFoundErr := accounting.GetBalance(elm[0].(string))
 
 			if notFoundErr == nil {
 				if total != 0.0 {

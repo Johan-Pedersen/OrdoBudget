@@ -23,6 +23,12 @@ nyt projekt: budgetautomation-414505
 - Google Sheets
 - https://docs.google.com/spreadsheets/d/1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc/edit?gid=1685114351#gid=1685114351
 
+- Build til et andet system
+    - https://www.digitalocean.com/community/tutorials/how-to-build-and-install-go-programs
+    - https://www.digitalocean.com/community/tutorials/building-go-applications-for-different-operating-systems-and-architectures
+    - https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-build-tags
+    - For at byg til windows hvor en terminal bliver aabnet
+        - https://www.digitalocean.com/community/tutorials/using-ldflags-to-set-version-information-for-go-applications
 ### fyne
 
 - https://docs.fyne.io/explore/widgets
@@ -701,7 +707,6 @@ nyt projekt: budgetautomation-414505
         - Foler maaske den skal flyttes.
 
 
-
 - Hvordan skal vi opdele pakkerne
     - Hvilke ansvars omraader har vi
     - parser giver god mening, fordi her skal vi parse forskellige filer fra div banker
@@ -773,8 +778,129 @@ nyt projekt: budgetautomation-414505
     - Skal CommonGrps ikke hedde fixedExpenses?
         - Det er vel ikke nodvendigvis "fixed expenses", det er bare hvad den bliver brugt til
 
-- matches pakke 
-    - til at finde matches
-    - skal bruge func til updateBalance fra accunting
-    - skal accutning bruge matches, vel ikke rigtig
-    - matces skal vel bare kaldes af ui?
+## Fix UpdateCommonGrps
+
+- Det skal gores mere effektivt
+
+- Denne funktionalitet burde ligge hvor man initialisere Balances.
+
+- Det er ikke saa godt design, at ikke rigtig tage hojde for fixed-expenses for til allersidts hvor vi updater sheets. **Fordi Balances viser dermed ikke det sande billed.**
+- Hvis Entry.Ind passede til hvilken raekke den havde i sheets. Saa ville man ikke rigtig have et problem. Fordi saa kunne man bare lave en get, naar man instansiterede Balance tabellen
+    - Det betyder saa, at vi bliver nodt til at lave en en automatisk getEntries funktion, der henter og indexere alle entries
+    - Kan hurtigt blive et problem, fordi hvis der saa er nogen der laver om i kolonnerne saa bliver det hele fucked up
+        - Det kan vaere man kan laase sheets, eller lave en disclaimer der fortaeller risikoen ved at makke i den kolonne.
+        - Med denne aendring, mindsker det ogsaa det saetup man skal lave for at komme i gang.
+    - Hvis Balances er et map, kan man hente alle raekkerne 1 gang. Lobe dem i gennem og saa assign Ind baseret paa deres Row.
+
+### Auto generator for Entries
+
+- Entry.Ind skal vaere entriends paagaeldende rakke i config sheets
+    - Den skal nok hedde noget andet. Entry.Row?
+
+- 
+
+### callstack
+
+- Auto generator for config
+- Update accounting.UpdateBudgetReqs
+    - skal ikke bruge rows parameter laengere.
+        - Er erstattet af Entry.Row/Ind
+            - fungerede ikke?
+        
+
+- Test UpdateBudgetReqs, at fixed expenses bliver taelt med
+    - vaere sikker paa at flowet er rigtigt, skal ikke laengere kalde UpdateCommonGrp
+- fix UpdateCommonGrp
+- Rename UpdateCommonGrps til noget med fixedExpense
+
+## Auto generator for config
+
+### Laes Entry col fra sheets
+
+- For hver reakke danner man en entry/post
+- Vi har pre-defined gruppern. og indtal man rammer en ny grp-header, saa bliver det defineret som en ny entry
+    - Hvordan kan man bestemme om det skal vaere en header eller ej
+        - Man kan hente meta data om Cellen. Saa hvis den ser ud paa en bestemt maade saa taeller det som en grp
+
+- Sheets har namedRanges.
+    - https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets#NamedRange
+    - Dem kan man benytte til at definere poster og over-poster
+
+- Hvordan skal vi saa haandtere at assign mathes til entries
+    - Vi kan have en lokal config fil vi laeser fra
+    - Det ville nok vaere mere smart at have det i et sheet.
+
+- Saa man kan have et sheet ved siden af, hvor man kan have alle matches.
+- Naar man vil update poster og over-poster. definere man bare nye namedRanges, korere init programmet og saa bliver det andet sheet opdateret.
+    - Men det skal ogsaa vaere saa man selv kan opdatere det.
+    - Det er self ogsaa noget man kunne holde i en database, men her er det nemt for alle at modify
+    - Kan ikke bruge database, da de skal have adgang til at skrive nye matches hele tiden.
+
+- Hvordan ser vi forskal paa en GrpName og EntryName
+- Fordi vi skal jo bare kunne laese direkte fra Config sheets.
+- Man kan laese det direkte fra cellFormat. 
+- Saa maa vi definere farver lige som i budgettet som betyder post og over-post
+- 
+
+- usecasen hvor man vil tilfoje en ny post, er saa sjaelden at det ikke er saa vaesentling om det er helt optimeret.
+    - Vi skal bare have en maade hvor config sheets nemt bliver opdateret naar man saetter budgettet op.
+    - Man kan maaske bruge et apps script der holder oje med naar man laver en NamedRange, Der saetter den op i config sheets
+
+
+
+### opdater config sheet
+
+- Man kan lave sine egne triggers
+    - https://developers.google.com/apps-script/reference/script/spreadsheet-trigger-builder
+
+- Naar man tilfojer en ny raekke, er det en ON_CHANGE event
+
+- lav en knap som henter alle namedRanges over i config sheets
+- kan lave en on change trigger, der korere scriptet igen hvis man indsaetter en ny raekke
+    - ved ikke helt
+    - Denne case sker jo ikke saa tit, saa det ville vaere fint hvis man skulle lave en ny named Range og saa tryk paa knappen
+
+### callStack
+
+- opdater config sheet
+- Laes Entry col fra sheets
+
+## August mdr passer ikke med 1000 kr. har 1000 kr mindre end budgettet siger
+
+- Ida ingenor foreningen trakker 2 gang
+    - giver - 878 kr
+    - Hvor ofte kommer den betaling
+
+- forsikringer giver + 200
+- Faelles udgifter giver + 300
+
+- hvis forsikring og faelles passede, saa vil forkellen vaere -1500
+- med rettelsen fra ida er der stadig en forskel paa 600 kr
+
+- hverdag stemmer
+
+- bil passer
+
+- indtaegter stemmer
+
+- mad giver stemmer
+
+- opsparing stemmer
+
+## test accounting
+
+### test createGrps
+
+- Vi skal have et sheets.ValueRange som input
+- Paa den maade tester vi bare som en black box, og saa tjekker at de rigtige grps kommer ud
+- man kan heller ikke rigtig gore noget andet
+
+- Man kan lave en setup funktion, den kan enten lave en mock ValueRange, eller lave en mock getConfig funktion. Hvor man saa har en raekke test configs i et seperaret sheet, som man saa kna kalde i div. test cases.
+- Eller skal man lave ValueRange sheets fra bunden, saa er det nok nemmets med test sheets
+
+- Starter med at prove at lave en raa ValueRange variabel
+
+- test mellem rum ved config matches
+
+### call stack
+
