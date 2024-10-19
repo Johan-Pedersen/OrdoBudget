@@ -44,7 +44,7 @@ func ReadExcrptCsv(r io.Reader, month int64) []Excrpt {
 			//
 			date, err := time.Parse("2006/01/02", elms[0])
 			if err != nil {
-				log.Printf("Could not parse date. Skipping row %d", i)
+				log.Printf("Could not parse date. Skipping row %d in input file", i+1)
 
 				// date can be "reserveret", and we only want to account for excrpts which has been taken from the account
 			} else {

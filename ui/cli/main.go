@@ -5,11 +5,13 @@ import (
 	"budgetAutomation/internal/parser"
 	req "budgetAutomation/internal/request"
 	"budgetAutomation/internal/util"
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"google.golang.org/api/sheets/v4"
@@ -235,16 +237,28 @@ func DecideEntries(allMatches map[parser.Excrpt][]accounting.Entry) {
 			fmt.Println(len(matches), " matches found for ", excrpt, ". Please choose a match")
 		}
 
-		entryInd := -1
+		reader := bufio.NewReader(os.Stdin)
 		validInd := false
 		for !validInd {
-			fmt.Scan(&entryInd)
-			entry, entryErr = accounting.GetEntry("", entryInd)
-			if entryErr == nil {
-				validInd = true
+			input, _ := reader.ReadString('\n')
+			input = strings.TrimSpace(input)
+
+			// Check if user wants to exit
+			if strings.ToLower(input) == "exit" {
+				os.Exit(0)
+			}
+
+			num, err := strconv.Atoi(input)
+			if err != nil {
+				fmt.Println("Invalid input. Please enter an integer.")
 			} else {
-				// Man gaar bare videre til naeste match uden at update noget
-				log.Println("Could not find entry.\nPlease choose again")
+				entry, entryErr = accounting.GetEntry("", num)
+				if entryErr == nil {
+					validInd = true
+				} else {
+					// Man gaar bare videre til naeste match uden at update noget
+					log.Println("Could not find entry.\nPlease choose again")
+				}
 			}
 		}
 		accounting.UpdateBalance(excrpt.Date, excrpt.Description, excrpt.Amount, entry.Name)

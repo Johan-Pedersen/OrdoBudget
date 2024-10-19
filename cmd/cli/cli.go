@@ -46,7 +46,6 @@ func main() {
 		// excrpts = cli.GetExcrpts()
 		// Initialize and print excerpt groups
 		accounting.InitGrps(sheetsGrpCol, month, person)
-		cli.PrintEntries()
 	}
 
 	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/storage/excrptSheet.csv")
@@ -69,7 +68,7 @@ func main() {
 
 	// Update budget -> API kald
 
-	cli.UpdateBudget(sheetsGrpCol, 0.0, month, person)
+	cli.UpdateBudget(sheetsGrpCol, excrpts[0].Balance, month, person)
 	// accBalance := cli.LoadExcrptTotal(excrpts, month)
 
 	// find Excerpt Total for current month.
