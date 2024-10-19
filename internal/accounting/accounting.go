@@ -3,7 +3,7 @@ package accounting
 import (
 	"budgetAutomation/internal/config"
 	"budgetAutomation/internal/parser"
-	"budgetAutomation/internal/requests"
+	"budgetAutomation/internal/request"
 	"budgetAutomation/internal/util"
 	"encoding/json"
 	"errors"
@@ -216,7 +216,7 @@ func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
 				if entry.FixedExpense {
 
 					readRange := "budget!" + A1Not + fmt.Sprint(i+1)
-					excrpts, readExcrptsErr := requests.GetSheet().Values.Get(requests.GetSpreadsheetId(), readRange).Do()
+					excrpts, readExcrptsErr := request.GetSheet().Values.Get(request.GetSpreadsheetId(), readRange).Do()
 
 					if readExcrptsErr != nil {
 						log.Fatalf("Unable to perform get: %v", readExcrptsErr)

@@ -2,7 +2,7 @@ package ui
 
 import (
 	"budgetAutomation/internal/accounting"
-	req "budgetAutomation/internal/requests"
+	req "budgetAutomation/internal/request"
 	"budgetAutomation/internal/util"
 	"context"
 	"encoding/json"

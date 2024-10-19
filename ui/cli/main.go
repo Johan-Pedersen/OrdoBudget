@@ -3,7 +3,7 @@ package cli
 import (
 	"budgetAutomation/internal/accounting"
 	"budgetAutomation/internal/parser"
-	req "budgetAutomation/internal/requests"
+	req "budgetAutomation/internal/request"
 	"budgetAutomation/internal/util"
 	"context"
 	"encoding/json"

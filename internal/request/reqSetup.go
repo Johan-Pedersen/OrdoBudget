@@ -1,4 +1,4 @@
-package requests
+package request
 
 import (
 	"context"
@@ -16,7 +16,7 @@ import (
 
 var spreadsheetId string = "1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc"
 
-func GetSpreadsheetId() string{
+func GetSpreadsheetId() string {
 	return spreadsheetId
 }
 
