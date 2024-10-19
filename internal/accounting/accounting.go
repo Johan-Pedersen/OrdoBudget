@@ -135,10 +135,6 @@ func createGrps(config *sheets.ValueRange) {
 	Groups = append(Groups, grp)
 }
 
-func GetGroups() []Group {
-	return Groups
-}
-
 /*
 Get entry based on name OR index(ind).
 Both can be specified, but it's not necessary.
