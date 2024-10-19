@@ -23,6 +23,12 @@ nyt projekt: budgetautomation-414505
 - Google Sheets
 - https://docs.google.com/spreadsheets/d/1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc/edit?gid=1685114351#gid=1685114351
 
+- Build til et andet system
+    - https://www.digitalocean.com/community/tutorials/how-to-build-and-install-go-programs
+    - https://www.digitalocean.com/community/tutorials/building-go-applications-for-different-operating-systems-and-architectures
+    - https://www.digitalocean.com/community/tutorials/customizing-go-binaries-with-build-tags
+    - For at byg til windows hvor en terminal bliver aabnet
+        - https://www.digitalocean.com/community/tutorials/using-ldflags-to-set-version-information-for-go-applications
 ### fyne
 
 - https://docs.fyne.io/explore/widgets
@@ -858,3 +864,43 @@ nyt projekt: budgetautomation-414505
 
 - opdater config sheet
 - Laes Entry col fra sheets
+
+## August mdr passer ikke med 1000 kr. har 1000 kr mindre end budgettet siger
+
+- Ida ingenor foreningen trakker 2 gang
+    - giver - 878 kr
+    - Hvor ofte kommer den betaling
+
+- forsikringer giver + 200
+- Faelles udgifter giver + 300
+
+- hvis forsikring og faelles passede, saa vil forkellen vaere -1500
+- med rettelsen fra ida er der stadig en forskel paa 600 kr
+
+- hverdag stemmer
+
+- bil passer
+
+- indtaegter stemmer
+
+- mad giver stemmer
+
+- opsparing stemmer
+
+## test accounting
+
+### test createGrps
+
+- Vi skal have et sheets.ValueRange som input
+- Paa den maade tester vi bare som en black box, og saa tjekker at de rigtige grps kommer ud
+- man kan heller ikke rigtig gore noget andet
+
+- Man kan lave en setup funktion, den kan enten lave en mock ValueRange, eller lave en mock getConfig funktion. Hvor man saa har en raekke test configs i et seperaret sheet, som man saa kna kalde i div. test cases.
+- Eller skal man lave ValueRange sheets fra bunden, saa er det nok nemmets med test sheets
+
+- Starter med at prove at lave en raa ValueRange variabel
+
+- test mellem rum ved config matches
+
+### call stack
+
