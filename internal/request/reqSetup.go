@@ -14,11 +14,10 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
-var spreadsheetId string = "1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc"
-
-func GetSpreadsheetId() string {
-	return spreadsheetId
-}
+var (
+	SpreadsheetId string = "1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc"
+	BudgetSheetId string = "1685114351"
+)
 
 // Retrieve a token, saves the token, then returns the generated client.
 func getClient(config *oauth2.Config) *http.Client {

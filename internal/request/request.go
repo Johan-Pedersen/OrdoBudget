@@ -5,6 +5,7 @@ import (
 	"budgetAutomation/internal/util"
 	"log"
 	"os"
+	"strconv"
 
 	"google.golang.org/api/sheets/v4"
 )
@@ -36,7 +37,7 @@ func CutPasteSingleReq(fromRow, fromCol, toRow, toCol int64) *sheets.Request {
 /*
 Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
 */
-func MultiUpdateReq(data []string, rowInd, colInd, sheetId int64) *sheets.Request {
+func MultiUpdateReq(data []string, rowInd, colInd int64, sheetId string) *sheets.Request {
 	var rowData []*sheets.RowData
 
 	for i := range data {
@@ -51,13 +52,17 @@ func MultiUpdateReq(data []string, rowInd, colInd, sheetId int64) *sheets.Reques
 		})
 	}
 
+	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
+	if err != nil {
+		log.Fatalln("Cannot convert sheetId to int")
+	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "*",
 			Start: &sheets.GridCoordinate{
 				ColumnIndex: colInd,
 				RowIndex:    rowInd,
-				SheetId:     sheetId,
+				SheetId:     intSheetId,
 			},
 			Rows: rowData,
 		},
@@ -68,7 +73,7 @@ func MultiUpdateReq(data []string, rowInd, colInd, sheetId int64) *sheets.Reques
 /*
 Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
 */
-func MultiUpdateReqNum(data []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+func MultiUpdateReqNum(data []float64, rowInd, colInd int64, sheetId string) *sheets.Request {
 	var rowData []*sheets.RowData
 
 	for i := range data {
@@ -87,13 +92,17 @@ func MultiUpdateReqNum(data []float64, rowInd, colInd, sheetId int64) *sheets.Re
 			},
 		})
 	}
+	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
+	if err != nil {
+		log.Fatalln("Cannot convert sheetId to int")
+	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "*",
 			Start: &sheets.GridCoordinate{
 				ColumnIndex: colInd,
 				RowIndex:    rowInd,
-				SheetId:     sheetId,
+				SheetId:     intSheetId,
 			},
 			Rows: rowData,
 		},
@@ -104,7 +113,7 @@ func MultiUpdateReqNum(data []float64, rowInd, colInd, sheetId int64) *sheets.Re
 /*
 Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
 */
-func MultiUpdateReqDate(data []float64, rowInd, colInd, sheetId int64) *sheets.Request {
+func MultiUpdateReqDate(data []float64, rowInd, colInd int64, sheetId string) *sheets.Request {
 	var rowData []*sheets.RowData
 
 	for i := range data {
@@ -125,13 +134,17 @@ func MultiUpdateReqDate(data []float64, rowInd, colInd, sheetId int64) *sheets.R
 			},
 		})
 	}
+	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
+	if err != nil {
+		log.Fatalln("Cannot convert sheetId to int")
+	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "*",
 			Start: &sheets.GridCoordinate{
 				ColumnIndex: colInd,
 				RowIndex:    rowInd,
-				SheetId:     sheetId,
+				SheetId:     intSheetId,
 			},
 			Rows: rowData,
 		},
@@ -143,7 +156,7 @@ func MultiUpdateReqDate(data []float64, rowInd, colInd, sheetId int64) *sheets.R
 Update single cell at (rowInd, colInd) with blank
 */
 
-func SingleUpdateReqBlank(rowInd, colInd, sheetId int64) *sheets.Request {
+func SingleUpdateReqBlank(rowInd, colInd int64, sheetId string) *sheets.Request {
 	blank := ""
 	rowData := &sheets.RowData{
 		Values: []*sheets.CellData{
@@ -154,13 +167,17 @@ func SingleUpdateReqBlank(rowInd, colInd, sheetId int64) *sheets.Request {
 			},
 		},
 	}
+	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
+	if err != nil {
+		log.Fatalln("Cannot convert sheetId to int")
+	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "UserEnteredValue",
 			Start: &sheets.GridCoordinate{
 				ColumnIndex: colInd,
 				RowIndex:    rowInd,
-				SheetId:     sheetId,
+				SheetId:     intSheetId,
 			},
 			Rows: []*sheets.RowData{rowData},
 		},
@@ -172,7 +189,7 @@ func SingleUpdateReqBlank(rowInd, colInd, sheetId int64) *sheets.Request {
 Update single cell at (rowInd, colInd) with amount
 */
 
-func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Request {
+func SingleUpdateReq(amount float64, rowInd, colInd int64, sheetId string) *sheets.Request {
 	rowData := &sheets.RowData{
 		Values: []*sheets.CellData{
 			{
@@ -182,13 +199,17 @@ func SingleUpdateReq(amount float64, rowInd, colInd, sheetId int64) *sheets.Requ
 			},
 		},
 	}
+	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
+	if err != nil {
+		log.Fatalln("Cannot convert sheetId to int")
+	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
 			Fields: "UserEnteredValue",
 			Start: &sheets.GridCoordinate{
 				ColumnIndex: colInd,
 				RowIndex:    rowInd,
-				SheetId:     sheetId,
+				SheetId:     intSheetId,
 			},
 			Rows: []*sheets.RowData{rowData},
 		},
@@ -229,9 +250,9 @@ func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
 	}
 
 	return []*sheets.Request{
-		MultiUpdateReqDate(dates, 1, 0, 1472288449),
-		MultiUpdateReqNum(amounts, 1, 1, 1472288449),
-		MultiUpdateReq(descriptions, 1, 2, 1472288449),
-		MultiUpdateReqNum(balances, 1, 3, 1472288449),
+		// MultiUpdateReqDate(dates, 1, 0, 1472288449),
+		// MultiUpdateReqNum(amounts, 1, 1, 1472288449),
+		// MultiUpdateReq(descriptions, 1, 2, 1472288449),
+		// MultiUpdateReqNum(balances, 1, 3, 1472288449),
 	}
 }

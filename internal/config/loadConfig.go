@@ -12,7 +12,7 @@ func GetConfig() *sheets.ValueRange {
 	sheet := request.GetSheet()
 	// Find excerpt grps to insert at
 
-	res, err := sheet.Values.Get(request.GetSpreadsheetId(), "Config!A2:C").Do() //
+	res, err := sheet.Values.Get(request.SpreadsheetId, "Config!A2:C").Do() //
 	if err != nil {
 		log.Fatalf("Unable to perform get operation: %v", err)
 	}

@@ -27,12 +27,12 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 
 			if notFoundErr == nil {
 				if balance != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(balance, int64(i), util.MonthToColInd(month, person), 1685114351))
+					updateReqs = append(updateReqs, req.SingleUpdateReq(balance, int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
 				} else {
-					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month, person), 1685114351))
+					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
 				}
 			} else if strings.EqualFold(strings.Trim(elm[0].(string), " "), "Faktisk balance") {
-				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month, person), 1685114351))
+				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
 			}
 		}
 	}
@@ -43,7 +43,7 @@ func GetExcrpts() *sheets.ValueRange {
 	sheet := req.GetSheet()
 	// Get Date, Amount and description
 	readRangeExrpt := "Udtrœk!A2:D"
-	excrpts, readExcrptsErr := sheet.Values.Get(req.GetSpreadsheetId(), readRangeExrpt).Do()
+	excrpts, readExcrptsErr := sheet.Values.Get(req.SpreadsheetId, readRangeExrpt).Do()
 	if readExcrptsErr != nil {
 		log.Fatalf("Unable to perform get: %v", readExcrptsErr)
 	}
@@ -67,7 +67,7 @@ func DebugGetExcrpts() *sheets.ValueRange {
 func GetSheetsGrpCol() *sheets.ValueRange {
 	sheet := req.GetSheet()
 	budgetColARange := "A1:A"
-	sheetsGrpCol, err := sheet.Values.Get(req.GetSpreadsheetId(), budgetColARange).Do()
+	sheetsGrpCol, err := sheet.Values.Get(req.SpreadsheetId, budgetColARange).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
@@ -81,7 +81,7 @@ func UpdateExcrptsSheet(month int64) {
 		Requests: req.UpdateExcrptSheet("storage/excrptSheet.csv", month),
 	}
 
-	_, excrptUpdateErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateExcerptSheetReq).Context(ctx).Do()
+	_, excrptUpdateErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateExcerptSheetReq).Context(ctx).Do()
 
 	if excrptUpdateErr != nil {
 		log.Fatalf("Unable to perform update excerpt sheet operation: %v", excrptUpdateErr)
@@ -108,7 +108,7 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 	}
 
 	// Execute the BatchUpdate request
-	_, updateBudgetErr := sheet.BatchUpdate(req.GetSpreadsheetId(), batchUpdateReq).Context(ctx).Do()
+	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateReq).Context(ctx).Do()
 
 	if updateBudgetErr != nil {
 		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
