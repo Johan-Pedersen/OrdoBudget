@@ -74,20 +74,6 @@ func GetSheetsGrpCol() *sheets.ValueRange {
 	return sheetsGrpCol
 }
 
-func UpdateExcrptsSheet(month int64) {
-	sheet := req.GetSheet()
-	ctx := context.Background()
-	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: req.UpdateExcrptSheet("storage/excrptSheet.csv", month),
-	}
-
-	_, excrptUpdateErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateExcerptSheetReq).Context(ctx).Do()
-
-	if excrptUpdateErr != nil {
-		log.Fatalf("Unable to perform update excerpt sheet operation: %v", excrptUpdateErr)
-	}
-}
-
 func GetPersonAndMonth(person, month *int64) {
 	fmt.Println("Which person is doing the budget: 1 or 2")
 	fmt.Scan(person)

@@ -19,7 +19,6 @@ func submitDebug() {
 
 	// excrpts := debugGetExcrpts()
 	debugGetExcrpts()
-	updateExcrptsSheetDebug()
 	accounting.InitGrpsDebug()
 
 	sheetsGrpCol := getSheetsGrpCol()
@@ -44,8 +43,6 @@ func submitDebug() {
 
 func submit(month int64, excrptPath string) {
 	var person int64 = 1
-
-	updateExcrptSheet(excrptPath, month)
 
 	sheetsGrpCol := getSheetsGrpCol()
 	accounting.InitGrps(sheetsGrpCol, month, person)
@@ -83,25 +80,6 @@ func getSheetsGrpCol() *sheets.ValueRange {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
 	return sheetsGrpCol
-}
-
-/*
-Update the temporary sheet to hold excrpts
-*/
-func updateExcrptSheet(excrptPath string, month int64) {
-	sheet := req.GetSheet()
-	ctx := context.Background()
-
-	// Update excerpt sheet, before we begin
-	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: req.UpdateExcrptSheet(excrptPath, month),
-	}
-
-	_, excrptUpdateErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateExcerptSheetReq).Context(ctx).Do()
-
-	if excrptUpdateErr != nil {
-		log.Fatalf("Unable to perform update excerpt sheet operation: %v", excrptUpdateErr)
-	}
 }
 
 func getExcrptsFromSheet() *sheets.ValueRange {
@@ -149,18 +127,4 @@ func debugGetExcrpts() *sheets.ValueRange {
 	json.NewDecoder(f3).Decode(&excrpts) // if err != nil {
 
 	return excrpts
-}
-
-func updateExcrptsSheetDebug() {
-	sheet := req.GetSheet()
-	ctx := context.Background()
-	batchUpdateExcerptSheetReq := &sheets.BatchUpdateSpreadsheetRequest{
-		Requests: req.UpdateExcrptSheet("storage/excrptSheet.csv", 4),
-	}
-
-	_, excrptUpdateErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateExcerptSheetReq).Context(ctx).Do()
-
-	if excrptUpdateErr != nil {
-		log.Fatalf("Unable to perform update excerpt sheet operation: %v", excrptUpdateErr)
-	}
 }

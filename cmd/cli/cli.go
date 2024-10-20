@@ -33,10 +33,6 @@ func main() {
 		person = 1
 		month = 6
 
-		// Update excerpt sheet, before we begin
-		cli.UpdateExcrptsSheet(month)
-		// excrpts = cli.DebugGetExcrpts()
-
 		// Initialize and print excerpt groups
 		accounting.InitGrpsDebug()
 

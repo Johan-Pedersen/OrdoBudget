@@ -1,38 +1,11 @@
 package request
 
 import (
-	"budgetAutomation/internal/parser"
-	"budgetAutomation/internal/util"
 	"log"
-	"os"
 	"strconv"
 
 	"google.golang.org/api/sheets/v4"
 )
-
-/*
-Parameter navne her giver ikke rigtig mening med to / from
-*/
-func CutPasteSingleReq(fromRow, fromCol, toRow, toCol int64) *sheets.Request {
-	cutPasteReq := &sheets.Request{
-		CutPaste: &sheets.CutPasteRequest{
-			Source: &sheets.GridRange{
-				EndColumnIndex:   fromCol + 1,
-				EndRowIndex:      fromRow + 1,
-				SheetId:          1472288449,
-				StartColumnIndex: fromCol,
-				StartRowIndex:    fromRow,
-			},
-			Destination: &sheets.GridCoordinate{
-				ColumnIndex: toCol,
-				RowIndex:    toRow,
-				SheetId:     1472288449,
-			},
-			PasteType: "PASTE_NORMAL", // Adjust paste type as needed
-		},
-	}
-	return cutPasteReq
-}
 
 /*
 Updates row-wise from (rowInd, colInd) to (rowInd + len(grpSums), colInd)
@@ -215,44 +188,4 @@ func SingleUpdateReq(amount float64, rowInd, colInd int64, sheetId string) *shee
 		},
 	}
 	return updateReq
-}
-
-func UpdateExcrptSheet(path string, month int64) []*sheets.Request {
-	// open the csv file
-	file, err := os.Open(path)
-	if err != nil {
-		print("could not open excerpt file")
-		log.Fatalln("coud not open excerpt file.", err)
-	}
-	defer file.Close()
-
-	excrpts := parser.ReadExcrptCsv(file, month)
-
-	var dates []float64
-
-	for _, exc := range excrpts {
-		dates = append(dates, util.ConvertDateToFloat(exc.Date))
-	}
-
-	var amounts []float64
-	for _, exc := range excrpts {
-		amounts = append(amounts, exc.Amount)
-	}
-
-	var descriptions []string
-	for _, exc := range excrpts {
-		descriptions = append(descriptions, exc.Description)
-	}
-
-	var balances []float64
-	for _, exc := range excrpts {
-		balances = append(balances, exc.Balance)
-	}
-
-	return []*sheets.Request{
-		// MultiUpdateReqDate(dates, 1, 0, 1472288449),
-		// MultiUpdateReqNum(amounts, 1, 1, 1472288449),
-		// MultiUpdateReq(descriptions, 1, 2, 1472288449),
-		// MultiUpdateReqNum(balances, 1, 3, 1472288449),
-	}
 }
