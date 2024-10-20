@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	SpreadsheetId string = "1Dg3qfLZd3S2ISqYLA7Av-D3njmiWPlcq-tQAodhgeAc"
-	BudgetSheetId string = "1685114351"
+	SpreadSheetId string
+	BudgetSheetId string
 )
 
 // Retrieve a token, saves the token, then returns the generated client.

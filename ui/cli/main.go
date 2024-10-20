@@ -43,7 +43,7 @@ func GetExcrpts() *sheets.ValueRange {
 	sheet := req.GetSheet()
 	// Get Date, Amount and description
 	readRangeExrpt := "Udtrœk!A2:D"
-	excrpts, readExcrptsErr := sheet.Values.Get(req.SpreadsheetId, readRangeExrpt).Do()
+	excrpts, readExcrptsErr := sheet.Values.Get(req.SpreadSheetId, readRangeExrpt).Do()
 	if readExcrptsErr != nil {
 		log.Fatalf("Unable to perform get: %v", readExcrptsErr)
 	}
@@ -67,7 +67,7 @@ func DebugGetExcrpts() *sheets.ValueRange {
 func GetSheetsGrpCol() *sheets.ValueRange {
 	sheet := req.GetSheet()
 	budgetColARange := "A1:A"
-	sheetsGrpCol, err := sheet.Values.Get(req.SpreadsheetId, budgetColARange).Do()
+	sheetsGrpCol, err := sheet.Values.Get(req.SpreadSheetId, budgetColARange).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
@@ -94,7 +94,7 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 	}
 
 	// Execute the BatchUpdate request
-	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateReq).Context(ctx).Do()
+	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadSheetId, batchUpdateReq).Context(ctx).Do()
 
 	if updateBudgetErr != nil {
 		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
@@ -258,11 +258,4 @@ func printFoundEntries(entries []accounting.Entry) {
 		fmt.Println(excrptGrp.Ind, ":", excrptGrp.Name)
 	}
 	fmt.Println("###################################################")
-}
-
-func GetinputFile() {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Enter input file name")
-	input, _ := reader.ReadString('\n')
-	input = strings.TrimSpace(input)
 }

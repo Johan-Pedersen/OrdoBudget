@@ -34,7 +34,7 @@ func submitDebug() {
 	// Execute the BatchUpdate request
 	sheet := req.GetSheet()
 	ctx := context.Background()
-	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateReq).Context(ctx).Do()
+	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadSheetId, batchUpdateReq).Context(ctx).Do()
 
 	if updateBudgetErr != nil {
 		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
@@ -60,7 +60,7 @@ func submit(month int64, excrptPath string) {
 	// Execute the BatchUpdate request
 	sheet := req.GetSheet()
 	ctx := context.Background()
-	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadsheetId, batchUpdateReq).Context(ctx).Do()
+	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadSheetId, batchUpdateReq).Context(ctx).Do()
 
 	if updateBudgetErr != nil {
 		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
@@ -75,7 +75,7 @@ func getSheetsGrpCol() *sheets.ValueRange {
 	sheetsGrpColRange := "A1:A"
 
 	sheet := req.GetSheet()
-	sheetsGrpCol, err := sheet.Values.Get(req.SpreadsheetId, sheetsGrpColRange).Do()
+	sheetsGrpCol, err := sheet.Values.Get(req.SpreadSheetId, sheetsGrpColRange).Do()
 	if err != nil {
 		log.Fatalf("Unable to perform get: %v", err)
 	}
@@ -86,7 +86,7 @@ func getExcrptsFromSheet() *sheets.ValueRange {
 	sheet := req.GetSheet()
 	// Get Date, Amount and description
 	readRangeExrpt := "Udtrœk!A2:D"
-	excrpts, readExcrptsErr := sheet.Values.Get(req.SpreadsheetId, readRangeExrpt).Do()
+	excrpts, readExcrptsErr := sheet.Values.Get(req.SpreadSheetId, readRangeExrpt).Do()
 	if readExcrptsErr != nil {
 		log.Fatalf("Unable to perform get: %v", readExcrptsErr)
 	}
