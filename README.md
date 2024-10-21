@@ -1,4 +1,4 @@
-# budgetAutomation
+# OrdoBudget
 
 Automate budget in google sheets
 
