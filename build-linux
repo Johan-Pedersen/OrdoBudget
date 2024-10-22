@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+rm -r -f ~/ordoBudget
+
+mkdir ~/ordoBudget
+
+# Loop through arguments
+for arg in "$@"; do
+   case "$arg" in
+      spreadSheetId=*) spreadSheetId="${arg#*=}" ;;
+      sheetId=*) sheetId="${arg#*=}" ;;
+   esac
+done
+
+go build -ldflags "-X 'budgetAutomation/internal/request.SpreadSheetId=${spreadSheetId}' -X 'budgetAutomation/internal/request.BudgetSheetId=${sheetId}'" -o ~/ordoBudget/ordoBudget cmd/cli/cli.go
+
+
+
