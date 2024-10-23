@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-rm -r -f ~/ordoBudget
+rm -r -f ~/ordoBudgetWin
 
-mkdir ~/ordoBudget
+mkdir ~/ordoBudgetWin
 
 # Loop through arguments
 for arg in "$@"; do
@@ -19,10 +19,9 @@ elif [[ -z "$sheetId" ]]; then
   echo "sheetId is empty"
 
 else
-  go build -ldflags "-X 'budgetAutomation/internal/request.SpreadSheetId=${spreadSheetId}' -X 'budgetAutomation/internal/request.BudgetSheetId=${sheetId}'" -o ~/ordoBudget/ordoBudget cmd/cli/cli.go
+  GOOS=windows GOARCH=amd64 go build -ldflags "-X 'budgetAutomation/internal/request.SpreadSheetId=${spreadSheetId}' -X 'budgetAutomation/internal/request.BudgetSheetId=${sheetId}'" -o ~/ordoBudget/ordoBudget.exe cmd/cli/cli.go
 
 fi
-
 
 
 
