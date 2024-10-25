@@ -17,10 +17,12 @@ func main() {
 	flag.Parse()
 
 	// Who is doing the budget
-	var person int64
+	var person int64 = 1
 
 	// Which month from 1-12 should be handled
 	var month int64
+
+	var multipleUsers bool
 
 	// var excrpts *sheets.ValueRange
 	sheetsGrpCol := cli.GetSheetsGrpCol()
@@ -37,7 +39,11 @@ func main() {
 
 	} else {
 
-		cli.GetPersonAndMonth(&person, &month)
+		if multipleUsers {
+			cli.InputPerson(&person)
+		}
+
+		cli.InputMonth(&month)
 
 		// Update excerpt sheet, before we begin
 		// cli.UpdateExcrptsSheet(month)

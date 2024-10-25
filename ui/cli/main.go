@@ -74,10 +74,12 @@ func GetSheetsGrpCol() *sheets.ValueRange {
 	return sheetsGrpCol
 }
 
-func GetPersonAndMonth(person, month *int64) {
+func InputPerson(person *int64) {
 	fmt.Println("Which person is doing the budget: 1 or 2")
 	fmt.Scan(person)
+}
 
+func InputMonth(month *int64) {
 	// Which month from 1-12 should be handled
 	fmt.Println("Specify month:")
 	fmt.Scan(month)
