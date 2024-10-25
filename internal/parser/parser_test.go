@@ -9,7 +9,7 @@ import (
 )
 
 func TestNotLatestMth(t *testing.T) {
-	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/test/excrptSheet.csv")
+	reader, err := os.Open("/home/hanyolo/src/OrdoBudget/test/excrptSheet.csv")
 	if err != nil {
 		log.Fatalln("Could not open excrpt test file", err)
 	}
@@ -30,7 +30,7 @@ func TestNotLatestMth(t *testing.T) {
 }
 
 func TestNormCase(t *testing.T) {
-	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/test/excrptSheet.csv")
+	reader, err := os.Open("/home/hanyolo/src/OrdoBudget/test/excrptSheet.csv")
 	if err != nil {
 		log.Fatalln("Could not open excrpt test file", err)
 	}
@@ -63,7 +63,7 @@ func TestEmpty(t *testing.T) {
 }
 
 func TestNotCorrectMth(t *testing.T) {
-	reader, err := os.Open("/home/hanyolo/src/budgetAutomation/test/excrptSheet.csv")
+	reader, err := os.Open("/home/hanyolo/src/OrdoBudget/test/excrptSheet.csv")
 	if err != nil {
 		log.Fatalln("Could not open excrpt test file", err)
 	}
