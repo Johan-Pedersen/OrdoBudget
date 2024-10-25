@@ -19,7 +19,7 @@ elif [[ -z "$sheetId" ]]; then
   echo "sheetId is empty"
 
 else
-  GOOS=windows GOARCH=amd64 go build -ldflags "-X 'budgetAutomation/internal/request.SpreadSheetId=${spreadSheetId}' -X 'budgetAutomation/internal/request.BudgetSheetId=${sheetId}'" -o ~/ordoBudget/ordoBudget.exe cmd/cli/cli.go
+  GOOS=windows GOARCH=amd64 go build -ldflags "-X 'budgetAutomation/internal/request.SpreadSheetId=${spreadSheetId}' -X 'budgetAutomation/internal/request.BudgetSheetId=${sheetId}'" -o ~/ordoBudgetWin/ordoBudget.exe cmd/cli/cli.go
 
 fi
 
