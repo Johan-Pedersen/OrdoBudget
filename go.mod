@@ -1,4 +1,4 @@
-module budgetAutomation
+module OrdoBudget
 
 go 1.22
 

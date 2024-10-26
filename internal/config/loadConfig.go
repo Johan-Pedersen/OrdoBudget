@@ -1,7 +1,7 @@
 package config
 
 import (
-	"budgetAutomation/internal/request"
+	"OrdoBudget/internal/request"
 	"log"
 
 	"google.golang.org/api/sheets/v4"

@@ -1,9 +1,9 @@
 package ui
 
 import (
-	"budgetAutomation/internal/accounting"
-	req "budgetAutomation/internal/request"
-	"budgetAutomation/internal/util"
+	"OrdoBudget/internal/accounting"
+	req "OrdoBudget/internal/request"
+	"OrdoBudget/internal/util"
 	"context"
 	"encoding/json"
 	"log"

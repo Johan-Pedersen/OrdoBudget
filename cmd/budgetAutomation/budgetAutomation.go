@@ -1,7 +1,7 @@
 package main
 
 import (
-	gui "budgetAutomation/ui/gui"
+	gui "OrdoBudget/ui/gui"
 	"flag"
 
 	"fyne.io/fyne/v2/app"

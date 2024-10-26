@@ -1,10 +1,10 @@
 package accounting
 
 import (
-	"budgetAutomation/internal/config"
-	"budgetAutomation/internal/parser"
-	"budgetAutomation/internal/request"
-	"budgetAutomation/internal/util"
+	"OrdoBudget/internal/config"
+	"OrdoBudget/internal/parser"
+	"OrdoBudget/internal/request"
+	"OrdoBudget/internal/util"
 	"encoding/json"
 	"errors"
 	"fmt"

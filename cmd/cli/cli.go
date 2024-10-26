@@ -1,9 +1,9 @@
 package main
 
 import (
-	"budgetAutomation/internal/accounting"
-	"budgetAutomation/internal/parser"
-	"budgetAutomation/ui/cli"
+	"OrdoBudget/internal/accounting"
+	"OrdoBudget/internal/parser"
+	"OrdoBudget/ui/cli"
 	"flag"
 	"fmt"
 	"log"

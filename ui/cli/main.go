@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"budgetAutomation/internal/accounting"
-	"budgetAutomation/internal/parser"
-	req "budgetAutomation/internal/request"
-	"budgetAutomation/internal/util"
+	"OrdoBudget/internal/accounting"
+	"OrdoBudget/internal/parser"
+	req "OrdoBudget/internal/request"
+	"OrdoBudget/internal/util"
 	"bufio"
 	"context"
 	"encoding/json"
