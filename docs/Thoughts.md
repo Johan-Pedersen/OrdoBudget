@@ -904,3 +904,84 @@ nyt projekt: budgetautomation-414505
 
 ### call stack
 
+## Lav setup cli argument
+
+- hvad skal man angive
+    - budgetSheetId 
+    - configSheetId 
+    - spreadSheetId 
+
+- Lav guide til hvordan man giver pgm'et adgang til ens speadsheet
+
+- hvor skal man laese input fra
+    - Med cli'en burde man bare angive den naar programmet starter
+        - Det er jo bare en exe man korere, saa man kan ikke give den input
+- hvordan skal vi ogsaa lave setup, naar man ikke kan parse flag 
+    - Man kan selv detect om det er forste gang det korere, 
+    - i forhold til at saette sheetId og spreadsheetid, burde man kunne angive det naar man builder
+        - Jeg tror man kan bruge -ldflags naar man bygger / compiler
+            - Man kan bruge -X flaget
+
+- Ogsaa kan man sporge paa hvilken csv fil der skal bruges
+
+
+- relative path for input file
+    - https://forum.golangbridge.org/t/how-to-get-relative-path-from-runtime-caller/15690
+
+- faa abs path til fil, https://stackoverflow.com/questions/17071286/how-can-i-open-files-relative-to-my-gopath 
+
+- Hvad skal man gore med token.json og client_secret
+    - De kan jo ikke bare ligge ude i det aabne
+    - Og de skal jo ikke vaere i den binaere fil, da de skal vaere lokalt til denne bruger ellers har vi nok it sikkerheds brist
+    - i opsaetnings scriptet sorger man faar at lave en mappe
+        - der ligger man token og client secret
+        - hvordan skal man saa bygge projektet
+            - Det kraver jo man har adgang til koden
+            - Det skal ikke vaere nodvendigt for mig at bygge selv
+
+- til opsaetning kan man ogsaa angive om det er for 1 eller 2 personer. Hvis man er 2 pers, bliver man spurgt hver gang hvem der skal laves budget for
+
+-
+
+## Lav guide
+
+- naar man laver en kopi, skal man ind og rename funktionen for den virker
+    - Hvad sker der naar man trykker paa "implementer" i app script
+
+## build script
+
+- Hvad skal man gore med token.json og client_secret
+    - De kan jo ikke bare ligge ude i det aabne
+    - Og de skal jo ikke vaere i den binaere fil, da de skal vaere lokalt til denne bruger ellers har vi nok it sikkerheds brist
+    - i opsaetnings scriptet sorger man faar at lave en mappe
+        - der ligger man token og client secret
+        - hvordan skal man saa bygge projektet
+            - Det kraver jo man har adgang til koden
+            - Det skal ikke vaere nodvendigt for mig at bygge selv
+
+- vi laver et build script for linux og windows, som vi ligger i git repo'et, som man saa kan korere
+
+- Hvordan fungere det med at angive input excrptSheet, naar programmet ligger i usr/local men man kalder det fra desktop.
+- Den binaere fil skal vel ogsaa ligge i urs/local/bin el. kan den bare ligge i usr/local/budgetAutomation/bin
+
+- Hvordan skal man lave opsaetning af clinte secret og token
+    - syntes den burde komme op af sig selv
+
+
+## Distribution
+
+- For at jeg kan automatisere noget af det skal der vaere en hjemmeside, som de kan intereagere med i stedet.
+- Saa kan jeg bygge en exe fil til dem jeg zipper med client secret og saa er vi good
+
+### callstack
+
+- Hvordan faar man windows til ikke at nakke exe filen med windows defender
+- Hvordan kan man automatisk download en client secret
+    - Hvis man downloaded det hele fra en hjemmeside, saa kunne man samle det hele i en zip fil man kunne download.
+    - Hvad saa med sheetId og spreadSheetId.
+        - Dem kunne man saa input i et par felter saa kalder man build scriptet og noget logik til at danne en client secret.
+- Hvordan kan man automatisk build systemet
+
+## kor budget for 1 el. 2 personer
+
+- til opsaetning kan man ogsaa angive om det er for 1 eller 2 personer. hvis man er 2 pers, bliver man spurgt hver gang hvem der skal laves budget for

@@ -1,18 +1,5 @@
 # CallStack
 
-- Hvordan eksporter man et program til at bruge de rigtige sheetId's
-- Lav et opsaetnings pgm saa Clara korer og saette op med hendes eget budget
-- Lav et budget setup til Clara
-
-- Update readme
-    - Lav et helt mock budget, som kan ses af alle og som kan kan refere til i readme'en
-
-## cli finishing touches
-
-- hent actual balance som det sidste
-
-- i cli'en skal vi scanne for ordet "exit", som skal lukke programmet
-
 ## gui 
 
 - Aendre tekst paa submit knap
