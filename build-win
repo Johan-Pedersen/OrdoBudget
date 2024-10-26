@@ -1,25 +1,28 @@
 #!/usr/bin/env bash
 
-rm -r -f ~/ordoBudgetWin
+rm -f ~/ordoBudgetWin/ordoBudget.exe
 
-mkdir ~/ordoBudgetWin
+mkdir -p ~/ordoBudgetWin
 
+# Loop through arguments
 # Loop through arguments
 for arg in "$@"; do
    case "$arg" in
       spreadSheetId=*) spreadSheetId="${arg#*=}" ;;
       sheetId=*) sheetId="${arg#*=}" ;;
+      multipleUsers=*) multipleUsers="${arg#*=}";;
    esac
 done
 
 if [[ -z "$spreadSheetId" ]]; then 
   echo "spreadSheetId is empty"
-
 elif [[ -z "$sheetId" ]]; then 
   echo "sheetId is empty"
+elif [[ -z "$multipleUsers" ]]; then 
+  echo "multipleUsers is empty"
 
 else
-  GOOS=windows GOARCH=amd64 go build -ldflags "-X 'budgetAutomation/internal/request.SpreadSheetId=${spreadSheetId}' -X 'budgetAutomation/internal/request.BudgetSheetId=${sheetId}'" -o ~/ordoBudgetWin/ordoBudget.exe cmd/cli/cli.go
+  GOOS=windows GOARCH=amd64 go build -ldflags "-X 'OrdoBudget/internal/request.SpreadSheetId=${spreadSheetId}' -X 'OrdoBudget/internal/request.BudgetSheetId=${sheetId}' -X 'Ordobudget/cmd/cli.multipleUsers=${multipleUsers}'" -o ~/ordoBudgetWin/ordoBudget.exe cmd/cli/cli.go
 
 fi
 
