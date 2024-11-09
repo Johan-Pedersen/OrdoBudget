@@ -86,6 +86,8 @@ func main() {
 	// find Excerpt Total for current month.
 	cli.PrintBalances()
 	cli.PrintResume()
+	fmt.Println("Press Enter to finish")
+	fmt.Scanln()
 }
 
 // This code converts the -ldflags -X build flags from string to it's actual type
@@ -102,10 +104,8 @@ func init() {
 	switch strings.TrimSpace(bankStr) {
 	case parse.NordeaBank.String():
 		parser = parse.Nordea{}
-		println("Norda bank")
 	case parse.SparKronBank.String():
 		parser = parse.SparKron{}
-		println("SparKron")
 
 	}
 }
