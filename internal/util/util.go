@@ -22,6 +22,9 @@ Currently it matches only my col
 func MonthToColInd(month, person int64) int64 {
 	var adjustment int64 = 0
 
+	if person == 0 {
+		return month
+	}
 	if person == 2 {
 		adjustment += 1
 	}

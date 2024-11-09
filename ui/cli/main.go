@@ -2,7 +2,7 @@ package cli
 
 import (
 	"OrdoBudget/internal/accounting"
-	"OrdoBudget/internal/parser"
+	"OrdoBudget/internal/parse"
 	req "OrdoBudget/internal/request"
 	"OrdoBudget/internal/util"
 	"bufio"
@@ -211,7 +211,7 @@ func PrintResume() {
 /*
 Decide entries / matchs of the excrpts belonging to multiple or none, pre-defined entries
 */
-func DecideEntries(allMatches map[parser.Excrpt][]accounting.Entry) {
+func DecideEntries(allMatches map[parse.Excrpt][]accounting.Entry) {
 	var entry accounting.Entry
 	var entryErr error
 

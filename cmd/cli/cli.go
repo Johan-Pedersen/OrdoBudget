@@ -2,27 +2,35 @@ package main
 
 import (
 	"OrdoBudget/internal/accounting"
-	"OrdoBudget/internal/parser"
+	"OrdoBudget/internal/parse"
 	"OrdoBudget/ui/cli"
 	"flag"
 	"fmt"
 	"log"
-	"os"
+	"strconv"
 	"strings"
 )
+
+// Who is doing the budget
+var person int64 = 0
+
+// Which month from 1-12 should be handled
+var month int64
+
+var multipleUsers bool
+
+var (
+	bankStr          string
+	multipleUsersStr string
+	bank             parse.Bank
+)
+
+var parser parse.Parser
 
 func main() {
 	debugMode := flag.Bool("debug", false, "Run in debug mode")
 
 	flag.Parse()
-
-	// Who is doing the budget
-	var person int64 = 1
-
-	// Which month from 1-12 should be handled
-	var month int64
-
-	var multipleUsers bool
 
 	// var excrpts *sheets.ValueRange
 	sheetsGrpCol := cli.GetSheetsGrpCol()
@@ -57,12 +65,7 @@ func main() {
 	fmt.Scan(&inputFileName)
 	inputFileName = strings.TrimSpace(inputFileName)
 
-	reader, err := os.Open(inputFileName)
-	if err != nil {
-		log.Fatalln("Could not open excrpt file", err)
-	}
-	// Read excrpts from csv
-	excrpts := parser.ReadExcrptCsv(reader, month)
+	excrpts := parser.Parse(inputFileName, month)
 
 	// Auto find matches
 	// create upd requests for match
@@ -83,4 +86,26 @@ func main() {
 	// find Excerpt Total for current month.
 	cli.PrintBalances()
 	cli.PrintResume()
+}
+
+// This code converts the -ldflags -X build flags from string to it's actual type
+
+func init() {
+	//
+	var err error
+	multipleUsers, err = strconv.ParseBool(multipleUsersStr)
+
+	if err != nil {
+		log.Fatal("Could not parse multipleUsers flag")
+	}
+
+	switch strings.TrimSpace(bankStr) {
+	case parse.NordeaBank.String():
+		parser = parse.Nordea{}
+		println("Norda bank")
+	case parse.SparKronBank.String():
+		parser = parse.SparKron{}
+		println("SparKron")
+
+	}
 }

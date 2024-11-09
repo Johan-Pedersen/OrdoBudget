@@ -2,7 +2,7 @@ package accounting
 
 import (
 	"OrdoBudget/internal/config"
-	"OrdoBudget/internal/parser"
+	"OrdoBudget/internal/parse"
 	"OrdoBudget/internal/request"
 	"OrdoBudget/internal/util"
 	"encoding/json"
@@ -189,8 +189,8 @@ func FindMatches(excrpt string) []Entry {
 /*
 Find matches for excrpts and updates Ballance iff only 1 match is found, otherwise the found excrpts are added to the return
 */
-func FindUpdMatches(excrpts *[]parser.Excrpt) map[parser.Excrpt][]Entry {
-	ret := make(map[parser.Excrpt][]Entry)
+func FindUpdMatches(excrpts *[]parse.Excrpt) map[parse.Excrpt][]Entry {
+	ret := make(map[parse.Excrpt][]Entry)
 
 	for _, excrpt := range *excrpts {
 		matches := FindMatches(excrpt.Description)
