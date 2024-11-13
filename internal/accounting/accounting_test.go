@@ -8,22 +8,45 @@ import (
 )
 
 func TestCreatGrps(t *testing.T) {
-	valRange := &sheets.ValueRange{
-		Values: [][]interface{}{
-			{"Grp 0   "},
-			{"Entry0", "FALSE", "xxx"},
-			{"Entry1", "FALSE", "     , yy"},
-			{"Entry 2", "true", ", x , y.2, ~, hteth"},
-			{"Entry  3", "FALSE", " "},
-			{"ENtry 5", "FALSE", ""},
+	grp0 := "Grp 0   "
+	entry0 := "Entry0"
+	entry1 := "Entry1"
+	entry2 := "Entry 2"
+	entry3 := "Entry  3"
+	entry5 := "ENtry 5"
 
-			{"Grp1"},
-			{"Entry1,2", "TRUE"},
-			{"Entry1.3", "false", "Entry1.2,HEJ, Entry1.34,       ,false"},
+	match1 := "xxx"
+	match2 := "     , yy"
+	match3 := ", x , y.2, ~, hteth"
+	match4 := " "
+	match5 := ""
+
+	fixed2 := true
+
+	grp1 := "Grp1"
+	entry12 := "Entry1.2"
+	entry13 := "Entry1.3"
+
+	match13 := "Entry1.2,HEJ, Entry1.34,       ,false"
+
+	fixed12 := true
+	config := &sheets.GridData{
+		RowData: []*sheets.RowData{
+			createRowData(0, 0, 1, &grp0, nil, nil),
+			createRowData(1, 1, 1, &entry0, &match1, nil),
+			createRowData(1, 1, 1, &entry1, &match2, nil),
+			createRowData(1, 1, 1, &entry2, &match3, &fixed2),
+			createRowData(1, 1, 1, &entry3, &match4, nil),
+			createRowData(1, 1, 1, &entry5, &match5, nil),
+
+			createRowData(0, 0, 1, &grp1, nil, nil),
+			createRowData(1, 1, 1, &entry12, nil, &fixed12),
+			createRowData(1, 1, 1, &entry13, &match13, nil),
 		},
 	}
+	// Final row
 
-	createGrps(valRange)
+	createGrps(config)
 
 	t.Run("# of groups", func(t *testing.T) {
 		if len(Groups) != 2 {
@@ -81,4 +104,61 @@ func TestCreatGrps(t *testing.T) {
 			t.Fatal("Groups[0].Entries[2].FixedExpense is not true")
 		}
 	})
+}
+
+func createRowData(red, green, blue float64, name *string, matches *string, fixedExpense *bool) *sheets.RowData {
+	var cellDataFixed sheets.CellData
+
+	if fixedExpense != nil {
+		cellDataFixed = sheets.CellData{
+			EffectiveFormat: &sheets.CellFormat{
+				BackgroundColor: &sheets.Color{
+					Red:   red,
+					Blue:  blue,
+					Green: green,
+				},
+			},
+			UserEnteredValue: &sheets.ExtendedValue{
+				BoolValue: fixedExpense,
+			},
+		}
+	}
+
+	var cellDataMatches sheets.CellData
+
+	if matches != nil {
+		cellDataMatches = sheets.CellData{
+			EffectiveFormat: &sheets.CellFormat{
+				BackgroundColor: &sheets.Color{
+					Red:   red,
+					Blue:  blue,
+					Green: green,
+				},
+			},
+			UserEnteredValue: &sheets.ExtendedValue{
+				StringValue: matches,
+			},
+		}
+	}
+	return &sheets.RowData{
+		Values: []*sheets.CellData{
+			// name cell
+			{
+				EffectiveFormat: &sheets.CellFormat{
+					BackgroundColor: &sheets.Color{
+						Red:   red,
+						Blue:  blue,
+						Green: green,
+					},
+				},
+				UserEnteredValue: &sheets.ExtendedValue{
+					StringValue: name,
+				},
+			},
+			// matches
+			&cellDataMatches,
+			// fixed expense
+			&cellDataFixed,
+		},
+	}
 }

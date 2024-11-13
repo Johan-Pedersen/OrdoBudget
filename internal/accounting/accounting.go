@@ -81,58 +81,90 @@ func InitGrps(sheetsGrpCol *sheets.ValueRange, month, person int64) {
 	config := config.GetConfig()
 
 	// initialize excerpt grps with -1 as total
-	createGrps(config)
+	createGrps(config[0])
 
 	updateFixedExpenses(sheetsGrpCol, month, person)
 }
 
-func createGrps(config *sheets.ValueRange) {
+func createGrps(config *sheets.GridData) {
 	// Init excrptGrp Totals
-	var grp Group
-	for i, elm := range config.Values {
-		if len(elm) == 1 {
-			if grp.Name != "" {
-				Groups = append(Groups, grp)
-			}
-			grp = Group{}
-			grp.Name = strings.TrimSpace(strings.ToUpper(elm[0].(string)))
 
-			// Needed to filter out blanklines
-		} else if len(elm) > 1 {
-
-			var matches []string
-
-			// Are there any matches
-			if len(elm) == 3 {
-				str := strings.ToLower(elm[2].(string))
-				tmp := strings.Split(str, ",")
-				for _, v := range tmp {
-					v = strings.TrimSpace(v)
-					// Make sure accidental whitespace is ignored
-					if len(v) != 0 {
-						matches = append(matches, v)
-					}
-				}
+	for i, row := range config.RowData {
+		cellData := row.Values
+		if isBlank(*cellData[0]) {
+			break
+		}
+		if hasBlueBG(cellData[0].EffectiveFormat.BackgroundColor) {
+			grp := Group{
+				Name: strings.TrimSpace(strings.ToUpper(*cellData[0].UserEnteredValue.StringValue)),
 			}
 
-			fixedExpense, err := strconv.ParseBool(elm[1].(string))
-			if err != nil {
-				log.Fatal("Cannot parse fixed expense of", elm[0].(string))
-			}
+			Groups = append(Groups, grp)
+		} else {
 
-			entry := Entry{
-				Ind:          i,
-				Name:         elm[0].(string),
-				Mappings:     matches,
-				GroupName:    grp.Name,
-				FixedExpense: fixedExpense,
+			grp := &Groups[len(Groups)-1]
+
+			entry, err := entryFromCell(cellData, i, grp.Name)
+
+			if err == nil {
+				grp.Entries = append(grp.Entries, entry)
+				Balances[entry.Name] = -1.0
 			}
-			grp.Entries = append(grp.Entries, entry)
-			Balances[entry.Name] = -1.0
 		}
 	}
-	// Make sure to append ignore group
-	Groups = append(Groups, grp)
+}
+
+func hasBlueBG(bg *sheets.Color) bool {
+	return bg.Alpha == 0 && bg.Red == 0 && bg.Green == 0
+}
+
+func isBlank(cellData sheets.CellData) bool {
+	// Cell has white background and no value
+	return cellData.UserEnteredValue == nil &&
+		cellData.EffectiveFormat.BackgroundColor.Red == 1 &&
+		cellData.EffectiveFormat.BackgroundColor.Green == 1 &&
+		cellData.EffectiveFormat.BackgroundColor.Blue == 1
+}
+
+func entryFromCell(cellData []*sheets.CellData, ind int, grpName string) (Entry, error) {
+	var fixedExpense bool
+	var entryName string
+	var matches []string
+	// Kolonne 0 er gruppen / posten
+
+	// No entry name
+	if cellData[0].UserEnteredValue == nil {
+		return Entry{}, errors.New("no entry defined in row")
+	}
+
+	entryName = strings.TrimSpace(strings.ToLower(*cellData[0].UserEnteredValue.StringValue))
+	// Kolonne 1 match
+
+	if len(cellData) > 1 && cellData[1].UserEnteredValue != nil {
+		tmpMatch := cellData[1].UserEnteredValue.StringValue
+
+		tmp := strings.Split(*tmpMatch, ",")
+		for _, v := range tmp {
+			v = strings.TrimSpace(v)
+			// Make sure accidental whitespace is ignored
+			if len(v) != 0 {
+				matches = append(matches, strings.ToLower(v))
+			}
+		}
+	}
+
+	// Kolonne 2 fast udgift
+	if len(cellData) > 2 && cellData[2].UserEnteredValue != nil {
+		fixedExpense = *cellData[2].UserEnteredValue.BoolValue
+	}
+
+	return Entry{
+		Ind:          ind,
+		Name:         entryName,
+		Mappings:     matches,
+		GroupName:    grpName,
+		FixedExpense: fixedExpense,
+	}, nil
 }
 
 /*
