@@ -11,6 +11,7 @@ for arg in "$@"; do
       spreadSheetId=*) spreadSheetId="${arg#*=}" ;;
       sheetId=*) sheetId="${arg#*=}" ;;
       multipleUsers=*) multipleUsers="${arg#*=}";;
+      bank=*) bank="${arg#*=}";;
    esac
 done
 
@@ -20,10 +21,10 @@ elif [[ -z "$sheetId" ]]; then
   echo "sheetId is empty"
 elif [[ -z "$multipleUsers" ]]; then 
   echo "multipleUsers is empty"
-
+elif [[ -z "$bank" ]]; then 
+  echo "bank is empty"
 else
-  GOOS=windows GOARCH=amd64 go build -ldflags "-X 'OrdoBudget/internal/request.SpreadSheetId=${spreadSheetId}' -X 'OrdoBudget/internal/request.BudgetSheetId=${sheetId}' -X 'Ordobudget/cmd/cli.multipleUsers=${multipleUsers}'" -o ~/ordoBudgetWin/ordoBudget.exe cmd/cli/cli.go
-
+  GOOS=windows GOARCH=amd64 go build -ldflags "-X 'OrdoBudget/internal/request.SpreadSheetId=${spreadSheetId}' -X 'OrdoBudget/internal/request.BudgetSheetId=${sheetId}' -X 'main.multipleUsersStr=${multipleUsers}' -X 'main.bankStr=${bank}'" -o ~/ordoBudgetWin/ordoBudget.exe cmd/cli/cli.go 
 fi
 
 

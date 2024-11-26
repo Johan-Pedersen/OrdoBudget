@@ -985,3 +985,64 @@ nyt projekt: budgetautomation-414505
 ## kor budget for 1 el. 2 personer
 
 - til opsaetning kan man ogsaa angive om det er for 1 eller 2 personer. hvis man er 2 pers, bliver man spurgt hver gang hvem der skal laves budget for
+
+## Brug af pattern i Parser
+
+- Den parser man skal bruge afhaenger af fil type og bank
+    - Man bliver nod til at angive bank i opsaetnings scritpet. Da det fortaeller hvilken opsaetning man kan regne med.
+    - Naar man har fundet banken, kan programmet selv agere paa baggrund af fil typen
+    - bankeg angiver man i opsaetnings scriptet
+
+    - Saa vi skal have et design pattern der understotter dette
+        - Det er en form for behaviorial pattern
+        - https://refactoring.guru/design-patterns/strategy
+
+- Nordea
+    - CSV
+    - PDF
+- Sparkassen kronjylland
+    - PDF
+
+- PDF -> .xlsx
+    - Som opforer sig paent
+
+### hvordan skal vi gore 
+
+- Metoden der skal bruges afhaenger baade af bank og fil type
+
+- Skal vi have et interface der hedder parser der implementere ReadInput/ReadExcrpts
+    - Her implementere man en funktion per filtype
+        - Men saa er der nogen banker der skal implementer funktioner for filtyper de ikke har
+
+- Lave en parser klasse / struct per bank der implementere et interface, med 1 metode parse
+    - Der laver man saa et tjek paa fil type der afgore hvilken faktisk parser funktion der skal bruges
+    - Hvad opnaar man ved det 
+        - At man er garenteret de har en metode parse, som man kan kalde
+        - Og saa man kan tjekke paa den som en type
+
+    - Hvordan vaelger man en struct baseret paa banknr
+        - Man har vel bare en var af type parser interface. Den saetter man saa bare accordingly
+
+        
+- Giver det mening at have en struct, hvis den holder nogen felter 
+    - Saa giver det vel bare ekstra kode
+    - Giver det noget at have saadan en emytp struct. 
+        - Men man skal have den for at kunne bruge et interface.
+        - Er interface saa det vaerd?
+
+- Skal man bruge build-tags i forhold til at build UI og cli
+    - Det er lidt overkill
+
+- Man kan ligge en init funktion der konvereter -ldflags fra string
+    - Hvor skal den init ligge
+    - Den er jo generel for alt kode
+    - Saa skal de variable man saetter vaere globale, ellers kan man ikke se dem fra cmd
+        - Nej, fordi hvis flagene bare er lokalt til cmd pakken saa er det jo fint nok
+
+- at lave (numberVale/stingValue, ser ikke ud til at fungere)
+    - Ellers saa er de der bare men sat til nil
+
+- Kan man lave gore saa det kun er vores namedRanges vi faar ind
+    - og ikke hente > 6000 rows
+
+### Callstack
