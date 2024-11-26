@@ -1,6 +1,7 @@
 # CallStack
 
-- i resume, vis ogsaa den samlede balance for hver gruppe
+- hvorfor er den saa langsom efter man har angivet mdr
+    - den henter config, men det kan den gore til at starte med i en seperart traad
 - naar man opdatere cellen, kan man gore det som "= x1 +x2 ...", saa den er nem at rette i
 - haandter mellemrum i input fil navnet
     - skal kunne have punktum i fil navn

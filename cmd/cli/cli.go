@@ -87,8 +87,8 @@ func main() {
 	// accBalance := cli.LoadExcrptTotal(excrpts, month)
 
 	// find Excerpt Total for current month.
-	cli.PrintBalances()
 	cli.PrintResume()
+	cli.PrintBalances()
 	fmt.Println("Press Enter to finish")
 	fmt.Scanln()
 }

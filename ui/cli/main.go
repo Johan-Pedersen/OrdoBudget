@@ -180,6 +180,7 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []account
 }
 
 func PrintBalances() {
+	fmt.Println("Balances")
 	fmt.Println("###################################################")
 	for k, v := range accounting.Balances {
 		fmt.Println(k, ": ", v+1)
@@ -188,7 +189,7 @@ func PrintBalances() {
 }
 
 func PrintEntries() {
-	fmt.Println("Excerpt groups")
+	fmt.Println("Groups")
 	fmt.Println("###################################################")
 	for _, parent := range accounting.Groups {
 		fmt.Println("\n************", parent.Name, "************")
