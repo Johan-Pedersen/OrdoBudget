@@ -9,8 +9,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 // Who is doing the budget
@@ -39,7 +37,6 @@ func main() {
 
 	// Debug mode
 	if *debugMode {
-		spew.Dump("helle")
 
 		// hard code person + month
 		person = 1
