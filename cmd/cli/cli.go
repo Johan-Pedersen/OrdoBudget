@@ -2,11 +2,11 @@ package main
 
 import (
 	"OrdoBudget/internal/accounting"
+	"OrdoBudget/internal/logtrace"
 	"OrdoBudget/internal/parse"
 	"OrdoBudget/ui/cli"
 	"flag"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -98,7 +98,7 @@ func init() {
 	multipleUsers, err = strconv.ParseBool(multipleUsersStr)
 
 	if err != nil {
-		log.Fatal("Could not parse multipleUsers flag")
+		logtrace.Error(err.Error())
 	}
 
 	switch strings.TrimSpace(bankStr) {

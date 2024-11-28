@@ -1,10 +1,10 @@
 package parse
 
 import (
+	"OrdoBudget/internal/logtrace"
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -46,7 +46,7 @@ func (spar SparKron) parseXlsx(path string, month int64) []Excrpt {
 				if errors.Is(err, io.EOF) {
 					break
 				}
-				log.Fatal("Error:", err)
+				logtrace.Error(err.Error())
 			}
 
 			cmpMth := time.Date(0, monthTime, 1, 0, 0, 0, 0, time.UTC)
@@ -55,7 +55,7 @@ func (spar SparKron) parseXlsx(path string, month int64) []Excrpt {
 			// date, err := time.Parse("2006/01/02", row[0])
 			date, err := time.Parse("02/01/2006", row[0])
 			if err != nil {
-				log.Printf("Could not parse date. Skipping row %d in input file", i+1)
+				logtrace.Info("Could not parse date. Skipping row" + strconv.Itoa(i+1) + "in input file")
 
 				// date can be "reserveret", and we only want to account for excrpts which has been taken from the account
 			} else {
@@ -67,7 +67,7 @@ func (spar SparKron) parseXlsx(path string, month int64) []Excrpt {
 					tmp := strings.ReplaceAll(row[2][0:len(row[2])-4], ".", "")
 					amount, err := strconv.ParseFloat(strings.ReplaceAll(tmp, ",", "."), 64)
 					if err != nil {
-						log.Fatal(err)
+						logtrace.Error(err.Error())
 					}
 
 					var balance float64
@@ -76,7 +76,7 @@ func (spar SparKron) parseXlsx(path string, month int64) []Excrpt {
 					tmp2 := strings.ReplaceAll(row[3][0:len(row[3])-4], ".", "")
 					balance, err = strconv.ParseFloat(strings.ReplaceAll(tmp2, ",", "."), 64)
 					if err != nil {
-						log.Fatal(err)
+						logtrace.Error(err.Error())
 					}
 					description = row[1]
 					excrpts = append(excrpts, CreateExcrpt(amount, balance, date.Format("02/01/2006"), description))

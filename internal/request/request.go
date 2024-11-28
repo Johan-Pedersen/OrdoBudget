@@ -1,7 +1,7 @@
 package request
 
 import (
-	"log"
+	"OrdoBudget/internal/logtrace"
 	"strconv"
 
 	"google.golang.org/api/sheets/v4"
@@ -27,7 +27,7 @@ func MultiUpdateReq(data []string, rowInd, colInd int64, sheetId string) *sheets
 
 	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
 	if err != nil {
-		log.Fatalln("Cannot convert sheetId to int")
+		logtrace.Error(err.Error())
 	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
@@ -67,7 +67,7 @@ func MultiUpdateReqNum(data []float64, rowInd, colInd int64, sheetId string) *sh
 	}
 	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
 	if err != nil {
-		log.Fatalln("Cannot convert sheetId to int")
+		logtrace.Error(err.Error())
 	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
@@ -109,7 +109,7 @@ func MultiUpdateReqDate(data []float64, rowInd, colInd int64, sheetId string) *s
 	}
 	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
 	if err != nil {
-		log.Fatalln("Cannot convert sheetId to int")
+		logtrace.Error(err.Error())
 	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
@@ -142,7 +142,7 @@ func SingleUpdateReqBlank(rowInd, colInd int64, sheetId string) *sheets.Request 
 	}
 	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
 	if err != nil {
-		log.Fatalln("Cannot convert sheetId to int")
+		logtrace.Error(err.Error())
 	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{
@@ -174,7 +174,7 @@ func SingleUpdateReq(amount float64, rowInd, colInd int64, sheetId string) *shee
 	}
 	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
 	if err != nil {
-		log.Fatalln("Cannot convert sheetId to int")
+		logtrace.Error(err.Error())
 	}
 	updateReq := &sheets.Request{
 		UpdateCells: &sheets.UpdateCellsRequest{

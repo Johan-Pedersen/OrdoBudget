@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"log"
+	"OrdoBudget/internal/logtrace"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -44,7 +44,7 @@ func MainView(debug bool, app fyne.App) {
 func isMonthValid(month string) (int64, bool) {
 	intMonth, err := strconv.ParseInt(month, 10, 64)
 	if err != nil {
-		log.Fatal("Month not a number")
+		logtrace.Error(err.Error())
 	}
 	return intMonth, intMonth >= 1 && intMonth <= 12
 }

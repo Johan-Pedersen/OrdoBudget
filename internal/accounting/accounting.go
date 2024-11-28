@@ -2,13 +2,13 @@ package accounting
 
 import (
 	"OrdoBudget/internal/config"
+	"OrdoBudget/internal/logtrace"
 	"OrdoBudget/internal/parse"
 	"OrdoBudget/internal/request"
 	"OrdoBudget/internal/util"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -63,14 +63,14 @@ func InitGrpsDebug() {
 
 	f1, err := os.Open("build/debug/JsonEntries")
 	if err != nil {
-		log.Fatal("Unable to open JsonEntries")
+		logtrace.Error(err.Error())
 	}
 	defer f1.Close()                    // //Json decode
 	json.NewDecoder(f1).Decode(&Groups) // if err != nil {
 
 	f2, err := os.Open("build/debug/JsonBalances")
 	if err != nil {
-		log.Fatal("Unable to open JSonBalances")
+		logtrace.Error(err.Error())
 	}
 	defer f2.Close()                      // //Json decode
 	json.NewDecoder(f2).Decode(&Balances) // if err != nil {
@@ -251,7 +251,7 @@ func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
 					excrpts, readExcrptsErr := request.GetSheet().Values.Get(request.SpreadSheetId, readRange).Do()
 
 					if readExcrptsErr != nil {
-						log.Fatalf("Unable to perform get: %v", readExcrptsErr)
+						logtrace.Error(readExcrptsErr.Error())
 					}
 
 					if len(excrpts.Values) == 0 {
@@ -262,7 +262,7 @@ func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
 						if len(val) > 0 {
 							amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(val[:len(val)-4], ".", ""), ",", "."), 64)
 							if err != nil {
-								log.Fatal(err)
+								logtrace.Error(err.Error())
 							}
 							// updateExcrptTotal("9999-99-99", excrptGrp.name, amount)
 							Balances[entry.Name] += -1 * float64(amount)

@@ -1,8 +1,8 @@
 package config
 
 import (
+	"OrdoBudget/internal/logtrace"
 	"OrdoBudget/internal/request"
-	"log"
 
 	"google.golang.org/api/sheets/v4"
 )
@@ -15,7 +15,7 @@ func GetConfig() []*sheets.GridData {
 	// This is a monster and I'm sorry
 	res, err := sheet.Get(request.SpreadSheetId).Ranges("Config!A2:C").Fields("sheets(data(rowData(values(userEnteredValue(stringValue,boolValue),effectiveFormat(backgroundColor)))))").Do()
 	if err != nil {
-		log.Fatalf("Unable to perform get operation: %v", err)
+		logtrace.Error(err.Error())
 	}
 
 	return res.Sheets[0].Data

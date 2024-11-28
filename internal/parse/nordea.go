@@ -1,10 +1,10 @@
 package parse
 
 import (
+	"OrdoBudget/internal/logtrace"
 	"encoding/csv"
 	"errors"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -22,7 +22,7 @@ func (nor Nordea) parseCsv(filePath string, month int64) []Excrpt {
 
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Fatalln("Could not open excrpt file", err)
+		logtrace.Error(err.Error())
 	}
 	// Create a new CSV ReadExcrptCsv
 	reader := csv.NewReader(file)
@@ -46,7 +46,7 @@ func (nor Nordea) parseCsv(filePath string, month int64) []Excrpt {
 				if errors.Is(err, io.EOF) {
 					break
 				}
-				log.Fatal("Error:", err)
+				logtrace.Error(err.Error())
 			}
 
 			cmpMth := time.Date(0, monthTime, 1, 0, 0, 0, 0, time.UTC)
@@ -54,7 +54,7 @@ func (nor Nordea) parseCsv(filePath string, month int64) []Excrpt {
 			//
 			date, err := time.Parse("2006/01/02", row[0])
 			if err != nil {
-				log.Printf("Could not parse date. Skipping row %d in input file", i+1)
+				logtrace.Info(err.Error())
 
 				// date can be "reserveret", and we only want to account for excrpts which has been taken from the account
 			} else {
@@ -65,7 +65,7 @@ func (nor Nordea) parseCsv(filePath string, month int64) []Excrpt {
 
 					amount, err := strconv.ParseFloat(strings.ReplaceAll(row[1], ",", "."), 64)
 					if err != nil {
-						log.Fatal(err)
+						logtrace.Error(err.Error())
 					}
 
 					var balance float64
@@ -73,7 +73,7 @@ func (nor Nordea) parseCsv(filePath string, month int64) []Excrpt {
 
 					balance, err = strconv.ParseFloat(strings.ReplaceAll(row[6], ",", "."), 64)
 					if err != nil {
-						log.Fatal(err)
+						logtrace.Error(err.Error())
 					}
 					description = row[5]
 					excrpts = append(excrpts, CreateExcrpt(amount, balance, date.Format("2006/01/02"), description))

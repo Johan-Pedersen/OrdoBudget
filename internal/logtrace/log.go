@@ -1,8 +1,10 @@
-package logging
+package logtrace
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"runtime/debug"
 )
 
 var (
@@ -23,6 +25,7 @@ func Info(msg string) {
 
 // Error logs an error message
 func Error(msg string) {
-	errorLog.Println(msg)
+	trace := fmt.Sprintf("%s\n%s", msg, debug.Stack())
+	errorLog.Output(2, trace)
+	os.Exit(1)
 }
-

@@ -1,8 +1,8 @@
 package util
 
 import (
+	"OrdoBudget/internal/logtrace"
 	"fmt"
-	"log"
 	"math"
 	"time"
 )
@@ -48,9 +48,7 @@ func CheckCurMonth(curMonth, exrptMonth int64) (bool, int64) {
 	if curMonth == -1 {
 		curMonth = exrptMonth
 	} else if exrptMonth != curMonth {
-
 		isNewMonth = true
-		log.Println("Begin new month")
 	}
 
 	return isNewMonth, curMonth
@@ -64,7 +62,7 @@ Google sheets calculate dates as - days since Dec 30, 1899
 func ConvertDateToFloat(dateStr string) float64 {
 	date, err := time.Parse("2006/01/02", dateStr)
 	if err != nil {
-		log.Fatal("Could not parse date")
+		logtrace.Error(err.Error())
 	}
 	baseDate := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
 	days := float64(date.Sub(baseDate).Hours() / 24)

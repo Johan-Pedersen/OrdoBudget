@@ -2,11 +2,11 @@ package ui
 
 import (
 	"OrdoBudget/internal/accounting"
+	"OrdoBudget/internal/logtrace"
 	req "OrdoBudget/internal/request"
 	"OrdoBudget/internal/util"
 	"context"
 	"encoding/json"
-	"log"
 	"os"
 	"strings"
 
@@ -37,7 +37,7 @@ func submitDebug() {
 	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadSheetId, batchUpdateReq).Context(ctx).Do()
 
 	if updateBudgetErr != nil {
-		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
+		logtrace.Error(updateBudgetErr.Error())
 	}
 }
 
@@ -63,7 +63,7 @@ func submit(month int64, excrptPath string) {
 	_, updateBudgetErr := sheet.BatchUpdate(req.SpreadSheetId, batchUpdateReq).Context(ctx).Do()
 
 	if updateBudgetErr != nil {
-		log.Fatalf("Unable to perform update operation: %v", updateBudgetErr)
+		logtrace.Error(updateBudgetErr.Error())
 	}
 }
 
@@ -77,7 +77,7 @@ func getSheetsGrpCol() *sheets.ValueRange {
 	sheet := req.GetSheet()
 	sheetsGrpCol, err := sheet.Values.Get(req.SpreadSheetId, sheetsGrpColRange).Do()
 	if err != nil {
-		log.Fatalf("Unable to perform get: %v", err)
+		logtrace.Error(err.Error())
 	}
 	return sheetsGrpCol
 }
@@ -88,7 +88,7 @@ func getExcrptsFromSheet() *sheets.ValueRange {
 	readRangeExrpt := "Udtrœk!A2:D"
 	excrpts, readExcrptsErr := sheet.Values.Get(req.SpreadSheetId, readRangeExrpt).Do()
 	if readExcrptsErr != nil {
-		log.Fatalf("Unable to perform get: %v", readExcrptsErr)
+		logtrace.Error(readExcrptsErr.Error())
 	}
 	return excrpts
 }
@@ -121,7 +121,7 @@ func debugGetExcrpts() *sheets.ValueRange {
 	var excrpts *sheets.ValueRange
 	f3, err := os.Open("build/debug/JsonExcrptSheets")
 	if err != nil {
-		log.Fatal("Unable to open JSonExcrptSheets")
+		logtrace.Error(err.Error())
 	}
 	defer f3.Close()                     // //Json decode
 	json.NewDecoder(f3).Decode(&excrpts) // if err != nil {
