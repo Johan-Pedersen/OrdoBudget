@@ -27,5 +27,7 @@ func Info(msg string) {
 func Error(msg string) {
 	trace := fmt.Sprintf("%s\n%s", msg, debug.Stack())
 	errorLog.Output(2, trace)
+	fmt.Println("Press Enter to stop program")
+	fmt.Scanln()
 	os.Exit(1)
 }
