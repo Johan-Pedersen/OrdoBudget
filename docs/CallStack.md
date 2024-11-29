@@ -1,13 +1,13 @@
 # CallStack
 
+- haandter mellemrum i input fil navnet
+    - Fejl'en skyldes fmt.Scan seprere arugemeter paa space
+
 - hvorfor er den saa langsom efter man har angivet mdr
     - den henter config, men det kan den gore til at starte med i en seperart traad
-- naar man opdatere cellen, kan man gore det som "= x1 +x2 ...", saa den er nem at rette i
-- haandter mellemrum i input fil navnet
-    - skal kunne have punktum i fil navn
-- graceful shut down, hvis der sker en fejl
-    - lige nu dor den bare instant
 - nogen gang kommer der en stor forskel paa faktisk og udregnet konto balance. som bliver rettet op naar man udfylder for naeste mdr
+- naar man opdatere cellen, kan man gore det som "= x1 +x2 ...", saa den er nem at rette i
+    - stor change
 
 ## gui 
 
@@ -56,8 +56,9 @@
 
 - Kunne man automatisere det hele hvis man fik en bank-fuldmagt af brugeren
 
-## Refactor
+- Kan angive link til setup program, som automatisk henter spreadsheetId og sheetId ud
 
+## Refactor
 
 - Hent config paa en smartere maade, saa man ikke henter >6000 raekker
 - En bedre maade at tjekke paa om man har en header i config
@@ -66,6 +67,10 @@
 - burde config.GetConfig() returnere en error?
 - UpdateBudgetReqs skal ikke ligge cli
     - Det er en faelles funktion som bruges af alt UI
-- Default fixed expense til false
 - Det er kun cli.go der holder build variable
     - Men disse er ikke synlige for GUI'en fordi alle directories haandteres som en seperart build unit af go. Ligegyldig om det er i samme package
+- Hvor er det mest idiomatisk at haandtere fejl
+    - Mener man helst vil haandtere fejl saa langt ude i programmet som muligt
+    - De fleste funtktioner skal returnere error 
+- faar panic hvis man inputter en bank der ikke findes
+    - skal fanges med error log

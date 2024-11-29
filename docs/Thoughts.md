@@ -1046,3 +1046,19 @@ nyt projekt: budgetautomation-414505
     - og ikke hente > 6000 rows
 
 ### Callstack
+
+## Bedre info og error logger
+
+- lave hjemmestrikket error logger
+- hvordan skal vi parse den med til alle funktioner
+    - Det nytter ikke noget at have den siddende paa et objekt, som man saa skal lave alle metoderen refere til det 
+- Saa skulle man lave loggeren global
+    - 
+
+- Man kan bare ligge den i en log pakke
+
+- logging binder sig taet ind til graceful shutdown.
+    - De skal jo have en besked at vide naar man fejler
+- som binder sig ind i error handling
+
+- start med logging og graceful shutdown
