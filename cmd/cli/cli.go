@@ -1,14 +1,15 @@
 package main
 
 import (
-	"OrdoBudget/internal/accounting"
-	"OrdoBudget/internal/logtrace"
-	"OrdoBudget/internal/parse"
-	"OrdoBudget/ui/cli"
 	"flag"
 	"fmt"
 	"strconv"
 	"strings"
+
+	"OrdoBudget/internal/accounting"
+	"OrdoBudget/internal/logtrace"
+	"OrdoBudget/internal/parse"
+	"OrdoBudget/ui/cli"
 )
 
 // Who is doing the budget
@@ -96,7 +97,6 @@ func init() {
 	//
 	var err error
 	multipleUsers, err = strconv.ParseBool(multipleUsersStr)
-
 	if err != nil {
 		logtrace.Error(err.Error())
 	}

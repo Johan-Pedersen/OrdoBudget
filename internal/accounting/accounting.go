@@ -1,17 +1,18 @@
 package accounting
 
 import (
-	"OrdoBudget/internal/config"
-	"OrdoBudget/internal/logtrace"
-	"OrdoBudget/internal/parse"
-	"OrdoBudget/internal/request"
-	"OrdoBudget/internal/util"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
+
+	"OrdoBudget/internal/config"
+	"OrdoBudget/internal/logtrace"
+	"OrdoBudget/internal/parse"
+	"OrdoBudget/internal/request"
+	"OrdoBudget/internal/util"
 
 	"google.golang.org/api/sheets/v4"
 )
@@ -247,7 +248,7 @@ func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
 			if notFound == nil {
 				if entry.FixedExpense {
 
-					readRange := "budget!" + A1Not + fmt.Sprint(i+1)
+					readRange := A1Not + fmt.Sprint(i+1)
 					excrpts, readExcrptsErr := request.GetSheet().Values.Get(request.SpreadSheetId, readRange).Do()
 
 					if readExcrptsErr != nil {

@@ -1,5 +1,7 @@
 # CallStack
 
+- skriv errors til log fil 
+
 - haandter mellemrum i input fil navnet
     - Fejl'en skyldes fmt.Scan seprere arugemeter paa space
 
