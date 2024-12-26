@@ -17,7 +17,7 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
-var Balances = map[string]float64{}
+var Balances = map[string][]float64{}
 
 var Groups = []Group{}
 
@@ -34,14 +34,32 @@ func UpdateBalance(date, excrpt string, amount float64, GroupName string) {
 		tmpAmount = 0
 	}
 
-	Balances[GroupName] += float64(tmpAmount)
+	Balances[GroupName] = append(Balances[GroupName], float64(tmpAmount))
 	UpdateResume(date, excrpt, GroupName, tmpAmount)
 }
 
 func UpdateResume(date, excrpt, GroupName string, amount float64) {
+
 	Resume = append(Resume, date+" "+excrpt+" "+strconv.FormatFloat(amount, 'f', -1, 64)+": "+GroupName)
 }
 
+func GetAmounts(EntryName string) ([]float64, error) {
+	entry, err := GetEntry(EntryName, -1)
+	//
+	if err != nil {
+		return []float64{}, err
+	}
+
+	// Balance should always be a positive number
+	amounts := Balances[entry.Name]
+
+	if entry.GroupName != "INDKOMST EFTER SKAT" {
+		for i := range amounts {
+			amounts[i] = amounts[i] * -1
+		}
+	}
+	return amounts, nil
+}
 func GetBalance(EntryName string) (float64, error) {
 	entry, err := GetEntry(EntryName, -1)
 	//
@@ -50,13 +68,23 @@ func GetBalance(EntryName string) (float64, error) {
 	}
 
 	// Balance should always be a positive number
-	balance := Balances[entry.Name] + 1
+	balance := sum(entry.Name)
 
 	if entry.GroupName == "INDKOMST EFTER SKAT" {
 		return balance, nil
 	} else {
 		return -1 * balance, nil
 	}
+}
+
+func sum(entryName string) float64 {
+	sum := 0.0
+	for _, v := range Balances[entryName] {
+
+		sum += v
+
+	}
+	return sum
 }
 
 func InitGrpsDebug() {
@@ -109,7 +137,7 @@ func createGrps(config *sheets.GridData) {
 
 			if err == nil {
 				grp.Entries = append(grp.Entries, entry)
-				Balances[entry.Name] = -1.0
+				Balances[entry.Name] = []float64{}
 			}
 		}
 	}
@@ -239,36 +267,33 @@ func FindUpdMatches(excrpts *[]parse.Excrpt) map[parse.Excrpt][]Entry {
 }
 
 func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
-	// Get Date, Amount and description
 
 	A1Not := util.MonthToA1Notation(month, person)
 	for i, elm := range sheetEntries.Values {
 		if len(elm) != 0 {
-			entry, notFound := GetEntry(elm[0].(string), -1)
-			if notFound == nil {
+			entry, notFoundtErr := GetEntry(elm[0].(string), -1)
+			if notFoundtErr == nil {
 				if entry.FixedExpense {
 
 					readRange := A1Not + fmt.Sprint(i+1)
-					excrpts, readExcrptsErr := request.GetSheet().Values.Get(request.SpreadSheetId, readRange).Do()
 
-					if readExcrptsErr != nil {
-						logtrace.Error(readExcrptsErr.Error())
+					expense, readExpenseErr := request.GetSheet().Values.Get(request.SpreadSheetId, readRange).Do()
+
+					if readExpenseErr != nil {
+						logtrace.Error(readExpenseErr.Error())
 					}
 
-					if len(excrpts.Values) == 0 {
-						Balances[entry.Name] += 0.0
-					} else {
+					// check size before we try to access element
+					if len(expense.Values) > 0 {
 
-						val := strings.Trim(excrpts.Values[0][0].(string), " ")
+						val := strings.Trim(expense.Values[0][0].(string), " ")
+						fmt.Printf("val: %v\n", val)
 						if len(val) > 0 {
 							amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(val[:len(val)-4], ".", ""), ",", "."), 64)
 							if err != nil {
 								logtrace.Error(err.Error())
 							}
-							// updateExcrptTotal("9999-99-99", excrptGrp.name, amount)
-							Balances[entry.Name] += -1 * float64(amount)
-						} else {
-							Balances[entry.Name] += 0.0
+							Balances[entry.Name] = append(Balances[entry.Name], -1*float64(amount))
 						}
 					}
 				}

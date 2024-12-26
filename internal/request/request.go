@@ -189,3 +189,36 @@ func SingleUpdateReq(amount float64, rowInd, colInd int64, sheetId string) *shee
 	}
 	return updateReq
 }
+
+/*
+Update single cell at (rowInd, colInd) with amount
+ amount: "=1 + 2 + 3 + 4 ..."
+*/
+
+func SingleUpdateReqSum(amount string, rowInd, colInd int64, sheetId string) *sheets.Request {
+	rowData := &sheets.RowData{
+		Values: []*sheets.CellData{
+			{
+				UserEnteredValue: &sheets.ExtendedValue{
+					FormulaValue: &amount,
+				},
+			},
+		},
+	}
+	intSheetId, err := strconv.ParseInt(sheetId, 10, 64)
+	if err != nil {
+		logtrace.Error(err.Error())
+	}
+	updateReq := &sheets.Request{
+		UpdateCells: &sheets.UpdateCellsRequest{
+			Fields: "UserEnteredValue",
+			Start: &sheets.GridCoordinate{
+				ColumnIndex: colInd,
+				RowIndex:    rowInd,
+				SheetId:     intSheetId,
+			},
+			Rows: []*sheets.RowData{rowData},
+		},
+	}
+	return updateReq
+}

@@ -24,20 +24,53 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 	for i, elm := range rows.Values {
 		if len(elm) != 0 {
 
-			balance, notFoundErr := accounting.GetBalance(elm[0].(string))
+			// balance, notFoundErr := accounting.GetBalance(elm[0].(string))
 
-			if notFoundErr == nil {
-				if balance != 0.0 {
-					updateReqs = append(updateReqs, req.SingleUpdateReq(balance, int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
-				} else {
-					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
-				}
-			} else if strings.EqualFold(strings.Trim(elm[0].(string), " "), "Faktisk balance") {
+			// amounts := accounting.Balances[elm[0].(string)]
+
+			// "Faktisk balance", is the last field in the budget to fill out, which means we can break after
+
+			if strings.EqualFold(strings.Trim(elm[0].(string), " "), "Faktisk balance") {
 				updateReqs = append(updateReqs, req.SingleUpdateReq(accBalance, int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
+				break
 			}
+
+			amounts, err := accounting.GetAmounts(elm[0].(string))
+
+			if err == nil {
+				if len(amounts) == 0 {
+					updateReqs = append(updateReqs, req.SingleUpdateReqBlank(int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
+				} else {
+					eq := toSumEq(amounts)
+					updateReqs = append(updateReqs, req.SingleUpdateReqSum(eq, int64(i), util.MonthToColInd(month, person), req.BudgetSheetId))
+				}
+			}
+
 		}
+
 	}
 	return updateReqs
+}
+
+/*
+Returns all amounts to a sum equation used in google sheets
+*/
+func toSumEq(amounts []float64) string {
+
+	sum_str := ""
+	if len(amounts) != 0 {
+
+		sum_str = "="
+		for i := range len(amounts) {
+			amount := strings.ReplaceAll(strconv.FormatFloat(amounts[i], 'f', -1, 64), ".", ",")
+			sum_str = sum_str + amount + "+"
+
+		}
+
+		//remove last '+' from equation
+		sum_str = sum_str[:len(sum_str)-1]
+	}
+	return sum_str
 }
 
 func GetExcrpts() *sheets.ValueRange {
@@ -107,7 +140,6 @@ func UpdateBudget(sheetsGrpCol *sheets.ValueRange, accBalance float64, month, pe
 
 /*
 Select excrptGrp for given match
-
 */
 func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []accounting.Entry) string {
 	grp := ""
@@ -183,8 +215,15 @@ func selMatchGrp(date, excrpt string, amount float64, excrptGrpMatches []account
 func PrintBalances() {
 	fmt.Println("Balances")
 	fmt.Println("###################################################")
-	for k, v := range accounting.Balances {
-		fmt.Println(k, ": ", v+1)
+	for k := range accounting.Balances {
+		balance, err := accounting.GetBalance(k)
+
+		if err != nil {
+			logtrace.Info(err.Error())
+		} else {
+
+			fmt.Println(k, ": ", balance)
+		}
 	}
 	fmt.Println("###################################################")
 }

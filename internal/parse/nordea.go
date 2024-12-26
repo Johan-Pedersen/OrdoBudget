@@ -90,4 +90,3 @@ func (nor Nordea) parseCsv(filePath string, month int64) []Excrpt {
 	}
 	return excrpts
 }
-
