@@ -1062,3 +1062,22 @@ nyt projekt: budgetautomation-414505
 - som binder sig ind i error handling
 
 - start med logging og graceful shutdown
+
+## udgifter staar med negativ fortegn
+
+- Naar man summer sammen, kan man ikke altid *-1 paa. Kun hvis det ikke er "indkomst efter skat"
+- saa man skal vide gruppen
+
+- tkan man gore det paa en anden maade
+  - 
+
+- Man kan lave en iterator til balance/amounts, med state, saa den ved om disse amounts er indkomst
+
+### lige nu bliver alle celler blanket, hvis ikke det er en entry m en balance
+
+- getAmount giver error, hvis ikke det er en kendt entry
+- Men de skal ikke vare blank, dem skal man bare springe over
+  - Der er heller ikke nogen grund til at logge dem
+- Men hvis entryen findes, men amounts er tom, skal man indsaette blank
+
+- naar man laeser faste udgifter, skal man kun satte ind hvis der staar <> 0
