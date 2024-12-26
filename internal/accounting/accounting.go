@@ -287,7 +287,6 @@ func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
 					if len(expense.Values) > 0 {
 
 						val := strings.Trim(expense.Values[0][0].(string), " ")
-						fmt.Printf("val: %v\n", val)
 						if len(val) > 0 {
 							amount, err := strconv.ParseFloat(strings.ReplaceAll(strings.ReplaceAll(val[:len(val)-4], ".", ""), ",", "."), 64)
 							if err != nil {
