@@ -68,6 +68,10 @@ func main() {
 
 	excrpts := parser.Parse(inputFileName, month)
 
+	if len(excrpts) == 0 {
+		logtrace.Error("No excrpts for given month")
+	}
+
 	// Auto find matches
 	// create upd requests for match
 
