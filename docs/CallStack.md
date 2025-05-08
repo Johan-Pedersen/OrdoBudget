@@ -11,6 +11,8 @@
 - naar man opdatere cellen, kan man gore det som "= x1 +x2 ...", saa den er nem at rette i
     - stor change
 
+- Problemer ved aarsskifte, naar mdr 12 er til sidst, bliver denne sprunget over. 
+
 ## gui 
 
 - command pattern

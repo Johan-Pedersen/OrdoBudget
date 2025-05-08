@@ -13,7 +13,8 @@ func GetConfig() []*sheets.GridData {
 	// Find excerpt grps to insert at
 
 	// This is a monster and I'm sorry
-	res, err := sheet.Get(request.SpreadSheetId).Ranges("Config!A2:C").Fields("sheets(data(rowData(values(userEnteredValue(stringValue,boolValue),effectiveFormat(backgroundColor)))))").Do()
+	res, err := sheet.Get(request.SpreadSheetId).Ranges("Config!A2:C").
+    Fields("sheets(data(rowData(values(userEnteredValue(stringValue,boolValue),effectiveFormat(backgroundColor)))))").Do()
 	if err != nil {
 		logtrace.Error(err.Error())
 	}

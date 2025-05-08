@@ -39,7 +39,6 @@ func UpdateBalance(date, excrpt string, amount float64, GroupName string) {
 }
 
 func UpdateResume(date, excrpt, GroupName string, amount float64) {
-
 	Resume = append(Resume, date+" "+excrpt+" "+strconv.FormatFloat(amount, 'f', -1, 64)+": "+GroupName)
 }
 
@@ -60,6 +59,7 @@ func GetAmounts(EntryName string) ([]float64, error) {
 	}
 	return amounts, nil
 }
+
 func GetBalance(EntryName string) (float64, error) {
 	entry, err := GetEntry(EntryName, -1)
 	//
@@ -80,9 +80,7 @@ func GetBalance(EntryName string) (float64, error) {
 func sum(entryName string) float64 {
 	sum := 0.0
 	for _, v := range Balances[entryName] {
-
 		sum += v
-
 	}
 	return sum
 }
@@ -267,7 +265,6 @@ func FindUpdMatches(excrpts *[]parse.Excrpt) map[parse.Excrpt][]Entry {
 }
 
 func updateFixedExpenses(sheetEntries *sheets.ValueRange, month, person int64) {
-
 	A1Not := util.MonthToA1Notation(month, person)
 	for i, elm := range sheetEntries.Values {
 		if len(elm) != 0 {

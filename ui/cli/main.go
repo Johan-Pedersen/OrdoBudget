@@ -1,11 +1,6 @@
 package cli
 
 import (
-	"OrdoBudget/internal/accounting"
-	"OrdoBudget/internal/logtrace"
-	"OrdoBudget/internal/parse"
-	req "OrdoBudget/internal/request"
-	"OrdoBudget/internal/util"
 	"bufio"
 	"context"
 	"encoding/json"
@@ -14,6 +9,12 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"OrdoBudget/internal/accounting"
+	"OrdoBudget/internal/logtrace"
+	"OrdoBudget/internal/parse"
+	req "OrdoBudget/internal/request"
+	"OrdoBudget/internal/util"
 
 	"google.golang.org/api/sheets/v4"
 )
@@ -47,7 +48,6 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 			}
 
 		}
-
 	}
 	return updateReqs
 }
@@ -56,7 +56,6 @@ func UpdateBudgetReqs(rows *sheets.ValueRange, accBalance float64, month, person
 Returns all amounts to a sum equation used in google sheets
 */
 func toSumEq(amounts []float64) string {
-
 	sum_str := ""
 	if len(amounts) != 0 {
 
@@ -67,7 +66,7 @@ func toSumEq(amounts []float64) string {
 
 		}
 
-		//remove last '+' from equation
+		// remove last '+' from equation
 		sum_str = sum_str[:len(sum_str)-1]
 	}
 	return sum_str
@@ -221,7 +220,6 @@ func PrintBalances() {
 		if err != nil {
 			logtrace.Info(err.Error())
 		} else {
-
 			fmt.Println(k, ": ", balance)
 		}
 	}
